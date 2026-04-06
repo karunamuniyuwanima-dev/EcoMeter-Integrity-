@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoMeter — Alert History</title>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&family=Exo+2:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg: #060d1a; --bg2: #0a1628; --bg3: #0d1f35;
+            --border: #1a3a5c; --border2: #1e4d7b;
+            --blue: #00a8ff; --cyan: #00e5ff; --green: #00e676;
+            --yellow: #ffd600; --orange: #ff6d00; --red: #ff1744;
+            --text: #e8f4fd; --text2: #7ba7c9; --text3: #3d6b8f;
+            --mono: 'Share Tech Mono', monospace;
+            --display: 'Rajdhani', sans-serif;
+            --body: 'Exo 2', sans-serif;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background:var(--bg); color:var(--text); font-family:var(--body); min-height:100vh; }
+        body::before { content:''; position:fixed; inset:0; background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,168,255,0.012) 2px,rgba(0,168,255,0.012) 4px); pointer-events:none; z-index:9999; }
+        body::after { content:''; position:fixed; inset:0; background-image:linear-gradient(rgba(0,168,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,168,255,0.025) 1px,transparent 1px); background-size:40px 40px; pointer-events:none; z-index:0; }
+        .page { position:relative; z-index:1; }
+
+        header { background:linear-gradient(135deg,#060f1e,#0a1a30); border-bottom:1px solid var(--border2); padding:0 28px; box-shadow:0 4px 30px rgba(0,168,255,0.1); position:sticky; top:0; z-index:100; }
+        .header-top { display:flex; align-items:center; justify-content:space-between; height:56px; border-bottom:1px solid rgba(26,58,92,0.5); }
+        .logo { display:flex; align-items:center; gap:10px; }
+        .logo-icon { width:32px; height:32px; background:linear-gradient(135deg,var(--blue),var(--cyan)); border-radius:7px; display:flex; align-items:center; justify-content:center; font-size:16px; box-shadow:0 0 12px rgba(0,168,255,0.4); }
+        .logo-text { font-family:var(--display); font-size:1.3rem; font-weight:700; letter-spacing:2px; }
+        .logo-text span { color:var(--cyan); }
+        .header-info { display:flex; align-items:center; gap:16px; font-family:var(--mono); font-size:0.75rem; color:var(--text2); }
+        .user-btn { display:flex; align-items:center; gap:8px; background:rgba(0,168,255,0.08); border:1px solid var(--border2); padding:6px 14px; border-radius:20px; color:var(--blue); font-family:var(--mono); font-size:0.72rem; cursor:pointer; }
+        .dot { width:7px; height:7px; background:var(--green); border-radius:50%; box-shadow:0 0 6px var(--green); animation:blink 2s infinite; }
+        @keyframes blink { 0%,100%{opacity:1}50%{opacity:0.4} }
+        .header-nav { display:flex; align-items:center; height:44px; gap:2px; }
+        .nav-btn { background:transparent; border:none; color:var(--text2); font-family:var(--display); font-size:0.78rem; font-weight:600; letter-spacing:1.5px; padding:6px 14px; cursor:pointer; border-radius:4px; text-transform:uppercase; position:relative; transition:color 0.2s; }
+        .nav-btn.active { color:var(--text); background:rgba(0,229,255,0.08); }
+        .nav-btn.active::after { content:''; position:absolute; bottom:-1px; left:0; right:0; height:2px; background:var(--cyan); }
+        .nav-btn:hover:not(.active) { color:var(--cyan); }
+        .nav-sep { color:var(--border2); font-size:0.8rem; padding:0 2px; }
+        .notif-btn { margin-left:8px; background:rgba(255,23,68,0.1); border:1px solid rgba(255,23,68,0.2); color:var(--red); font-size:0.9rem; padding:6px 12px; border-radius:4px; cursor:pointer; }
+
+        main { padding:20px 28px; max-width:1500px; margin:0 auto; }
+        .sec-title { font-family:var(--mono); font-size:0.62rem; color:var(--text3); letter-spacing:3px; text-transform:uppercase; margin-bottom:10px; }
+
+        .card { background:var(--bg3); border:1px solid var(--border); border-radius:10px; padding:18px; transition:border-color 0.3s; margin-bottom:14px; }
+        .card:hover { border-color:var(--border2); }
+        .card-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+        .card-title { font-family:var(--display); font-size:0.85rem; font-weight:600; letter-spacing:2px; text-transform:uppercase; }
+        .card-tag { font-family:var(--mono); font-size:0.62rem; padding:3px 9px; border-radius:10px; background:rgba(0,168,255,0.08); border:1px solid rgba(0,168,255,0.2); color:var(--blue); }
+
+        /* STATS */
+        .stats-row { display:grid; grid-template-columns:repeat(5,1fr); gap:12px; margin-bottom:14px; }
+        .stat { background:var(--bg3); border:1px solid var(--border); border-radius:10px; padding:16px; position:relative; overflow:hidden; transition:all 0.3s; }
+        .stat::before { content:''; position:absolute; top:0;left:0;right:0; height:2px; }
+        .stat.s-blue::before { background:linear-gradient(90deg,transparent,var(--blue),transparent); }
+        .stat.s-red::before { background:linear-gradient(90deg,transparent,var(--red),transparent); }
+        .stat.s-orange::before { background:linear-gradient(90deg,transparent,var(--orange),transparent); }
+        .stat.s-yellow::before { background:linear-gradient(90deg,transparent,var(--yellow),transparent); }
+        .stat.s-green::before { background:linear-gradient(90deg,transparent,var(--green),transparent); }
+        .stat:hover { border-color:var(--border2); transform:translateY(-2px); }
+        .stat-lbl { font-family:var(--mono); font-size:0.62rem; color:var(--text3); letter-spacing:2px; text-transform:uppercase; margin-bottom:8px; }
+        .stat-val { font-family:var(--display); font-size:2rem; font-weight:700; line-height:1; margin-bottom:5px; }
+        .stat.s-blue .stat-val { color:var(--blue); }
+        .stat.s-red .stat-val { color:var(--red); }
+        .stat.s-orange .stat-val { color:var(--orange); }
+        .stat.s-yellow .stat-val { color:var(--yellow); }
+        .stat.s-green .stat-val { color:var(--green); }
+        .stat-sub { font-size:0.68rem; color:var(--text2); }
+        .stat-icon { position:absolute; top:14px; right:14px; font-size:1.5rem; opacity:0.15; }
+
+        /* FILTERS */
+        .filter-row { display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-bottom:14px; }
+        .filter-group { display:flex; flex-direction:column; gap:5px; }
+        .filter-label { font-family:var(--mono); font-size:0.62rem; color:var(--text3); letter-spacing:2px; text-transform:uppercase; }
+        .filter-input { background:var(--bg2); border:1px solid var(--border2); border-radius:6px; padding:7px 12px; color:var(--text); font-family:var(--mono); font-size:0.75rem; outline:none; transition:border-color 0.2s; }
+        .filter-input:focus { border-color:var(--cyan); }
+        .filter-btns { display:flex; gap:6px; flex-wrap:wrap; }
+        .risk-filter-btn { background:transparent; border:1px solid var(--border2); color:var(--text2); font-family:var(--display); font-size:0.72rem; font-weight:600; padding:5px 14px; border-radius:20px; cursor:pointer; transition:all 0.2s; letter-spacing:1px; text-transform:uppercase; }
+        .risk-filter-btn:hover { border-color:var(--blue); color:var(--blue); }
+        .risk-filter-btn.active { background:rgba(0,168,255,0.1); border-color:var(--blue); color:var(--blue); }
+        .risk-filter-btn.f-critical.active { background:rgba(255,23,68,0.1); border-color:var(--red); color:var(--red); }
+        .risk-filter-btn.f-high.active { background:rgba(255,109,0,0.1); border-color:var(--orange); color:var(--orange); }
+        .risk-filter-btn.f-medium.active { background:rgba(255,214,0,0.1); border-color:var(--yellow); color:var(--yellow); }
+        .risk-filter-btn.f-low.active { background:rgba(0,230,118,0.1); border-color:var(--green); color:var(--green); }
+        .apply-btn { background:linear-gradient(135deg,var(--blue),var(--cyan)); border:none; color:#000; font-family:var(--display); font-size:0.8rem; font-weight:700; letter-spacing:1px; padding:8px 20px; border-radius:6px; cursor:pointer; transition:opacity 0.2s; align-self:flex-end; }
+        .apply-btn:hover { opacity:0.85; }
+
+        /* TIMELINE */
+        .timeline-wrap { position:relative; padding:10px 0; overflow-x:auto; }
+        .timeline-track { position:relative; height:60px; min-width:600px; }
+        .timeline-line { position:absolute; top:50%; left:0; right:0; height:2px; background:var(--border2); transform:translateY(-50%); }
+        .timeline-months { position:absolute; top:0; left:0; right:0; display:flex; justify-content:space-between; padding:0 10px; }
+        .timeline-month { font-family:var(--mono); font-size:0.62rem; color:var(--text3); }
+        .timeline-dots { position:absolute; top:50%; left:0; right:0; transform:translateY(-50%); display:flex; align-items:center; padding:0 10px; gap:4px; }
+        .timeline-dot { width:10px; height:10px; border-radius:50%; cursor:pointer; transition:transform 0.2s; flex-shrink:0; }
+        .timeline-dot:hover { transform:scale(1.4); }
+        .timeline-dot.critical { background:var(--red); box-shadow:0 0 6px var(--red); }
+        .timeline-dot.high { background:var(--orange); box-shadow:0 0 6px var(--orange); }
+        .timeline-dot.medium { background:var(--yellow); }
+        .timeline-dot.low { background:var(--green); }
+        .timeline-dot.normal { background:var(--blue); }
+
+        /* CHARTS */
+        .charts-row { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px; }
+
+        /* TABLE */
+        .table-wrap { overflow-x:auto; }
+        table { width:100%; border-collapse:collapse; }
+        thead tr { border-bottom:1px solid var(--border2); }
+        th { padding:9px 12px; text-align:left; font-family:var(--mono); font-size:0.6rem; color:var(--text3); letter-spacing:2px; text-transform:uppercase; font-weight:400; white-space:nowrap; }
+        td { padding:10px 12px; font-size:0.78rem; border-bottom:1px solid rgba(26,58,92,0.35); color:var(--text2); }
+        tbody tr:hover { background:rgba(0,168,255,0.025); }
+        .mid { font-family:var(--mono); }
+        .t-blue { color:var(--blue); }
+        .t-muted { color:var(--text3); font-size:0.68rem; }
+
+        .badge { display:inline-block; padding:2px 8px; border-radius:10px; font-family:var(--display); font-size:0.65rem; font-weight:700; letter-spacing:1px; }
+        .badge.CRITICAL { background:rgba(255,23,68,0.15); color:var(--red); border:1px solid rgba(255,23,68,0.3); }
+        .badge.HIGH { background:rgba(255,109,0,0.15); color:var(--orange); border:1px solid rgba(255,109,0,0.3); }
+        .badge.MEDIUM { background:rgba(255,214,0,0.15); color:var(--yellow); border:1px solid rgba(255,214,0,0.3); }
+        .badge.LOW { background:rgba(0,230,118,0.15); color:var(--green); border:1px solid rgba(0,230,118,0.3); }
+        .badge.NORMAL { background:rgba(0,168,255,0.15); color:var(--blue); border:1px solid rgba(0,168,255,0.3); }
+
+        .resolved-yes { color:var(--green); font-family:var(--mono); font-size:0.68rem; }
+        .resolved-no { color:var(--red); font-family:var(--mono); font-size:0.68rem; }
+
+        .export-btn { background:transparent; border:1px solid var(--border2); color:var(--cyan); font-family:var(--mono); font-size:0.65rem; padding:3px 10px; border-radius:4px; cursor:pointer; transition:all 0.2s; }
+        .export-btn:hover { background:rgba(0,229,255,0.1); border-color:var(--cyan); }
+
+        /* ALERT FEED */
+        .alert-feed { display:flex; flex-direction:column; gap:8px; max-height:300px; overflow-y:auto; }
+        .alert-feed::-webkit-scrollbar { width:4px; }
+        .alert-feed::-webkit-scrollbar-track { background:var(--bg2); }
+        .alert-feed::-webkit-scrollbar-thumb { background:var(--border2); border-radius:2px; }
+        .alert-feed-item { display:flex; align-items:center; gap:12px; padding:10px 14px; border-radius:8px; border-left:3px solid; transition:background 0.2s; cursor:pointer; }
+        .alert-feed-item:hover { background:rgba(255,255,255,0.03); }
+        .alert-feed-item.CRITICAL { border-color:var(--red); background:rgba(255,23,68,0.04); }
+        .alert-feed-item.HIGH { border-color:var(--orange); background:rgba(255,109,0,0.04); }
+        .alert-feed-item.MEDIUM { border-color:var(--yellow); background:rgba(255,214,0,0.04); }
+        .alert-feed-item.LOW { border-color:var(--green); background:rgba(0,230,118,0.04); }
+        .alert-feed-item.NORMAL { border-color:var(--blue); background:rgba(0,168,255,0.04); }
+        .alert-feed-icon { font-size:1rem; flex-shrink:0; }
+        .alert-feed-content { flex:1; }
+        .alert-feed-title { font-size:0.78rem; font-weight:600; margin-bottom:2px; }
+        .alert-feed-item.CRITICAL .alert-feed-title { color:var(--red); }
+        .alert-feed-item.HIGH .alert-feed-title { color:var(--orange); }
+        .alert-feed-item.MEDIUM .alert-feed-title { color:var(--yellow); }
+        .alert-feed-item.LOW .alert-feed-title { color:var(--green); }
+        .alert-feed-item.NORMAL .alert-feed-title { color:var(--blue); }
+        .alert-feed-desc { font-family:var(--mono); font-size:0.65rem; color:var(--text3); }
+        .alert-feed-time { font-family:var(--mono); font-size:0.62rem; color:var(--text3); flex-shrink:0; }
+
+        footer { text-align:center; padding:16px; color:var(--text3); font-family:var(--mono); font-size:0.62rem; letter-spacing:2px; border-top:1px solid var(--border); margin-top:8px; }
+
+        @media(max-width:1100px){
+            .stats-row{grid-template-columns:repeat(3,1fr)}
+            .charts-row{grid-template-columns:1fr}
+        }
+    </style>
+</head>
+<body>
+<div class="page">
+
+<header>
+    <div class="header-top">
+        <div class="logo">
+            <div class="logo-icon">⚡</div>
+            <div class="logo-text">EcoMeter <span>Dashboard</span></div>
+        </div>
+        <div class="header-info">
+            <span>User: Admin</span>
+            <span style="color:var(--border2)">|</span>
+            <span>Role: Admin</span>
+            <div class="user-btn"><div class="dot"></div>👤 User: Admin ▾</div>
+        </div>
+    </div>
+    <div class="header-nav">
+        <button class="nav-btn" onclick="location.href='index.html'">Dashboard</button>
+        <span class="nav-sep">|</span>
+        <button class="nav-btn" onclick="location.href='reports.html'">Reports</button>
+        <span class="nav-sep">|</span>
+        <button class="nav-btn active">Alert History</button>
+        <span class="nav-sep">|</span>
+        <button class="nav-btn" onclick="location.href='user_management.html'">User Management</button>
+        <span class="nav-sep">|</span>
+        <button class="nav-btn" onclick="location.href='analytics.html'">Analytics</button>
+        <span class="nav-sep">|</span>
+        <button class="nav-btn" onclick="location.href='settings.html'">Settings</button>
+        <span class="nav-sep">|</span>
+        <button class="nav-btn">Notification</button>
+        <button class="notif-btn">🔔</button>
+    </div>
+</header>
+
+<main>
+
+    <!-- STATS -->
+    <div class="sec-title">Alert Summary</div>
+    <div class="stats-row">
+        <div class="stat s-blue"><div class="stat-icon">📋</div><div class="stat-lbl">Total Alerts</div><div class="stat-val" id="s-total">--</div><div class="stat-sub">All time</div></div>
+        <div class="stat s-red"><div class="stat-icon">🔴</div><div class="stat-lbl">Critical</div><div class="stat-val" id="s-critical">--</div><div class="stat-sub">Critical alerts</div></div>
+        <div class="stat s-orange"><div class="stat-icon">🟠</div><div class="stat-lbl">High</div><div class="stat-val" id="s-high">--</div><div class="stat-sub">High risk alerts</div></div>
+        <div class="stat s-yellow"><div class="stat-icon">🟡</div><div class="stat-lbl">Medium</div><div class="stat-val" id="s-medium">--</div><div class="stat-sub">Medium risk alerts</div></div>
+        <div class="stat s-green"><div class="stat-icon">🟢</div><div class="stat-lbl">Low</div><div class="stat-val" id="s-low">--</div><div class="stat-sub">Low risk alerts</div></div>
+    </div>
+
+    <!-- FILTERS -->
+    <div class="card">
+        <div class="card-head">
+            <div class="card-title">Filter Alerts</div>
+            <div class="card-tag">CUSTOMIZE VIEW</div>
+        </div>
+        <div class="filter-row">
+            <div class="filter-group">
+                <div class="filter-label">Date From</div>
+                <input type="date" class="filter-input" id="date-from" value="2026-02-28">
+            </div>
+            <div class="filter-group">
+                <div class="filter-label">Date To</div>
+                <input type="date" class="filter-input" id="date-to" value="2026-03-31">
+            </div>
+            <div class="filter-group">
+                <div class="filter-label">Risk Level</div>
+                <div class="filter-btns">
+                    <button class="risk-filter-btn active" onclick="setRiskFilter(this,'all')">All</button>
+                    <button class="risk-filter-btn f-critical" onclick="setRiskFilter(this,'CRITICAL')">Critical</button>
+                    <button class="risk-filter-btn f-high" onclick="setRiskFilter(this,'HIGH')">High</button>
+                    <button class="risk-filter-btn f-medium" onclick="setRiskFilter(this,'MEDIUM')">Medium</button>
+                    <button class="risk-filter-btn f-low" onclick="setRiskFilter(this,'LOW')">Low</button>
+                </div>
+            </div>
+            <div class="filter-group">
+                <div class="filter-label">Attack Type</div>
+                <select class="filter-input" id="attack-type-filter" style="min-width:140px">
+                    <option value="all">All Types</option>
+                </select>
+            </div>
+            <button class="apply-btn" onclick="applyFilters()">Apply Filters</button>
+        </div>
+    </div>
+
+    <!-- TIMELINE -->
+    <div class="card">
+        <div class="card-head">
+            <div class="card-title">Alert Timeline — 2026</div>
+            <div class="card-tag">CHRONOLOGICAL</div>
+        </div>
+        <div class="timeline-wrap">
+            <div class="timeline-track">
+                <div class="timeline-line"></div>
+                <div class="timeline-months">
+                    <span class="timeline-month">Feb 2026</span>
+                    <span class="timeline-month">Mar 2026</span>
+                    <span class="timeline-month">Apr 2026</span>
+                </div>
+                <div class="timeline-dots" id="timeline-dots"></div>
+            </div>
+        </div>
+        <div style="display:flex;gap:16px;margin-top:10px;flex-wrap:wrap">
+            <div style="display:flex;align-items:center;gap:6px"><div style="width:8px;height:8px;border-radius:50%;background:var(--red)"></div><span style="font-family:var(--mono);font-size:0.65rem;color:var(--text3)">Critical</span></div>
+            <div style="display:flex;align-items:center;gap:6px"><div style="width:8px;height:8px;border-radius:50%;background:var(--orange)"></div><span style="font-family:var(--mono);font-size:0.65rem;color:var(--text3)">High</span></div>
+            <div style="display:flex;align-items:center;gap:6px"><div style="width:8px;height:8px;border-radius:50%;background:var(--yellow)"></div><span style="font-family:var(--mono);font-size:0.65rem;color:var(--text3)">Medium</span></div>
+            <div style="display:flex;align-items:center;gap:6px"><div style="width:8px;height:8px;border-radius:50%;background:var(--green)"></div><span style="font-family:var(--mono);font-size:0.65rem;color:var(--text3)">Low</span></div>
+            <div style="display:flex;align-items:center;gap:6px"><div style="width:8px;height:8px;border-radius:50%;background:var(--blue)"></div><span style="font-family:var(--mono);font-size:0.65rem;color:var(--text3)">Normal</span></div>
+        </div>
+    </div>
+
+    <!-- CHARTS -->
+    <div class="charts-row">
+        <div class="card">
+            <div class="card-head">
+                <div class="card-title">Alerts By Risk Level</div>
+                <div class="card-tag">BAR CHART</div>
+            </div>
+            <canvas id="riskBarChart" height="120"></canvas>
+        </div>
+        <div class="card">
+            <div class="card-head">
+                <div class="card-title">Alert Feed</div>
+                <div class="card-tag" id="feed-count">-- alerts</div>
+            </div>
+            <div class="alert-feed" id="alert-feed"></div>
+        </div>
+    </div>
+
+    <!-- ALERT HISTORY TABLE -->
+    <div class="card">
+        <div class="card-head">
+            <div class="card-title">Alert History Table</div>
+            <div style="display:flex;gap:10px;align-items:center">
+                <div class="card-tag" id="table-count">-- records</div>
+                <button class="export-btn" onclick="exportCSV()">⬇ Export CSV</button>
+            </div>
+        </div>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Meter ID</th>
+                        <th>Risk Level</th>
+                        <th>Risk Score</th>
+                        <th>Attack Type</th>
+                        <th>Rule Triggered</th>
+                        <th>Detected</th>
+                        <th>Ground Truth</th>
+                        <th>Resolved</th>
+                    </tr>
+                </thead>
+                <tbody id="alert-table">
+                    <tr><td colspan="11" style="text-align:center;padding:30px;color:var(--text3);font-family:var(--mono)">LOADING DATA...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</main>
+
+<footer>ECOMETER INTEGRITY — CYBERSECURITY PROTECTION FRAMEWORK FOR SMART ENERGY METER SYSTEMS &nbsp;|&nbsp; GROUP 24 | CSG3101 | EDITH COWAN UNIVERSITY</footer>
+</div>
+
+<script>
+const API = 'http://127.0.0.1:5000';
+let allData = [];
+let filteredData = [];
+let selectedRisk = 'all';
+let selectedAttackType = 'all';
+let riskBarChart;
+
+const riskIcons = { CRITICAL: '🔴', HIGH: '🟠', MEDIUM: '🟡', LOW: '🟢', NORMAL: '🔵' };
+
+function setRiskFilter(btn, level) {
+    document.querySelectorAll('.risk-filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    selectedRisk = level;
+}
+
+function applyFilters() {
+    selectedAttackType = document.getElementById('attack-type-filter').value;
+    filteredData = allData.filter(d => {
+        const riskOk = selectedRisk === 'all' || d.risk_level === selectedRisk;
+        const atkOk = selectedAttackType === 'all' || d.attack_type === selectedAttackType;
+        return riskOk && atkOk;
+    });
+    renderAll();
+}
+
+function renderAll() {
+    renderStats();
+    renderTimeline();
+    renderCharts();
+    renderFeed();
+    renderTable();
+}
+
+function renderStats() {
+    const rc = { CRITICAL: 0, HIGH: 0, MEDIUM: 0, LOW: 0, NORMAL: 0 };
+    filteredData.forEach(d => { if (rc[d.risk_level] !== undefined) rc[d.risk_level]++; });
+    document.getElementById('s-total').textContent = filteredData.length.toLocaleString();
+    document.getElementById('s-critical').textContent = rc.CRITICAL.toLocaleString();
+    document.getElementById('s-high').textContent = rc.HIGH.toLocaleString();
+    document.getElementById('s-medium').textContent = rc.MEDIUM.toLocaleString();
+    document.getElementById('s-low').textContent = rc.LOW.toLocaleString();
+}
+
+function renderTimeline() {
+    const dotsEl = document.getElementById('timeline-dots');
+    dotsEl.innerHTML = '';
+    const sample = filteredData.filter(d => d.detected === 1).slice(0, 60);
+    sample.forEach(d => {
+        const dot = document.createElement('div');
+        dot.className = `timeline-dot ${(d.risk_level || 'NORMAL').toLowerCase()}`;
+        dot.title = `${d.meter_id} - ${d.risk_level} - ${d.attack_type || 'none'}`;
+        dotsEl.appendChild(dot);
+    });
+}
+
+function renderCharts() {
+    const rc = { NORMAL: 0, LOW: 0, MEDIUM: 0, HIGH: 0, CRITICAL: 0 };
+    filteredData.forEach(d => { if (rc[d.risk_level] !== undefined) rc[d.risk_level]++; });
+
+    if (riskBarChart) { try { riskBarChart.destroy(); } catch(e) {} }
+    riskBarChart = new Chart(document.getElementById('riskBarChart'), {
+        type: 'bar',
+        data: {
+            labels: ['NORMAL', 'LOW', 'MEDIUM', 'HIGH', 'CRITICAL'],
+            datasets: [{
+                label: 'Alert Count',
+                data: [rc.NORMAL, rc.LOW, rc.MEDIUM, rc.HIGH, rc.CRITICAL],
+                backgroundColor: ['rgba(0,168,255,0.7)', 'rgba(0,230,118,0.7)', 'rgba(255,214,0,0.7)', 'rgba(255,109,0,0.7)', 'rgba(255,23,68,0.7)'],
+                borderRadius: 5,
+                borderSkipped: false
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: {
+                x: { ticks: { color: '#7ba7c9', font: { family: 'Share Tech Mono', size: 10 } }, grid: { color: 'rgba(26,58,92,0.4)' } },
+                y: { ticks: { color: '#3d6b8f', font: { size: 9 } }, grid: { color: 'rgba(26,58,92,0.4)' } }
+            }
+        }
+    });
+}
+
+function renderFeed() {
+    const feedEl = document.getElementById('alert-feed');
+    feedEl.innerHTML = '';
+    const detected = filteredData.filter(d => d.detected === 1).slice(0, 30);
+    document.getElementById('feed-count').textContent = detected.length.toLocaleString() + ' alerts';
+
+    detected.forEach(d => {
+        const level = d.risk_level || 'NORMAL';
+        const icon = riskIcons[level] || '🔵';
+        const time = d.timestamp ? d.timestamp.toString().slice(11, 16) : 'N/A';
+        const date = d.timestamp ? d.timestamp.toString().slice(0, 10) : 'N/A';
+        feedEl.innerHTML += `
+            <div class="alert-feed-item ${level}">
+                <div class="alert-feed-icon">${icon}</div>
+                <div class="alert-feed-content">
+                    <div class="alert-feed-title">${level} Risk — ${d.meter_id || 'N/A'} — ${d.attack_type || 'none'}</div>
+                    <div class="alert-feed-desc">${d.rule_triggered || 'No rule'} | Score: ${d.risk_score || 0}</div>
+                </div>
+                <div class="alert-feed-time">${date}<br>${time}</div>
+            </div>`;
+    });
+
+    if (detected.length === 0) {
+        feedEl.innerHTML = `<div style="text-align:center;padding:30px;color:var(--text3);font-family:var(--mono);font-size:0.75rem">NO ALERTS FOUND</div>`;
+    }
+}
+
+function renderTable() {
+    const tbody = document.getElementById('alert-table');
+    tbody.innerHTML = '';
+    document.getElementById('table-count').textContent = filteredData.length.toLocaleString() + ' records';
+
+    filteredData.slice(0, 100).forEach((d, i) => {
+        const detected = d.detected === 1
+            ? '<span style="color:var(--red);font-family:var(--mono);font-size:0.68rem">⚠ Yes</span>'
+            : '<span style="color:var(--text3);font-family:var(--mono);font-size:0.68rem">No</span>';
+        const truth = d.ground_truth === 1
+            ? '<span style="color:var(--orange);font-size:0.68rem">Attack</span>'
+            : '<span style="color:var(--text3);font-size:0.68rem">Normal</span>';
+        const resolved = d.detected === 1 && d.risk_level !== 'CRITICAL'
+            ? '<span class="resolved-yes">✓ Yes</span>'
+            : d.risk_level === 'CRITICAL'
+            ? '<span class="resolved-no">✗ No</span>'
+            : '<span style="color:var(--text3);font-family:var(--mono);font-size:0.68rem">N/A</span>';
+        const date = d.timestamp ? d.timestamp.toString().slice(0, 10) : 'N/A';
+        const time = d.timestamp ? d.timestamp.toString().slice(11, 16) : 'N/A';
+
+        tbody.innerHTML += `
+            <tr>
+                <td class="t-muted mid">${i + 1}</td>
+                <td class="mid" style="color:var(--text2);font-size:0.7rem">${date}</td>
+                <td class="mid" style="color:var(--text3);font-size:0.7rem">${time}</td>
+                <td class="t-blue mid">${d.meter_id || 'N/A'}</td>
+                <td><span class="badge ${d.risk_level || 'NORMAL'}">${d.risk_level || 'NORMAL'}</span></td>
+                <td class="mid" style="color:var(--yellow)">${d.risk_score != null ? d.risk_score : 'N/A'}</td>
+                <td class="mid" style="color:var(--orange);font-size:0.7rem">${d.attack_type || 'none'}</td>
+                <td class="mid" style="color:var(--text3);font-size:0.65rem;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${d.rule_triggered || 'none'}</td>
+                <td>${detected}</td>
+                <td>${truth}</td>
+                <td>${resolved}</td>
+            </tr>`;
+    });
+
+    if (filteredData.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="11" style="text-align:center;padding:30px;color:var(--text3);font-family:var(--mono)">NO ALERTS FOUND FOR SELECTED FILTERS</td></tr>`;
+    }
+}
+
+function exportCSV() {
+    const headers = ['meter_id', 'timestamp', 'risk_level', 'risk_score', 'attack_type', 'rule_triggered', 'detected', 'ground_truth'];
+    const rows = filteredData.map(d => headers.map(h => d[h] != null ? d[h] : '').join(','));
+    const csv = [headers.join(','), ...rows].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `ecometer_alert_history_${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+async function init() {
+    try {
+        const res = await fetch(`${API}/api/detection-results`);
+        allData = await res.json();
+        filteredData = [...allData];
+
+        // Populate attack type filter
+        const types = [...new Set(allData.map(d => d.attack_type).filter(Boolean))].sort();
+        const select = document.getElementById('attack-type-filter');
+        types.forEach(t => {
+            select.innerHTML += `<option value="${t}">${t}</option>`;
+        });
+
+        renderAll();
+    } catch (e) {
+        console.error(e);
+        document.getElementById('alert-table').innerHTML = `<tr><td colspan="11" style="text-align:center;padding:30px;color:var(--red);font-family:var(--mono)">⚠ CANNOT CONNECT TO BACKEND — Make sure Flask is running on port 5000</td></tr>`;
+    }
+}
+
+init();
+</script>
+</body>
+</html>

@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoMeter — Analytics</title>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&family=Exo+2:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg: #060d1a; --bg2: #0a1628; --bg3: #0d1f35;
+            --border: #1a3a5c; --border2: #1e4d7b;
+            --blue: #00a8ff; --cyan: #00e5ff; --green: #00e676;
+            --yellow: #ffd600; --orange: #ff6d00; --red: #ff1744;
+            --text: #e8f4fd; --text2: #7ba7c9; --text3: #3d6b8f;
+            --mono: 'Share Tech Mono', monospace;
+            --display: 'Rajdhani', sans-serif;
+            --body: 'Exo 2', sans-serif;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background:var(--bg); color:var(--text); font-family:var(--body); min-height:100vh; }
+        body::before { content:''; position:fixed; inset:0; background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,168,255,0.012) 2px,rgba(0,168,255,0.012) 4px); pointer-events:none; z-index:9999; }
+        body::after { content:''; position:fixed; inset:0; background-image:linear-gradient(rgba(0,168,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,168,255,0.025) 1px,transparent 1px); background-size:40px 40px; pointer-events:none; z-index:0; }
+        .page { position:relative; z-index:1; }
+
+        header { background:linear-gradient(135deg,#060f1e,#0a1a30); border-bottom:1px solid var(--border2); padding:0 28px; box-shadow:0 4px 30px rgba(0,168,255,0.1); position:sticky; top:0; z-index:100; }
+        .header-top { display:flex; align-items:center; justify-content:space-between; height:56px; border-bottom:1px solid rgba(26,58,92,0.5); }
+        .logo { display:flex; align-items:center; gap:10px; }
+        .logo-icon { width:32px; height:32px; background:linear-gradient(135deg,var(--blue),var(--cyan)); border-radius:7px; display:flex; align-items:center; justify-content:center; font-size:16px; box-shadow:0 0 12px rgba(0,168,255,0.4); }
+        .logo-text { font-family:var(--display); font-size:1.3rem; font-weight:700; letter-spacing:2px; }
+        .logo-text span { color:var(--cyan); }
+        .header-info { display:flex; align-items:center; gap:16px; font-family:var(--mono); font-size:0.75rem; color:var(--text2); }
+        .user-btn { display:flex; align-items:center; gap:8px; background:rgba(0,168,255,0.08); border:1px solid var(--border2); padding:6px 14px; border-radius:20px; color:var(--blue); font-family:var(--mono); font-size:0.72rem; cursor:pointer; }
+        .dot { width:7px; height:7px; background:var(--green); border-radius:50%; box-shadow:0 0 6px var(--green); animation:blink 2s infinite; }
+        @keyframes blink { 0%,100%{opacity:1}50%{opacity:0.4} }
+        .header-nav { display:flex; align-items:center; height:44px; gap:2px; }
+        .nav-btn { background:transparent; border:none; color:var(--text2); font-family:var(--display); font-size:0.78rem; font-weight:600; letter-spacing:1.5px; padding:6px 14px; cursor:pointer; border-radius:4px; text-transform:uppercase; position:relative; transition:color 0.2s; }
+        .nav-btn.active { color:var(--text); background:rgba(0,229,255,0.08); }
+        .nav-btn.active::after { content:''; position:absolute; bottom:-1px; left:0; right:0; height:2px; background:var(--cyan); }
+        .nav-btn:hover:not(.active) { color:var(--cyan); }
+        .nav-sep { color:var(--border2); font-size:0.8rem; padding:0 2px; }
+        .notif-btn { margin-left:8px; background:rgba(255,23,68,0.1); border:1px solid rgba(255,23,68,0.2); color:var(--red); font-size:0.9rem; padding:6px 12px; border-radius:4px; cursor:pointer; }
+
+        main { padding:20px 28px; max-width:1500px; margin:0 auto; }
+        .sec-title { font-family:var(--mono); font-size:0.62rem; color:var(--text3); letter-spacing:3px; text-transform:uppercase; margin-bottom:10px; }
+
+        .card { background:var(--bg3); border:1px solid var(--border); border-radius:10px; padding:18px; transition:border-color 0.3s; margin-bottom:14px; }
+        .card:hover { border-color:var(--border2); }
+        .card-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+        .card-title { font-family:var(--display); font-size:0.85rem; font-weight:600; letter-spacing:2px; text-transform:uppercase; }
+        .card-tag { font-family:var(--mono); font-size:0.62rem; padding:3px 9px; border-radius:10px; background:rgba(0,168,255,0.08); border:1px solid rgba(0,168,255,0.2); color:var(--blue); }
+
+        /* STATS */
+        .stats-row { display:grid; grid-template-columns:repeat(5,1fr); gap:12px; margin-bottom:14px; }
+        .stat { background:var(--bg3); border:1px solid var(--border); border-radius:10px; padding:16px; position:relative; overflow:hidden; transition:all 0.3s; }
+        .stat::before { content:''; position:absolute; top:0;left:0;right:0; height:2px; }
+        .stat.s-blue::before { background:linear-gradient(90deg,transparent,var(--blue),transparent); }
+        .stat.s-cyan::before { background:linear-gradient(90deg,transparent,var(--cyan),transparent); }
+        .stat.s-red::before { background:linear-gradient(90deg,transparent,var(--red),transparent); }
+        .stat.s-green::before { background:linear-gradient(90deg,transparent,var(--green),transparent); }
+        .stat.s-yellow::before { background:linear-gradient(90deg,transparent,var(--yellow),transparent); }
+        .stat:hover { border-color:var(--border2); transform:translateY(-2px); }
+        .stat-lbl { font-family:var(--mono); font-size:0.62rem; color:var(--text3); letter-spacing:2px; text-transform:uppercase; margin-bottom:8px; }
+        .stat-val { font-family:var(--display); font-size:2rem; font-weight:700; line-height:1; margin-bottom:5px; }
+        .stat.s-blue .stat-val { color:var(--blue); }
+        .stat.s-cyan .stat-val { color:var(--cyan); }
+        .stat.s-red .stat-val { color:var(--red); }
+        .stat.s-green .stat-val { color:var(--green); }
+        .stat.s-yellow .stat-val { color:var(--yellow); }
+        .stat-sub { font-size:0.68rem; color:var(--text2); }
+        .stat-icon { position:absolute; top:14px; right:14px; font-size:1.5rem; opacity:0.15; }
+
+        /* LAYOUTS */
+        .two-col { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px; }
+        .three-col { display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; margin-bottom:14px; }
+        .col-3-1 { display:grid; grid-template-columns:2fr 1fr; gap:14px; margin-bottom:14px; }
+
+        /* ACCURACY GAUGE */
+        .gauge-wrap { display:flex; align-items:center; justify-content:center; gap:24px; padding:8px 0; }
+        .gauge-circle { position:relative; width:120px; height:120px; }
+        .gauge-circle canvas { width:120px; height:120px; }
+        .gauge-text { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); text-align:center; }
+        .gauge-num { font-family:var(--display); font-size:1.6rem; font-weight:700; }
+        .gauge-lbl { font-family:var(--mono); font-size:0.55rem; color:var(--text3); letter-spacing:1px; }
+        .gauge-stats { display:flex; flex-direction:column; gap:12px; }
+        .g-stat { display:flex; align-items:center; gap:10px; }
+        .g-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+        .g-info { flex:1; }
+        .g-name { font-family:var(--mono); font-size:0.65rem; color:var(--text2); margin-bottom:2px; }
+        .g-val { font-family:var(--display); font-size:1.1rem; font-weight:600; }
+
+        /* PER METER TABLE */
+        .table-wrap { overflow-x:auto; }
+        table { width:100%; border-collapse:collapse; }
+        thead tr { border-bottom:1px solid var(--border2); }
+        th { padding:9px 12px; text-align:left; font-family:var(--mono); font-size:0.6rem; color:var(--text3); letter-spacing:2px; text-transform:uppercase; font-weight:400; white-space:nowrap; }
+        td { padding:10px 12px; font-size:0.78rem; border-bottom:1px solid rgba(26,58,92,0.35); color:var(--text2); }
+        tbody tr:hover { background:rgba(0,168,255,0.025); }
+        .mid { font-family:var(--mono); }
+        .t-blue { color:var(--blue); }
+        .t-muted { color:var(--text3); font-size:0.68rem; }
+
+        .badge { display:inline-block; padding:2px 8px; border-radius:10px; font-family:var(--display); font-size:0.65rem; font-weight:700; letter-spacing:1px; }
+        .badge.CRITICAL { background:rgba(255,23,68,0.15); color:var(--red); border:1px solid rgba(255,23,68,0.3); }
+        .badge.HIGH { background:rgba(255,109,0,0.15); color:var(--orange); border:1px solid rgba(255,109,0,0.3); }
+        .badge.MEDIUM { background:rgba(255,214,0,0.15); color:var(--yellow); border:1px solid rgba(255,214,0,0.3); }
+        .badge.LOW { background:rgba(0,230,118,0.15); color:var(--green); border:1px solid rgba(0,230,118,0.3); }
+        .badge.NORMAL { background:rgba(0,168,255,0.15); color:var(--blue); border:1px solid rgba(0,168,255,0.3); }
+
+        /* PROGRESS BARS */
+        .progress-list { display:flex; flex-direction:column; gap:12px; }
+        .progress-item { display:flex; flex-direction:column; gap:5px; }
+        .progress-header { display:flex; justify-content:space-between; align-items:center; }
+        .progress-name { font-family:var(--mono); font-size:0.72rem; color:var(--text2); }
+        .progress-val { font-family:var(--display); font-size:0.85rem; font-weight:600; color:var(--text); }
+        .progress-bar { height:6px; background:var(--border); border-radius:3px; overflow:hidden; }
+        .progress-fill { height:100%; border-radius:3px; transition:width 1s ease; }
+
+        /* CONFUSION MATRIX */
+        .matrix-wrap { display:flex; align-items:center; justify-content:center; padding:10px 0; }
+        .matrix { display:grid; grid-template-columns:auto 1fr 1fr; gap:4px; }
+        .matrix-cell { display:flex; align-items:center; justify-content:center; border-radius:6px; padding:12px 16px; text-align:center; }
+        .matrix-header { background:transparent; font-family:var(--mono); font-size:0.62rem; color:var(--text3); letter-spacing:1px; }
+        .matrix-tp { background:rgba(0,230,118,0.15); border:1px solid rgba(0,230,118,0.3); }
+        .matrix-tn { background:rgba(0,168,255,0.15); border:1px solid rgba(0,168,255,0.3); }
+        .matrix-fp { background:rgba(255,214,0,0.1); border:1px solid rgba(255,214,0,0.2); }
+        .matrix-fn { background:rgba(255,23,68,0.15); border:1px solid rgba(255,23,68,0.3); }
+        .matrix-val { font-family:var(--display); font-size:1.4rem; font-weight:700; display:block; }
+        .matrix-lbl { font-family:var(--mono); font-size:0.6rem; color:var(--text3); display:block; margin-top:2px; }
+        .matrix-tp .matrix-val { color:var(--green); }
+        .matrix-tn .matrix-val { color:var(--blue); }
+        .matrix-fp .matrix-val { color:var(--yellow); }
+        .matrix-fn .matrix-val { color:var(--red); }
+
+        footer { text-align:center; padding:16px; color:var(--text3); font-family:var(--mono); font-size:0.62rem; letter-spacing:2px; border-top:1px solid var(--border); margin-top:8px; }
+
+        @media(max-width:1100px){
+            .stats-row{grid-template-columns:repeat(3,1fr)}
+            .two-col{grid-template-columns:1fr}
+            .three-col{grid-template-columns:1fr}
+            .col-3-1{grid-template-columns:1fr}
+        }
+    </style>
+</head>
+<body>
+<div class="page">
+
+<header>
+    <div class="header-top">
+        <div class="logo">
+            <div class="logo-icon">⚡</div>
+            <div class="logo-text">EcoMeter <span>Dashboard</span></div>
+        </div>
+        <div class="header-info">
+            <span>User: Admin</span>
+            <span style="color:var(--border2)">|</span>
+            <span>Role: Admin</span>
+            <div class="user-btn"><div class="dot"></div>👤 User: Admin ▾</div>
+        </div>
+    </div>
+    <div class="header-nav">
+        <button class="nav-btn" onclick="location.href='index.html'">Dashboard</button>
+        <span class="nav-sep">|</span>
+        <button class="nav-btn" onclick="location.href='reports.html'">Reports</button>
+        <span class="nav-sep">|</span>
+        <button class="nav-btn" onclick="location.href='alert_history.html'">Alert History</button>
+        <span class="nav-sep">|</span>
+        <button class="nav-btn" onclick="location.href='user_management.html'">User Management</button>
+        <span class="nav-sep">|</span>
+        <button class="nav-btn active">Analytics</button>
+        <span class="nav-sep">|</span>
+        <button class="nav-btn" onclick="location.href='settings.html'">Settings</button>
+        <span class="nav-sep">|</span>
+        <button class="nav-btn">Notification</button>
+        <button class="notif-btn">🔔</button>
+    </div>
+</header>
+
+<main>
+
+    <!-- STATS -->
+    <div class="sec-title">Analytics Overview</div>
+    <div class="stats-row">
+        <div class="stat s-green"><div class="stat-icon">🎯</div><div class="stat-lbl">Detection Rate</div><div class="stat-val" id="a-rate">--</div><div class="stat-sub">Overall accuracy</div></div>
+        <div class="stat s-blue"><div class="stat-icon">✅</div><div class="stat-lbl">True Positive</div><div class="stat-val" id="a-tp">--</div><div class="stat-sub">Correctly detected</div></div>
+        <div class="stat s-red"><div class="stat-icon">❌</div><div class="stat-lbl">False Negative</div><div class="stat-val" id="a-fn">--</div><div class="stat-sub">Missed attacks</div></div>
+        <div class="stat s-yellow"><div class="stat-icon">⚠️</div><div class="stat-lbl">False Positive</div><div class="stat-val" id="a-fp">--</div><div class="stat-sub">False alarms</div></div>
+        <div class="stat s-cyan"><div class="stat-icon">📊</div><div class="stat-lbl">Avg Risk Score</div><div class="stat-val" id="a-risk">--</div><div class="stat-sub">Out of 100</div></div>
+    </div>
+
+    <!-- ROW 1: Accuracy Gauge + TP vs FN Chart -->
+    <div class="two-col">
+        <div class="card">
+            <div class="card-head">
+                <div class="card-title">Detection Accuracy</div>
+                <div class="card-tag">GAUGE</div>
+            </div>
+            <div class="gauge-wrap">
+                <div class="gauge-circle">
+                    <canvas id="gaugeChart"></canvas>
+                    <div class="gauge-text">
+                        <div class="gauge-num" id="gauge-num" style="color:var(--green)">--</div>
+                        <div class="gauge-lbl">ACCURACY</div>
+                    </div>
+                </div>
+                <div class="gauge-stats">
+                    <div class="g-stat">
+                        <div class="g-dot" style="background:var(--green)"></div>
+                        <div class="g-info">
+                            <div class="g-name">True Positive</div>
+                            <div class="g-val" id="g-tp" style="color:var(--green)">--</div>
+                        </div>
+                    </div>
+                    <div class="g-stat">
+                        <div class="g-dot" style="background:var(--red)"></div>
+                        <div class="g-info">
+                            <div class="g-name">False Negative</div>
+                            <div class="g-val" id="g-fn" style="color:var(--red)">--</div>
+                        </div>
+                    </div>
+                    <div class="g-stat">
+                        <div class="g-dot" style="background:var(--yellow)"></div>
+                        <div class="g-info">
+                            <div class="g-name">False Positive</div>
+                            <div class="g-val" id="g-fp" style="color:var(--yellow)">--</div>
+                        </div>
+                    </div>
+                    <div class="g-stat">
+                        <div class="g-dot" style="background:var(--blue)"></div>
+                        <div class="g-info">
+                            <div class="g-name">True Negative</div>
+                            <div class="g-val" id="g-tn" style="color:var(--blue)">--</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-head">
+                <div class="card-title">True Positive vs False Negative</div>
+                <div class="card-tag">BAR CHART</div>
+            </div>
+            <canvas id="tpFnChart" height="160"></canvas>
+        </div>
+    </div>
+
+    <!-- ROW 2: Confusion Matrix + Risk Distribution -->
+    <div class="two-col">
+        <div class="card">
+            <div class="card-head">
+                <div class="card-title">Confusion Matrix</div>
+                <div class="card-tag">DETECTION RESULTS</div>
+            </div>
+            <div class="matrix-wrap">
+                <div class="matrix">
+                    <div class="matrix-cell matrix-header"></div>
+                    <div class="matrix-cell matrix-header">Predicted: Attack</div>
+                    <div class="matrix-cell matrix-header">Predicted: Normal</div>
+                    <div class="matrix-cell matrix-header" style="writing-mode:vertical-lr;transform:rotate(180deg);font-size:0.55rem">Actual: Attack</div>
+                    <div class="matrix-cell matrix-tp">
+                        <span class="matrix-val" id="m-tp">--</span>
+                        <span class="matrix-lbl">True Positive</span>
+                    </div>
+                    <div class="matrix-cell matrix-fn">
+                        <span class="matrix-val" id="m-fn">--</span>
+                        <span class="matrix-lbl">False Negative</span>
+                    </div>
+                    <div class="matrix-cell matrix-header" style="writing-mode:vertical-lr;transform:rotate(180deg);font-size:0.55rem">Actual: Normal</div>
+                    <div class="matrix-cell matrix-fp">
+                        <span class="matrix-val" id="m-fp">--</span>
+                        <span class="matrix-lbl">False Positive</span>
+                    </div>
+                    <div class="matrix-cell matrix-tn">
+                        <span class="matrix-val" id="m-tn">--</span>
+                        <span class="matrix-lbl">True Negative</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-head">
+                <div class="card-title">Risk Score Distribution</div>
+                <div class="card-tag">BAR CHART</div>
+            </div>
+            <canvas id="riskDistChart" height="180"></canvas>
+        </div>
+    </div>
+
+    <!-- ROW 3: Attack Types + Per Meter Risk -->
+    <div class="two-col">
+        <div class="card">
+            <div class="card-head">
+                <div class="card-title">Attack Type Comparison</div>
+                <div class="card-tag">BREAKDOWN</div>
+            </div>
+            <div class="progress-list" id="attack-progress"></div>
+        </div>
+
+        <div class="card">
+            <div class="card-head">
+                <div class="card-title">Rule Trigger Frequency</div>
+                <div class="card-tag">DETECTION RULES</div>
+            </div>
+            <canvas id="ruleChart" height="180"></canvas>
+        </div>
+    </div>
+
+    <!-- ROW 4: Per Meter Risk Table -->
+    <div class="card">
+        <div class="card-head">
+            <div class="card-title">Per Meter Risk Analysis</div>
+            <div class="card-tag">METER BREAKDOWN</div>
+        </div>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Meter ID</th>
+                        <th>Total Readings</th>
+                        <th>Attacks</th>
+                        <th>Detected</th>
+                        <th>Missed</th>
+                        <th>Avg Risk Score</th>
+                        <th>Max Risk Score</th>
+                        <th>Risk Level</th>
+                        <th>Detection Rate</th>
+                    </tr>
+                </thead>
+                <tbody id="meter-table">
+                    <tr><td colspan="10" style="text-align:center;padding:30px;color:var(--text3);font-family:var(--mono)">LOADING DATA...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</main>
+
+<footer>ECOMETER INTEGRITY — CYBERSECURITY PROTECTION FRAMEWORK FOR SMART ENERGY METER SYSTEMS &nbsp;|&nbsp; GROUP 24 | CSG3101 | EDITH COWAN UNIVERSITY</footer>
+</div>
+
+<script>
+const API = 'http://127.0.0.1:5000';
+
+async function init() {
+    try {
+        const [mR, aR, dR] = await Promise.all([
+            fetch(`${API}/api/meter-data`),
+            fetch(`${API}/api/attacked-data`),
+            fetch(`${API}/api/detection-results`)
+        ]);
+        const mD = await mR.json();
+        const aD = await aR.json();
+        const dD = await dR.json();
+
+        // ── CORE METRICS ──
+        const tp = dD.filter(d => d.detected === 1 && d.ground_truth === 1).length;
+        const fn = dD.filter(d => d.detected === 0 && d.ground_truth === 1).length;
+        const fp = dD.filter(d => d.detected === 1 && d.ground_truth === 0).length;
+        const tn = dD.filter(d => d.detected === 0 && d.ground_truth === 0).length;
+        const total = tp + fn + fp + tn;
+        const rate = total > 0 ? ((tp / (tp + fn)) * 100).toFixed(1) : 0;
+        const avgRisk = dD.reduce((s, d) => s + (d.risk_score || 0), 0) / dD.length;
+
+        // Stats
+        document.getElementById('a-rate').textContent = rate + '%';
+        document.getElementById('a-tp').textContent = tp.toLocaleString();
+        document.getElementById('a-fn').textContent = fn.toLocaleString();
+        document.getElementById('a-fp').textContent = fp.toLocaleString();
+        document.getElementById('a-risk').textContent = avgRisk.toFixed(1);
+
+        // Gauge
+        document.getElementById('gauge-num').textContent = rate + '%';
+        document.getElementById('g-tp').textContent = tp.toLocaleString();
+        document.getElementById('g-fn').textContent = fn.toLocaleString();
+        document.getElementById('g-fp').textContent = fp.toLocaleString();
+        document.getElementById('g-tn').textContent = tn.toLocaleString();
+
+        // Confusion Matrix
+        document.getElementById('m-tp').textContent = tp.toLocaleString();
+        document.getElementById('m-fn').textContent = fn.toLocaleString();
+        document.getElementById('m-fp').textContent = fp.toLocaleString();
+        document.getElementById('m-tn').textContent = tn.toLocaleString();
+
+        // ── GAUGE CHART ──
+        new Chart(document.getElementById('gaugeChart'), {
+            type: 'doughnut',
+            data: {
+                datasets: [{
+                    data: [parseFloat(rate), 100 - parseFloat(rate)],
+                    backgroundColor: ['#00e676', 'rgba(26,58,92,0.5)'],
+                    borderWidth: 0
+                }]
+            },
+            options: { responsive: false, cutout: '78%', plugins: { legend: { display: false }, tooltip: { enabled: false } } }
+        });
+
+        // ── TP vs FN Chart ──
+        const meters = [...new Set(dD.map(d => d.meter_id))].sort();
+        const tpByMeter = meters.map(m => dD.filter(d => d.meter_id === m && d.detected === 1 && d.ground_truth === 1).length);
+        const fnByMeter = meters.map(m => dD.filter(d => d.meter_id === m && d.detected === 0 && d.ground_truth === 1).length);
+
+        new Chart(document.getElementById('tpFnChart'), {
+            type: 'bar',
+            data: {
+                labels: meters,
+                datasets: [
+                    { label: 'True Positive', data: tpByMeter, backgroundColor: 'rgba(0,230,118,0.7)', borderRadius: 4 },
+                    { label: 'False Negative', data: fnByMeter, backgroundColor: 'rgba(255,23,68,0.7)', borderRadius: 4 }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { labels: { color: '#7ba7c9', font: { family: 'Share Tech Mono', size: 10 } } } },
+                scales: {
+                    x: { ticks: { color: '#7ba7c9', font: { size: 10 } }, grid: { color: 'rgba(26,58,92,0.4)' } },
+                    y: { ticks: { color: '#3d6b8f', font: { size: 9 } }, grid: { color: 'rgba(26,58,92,0.4)' } }
+                }
+            }
+        });
+
+        // ── RISK DISTRIBUTION ──
+        const rc = { NORMAL: 0, LOW: 0, MEDIUM: 0, HIGH: 0, CRITICAL: 0 };
+        dD.forEach(d => { if (rc[d.risk_level] !== undefined) rc[d.risk_level]++; });
+        new Chart(document.getElementById('riskDistChart'), {
+            type: 'bar',
+            data: {
+                labels: ['NORMAL', 'LOW', 'MEDIUM', 'HIGH', 'CRITICAL'],
+                datasets: [{
+                    label: 'Count',
+                    data: [rc.NORMAL, rc.LOW, rc.MEDIUM, rc.HIGH, rc.CRITICAL],
+                    backgroundColor: ['rgba(0,168,255,0.7)', 'rgba(0,230,118,0.7)', 'rgba(255,214,0,0.7)', 'rgba(255,109,0,0.7)', 'rgba(255,23,68,0.7)'],
+                    borderRadius: 5,
+                    borderSkipped: false
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { ticks: { color: '#7ba7c9', font: { family: 'Share Tech Mono', size: 9 } }, grid: { color: 'rgba(26,58,92,0.4)' } },
+                    y: { ticks: { color: '#3d6b8f', font: { size: 9 } }, grid: { color: 'rgba(26,58,92,0.4)' } }
+                }
+            }
+        });
+
+        // ── ATTACK TYPE PROGRESS ──
+        const atkTypes = {};
+        aD.forEach(d => { if (d.attack_type) atkTypes[d.attack_type] = (atkTypes[d.attack_type] || 0) + 1; });
+        const maxA = Math.max(...Object.values(atkTypes));
+        const colors = ['#00a8ff', '#ff1744', '#ffd600', '#00e676', '#ff6d00'];
+        const progressEl = document.getElementById('attack-progress');
+        progressEl.innerHTML = '';
+        Object.entries(atkTypes).forEach(([t, c], i) => {
+            const pct = Math.round((c / maxA) * 100);
+            const totalAtk = aD.filter(d => d.attack_type).length;
+            const share = ((c / totalAtk) * 100).toFixed(1);
+            progressEl.innerHTML += `
+                <div class="progress-item">
+                    <div class="progress-header">
+                        <span class="progress-name">${t}</span>
+                        <span class="progress-val">${c.toLocaleString()} <span style="font-size:0.7rem;color:var(--text3)">(${share}%)</span></span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width:${pct}%;background:${colors[i % colors.length]}"></div>
+                    </div>
+                </div>`;
+        });
+
+        // ── RULE TRIGGER CHART ──
+        const rules = {};
+        dD.filter(d => d.detected === 1).forEach(d => {
+            if (d.rule_triggered && d.rule_triggered !== 'none') {
+                rules[d.rule_triggered] = (rules[d.rule_triggered] || 0) + 1;
+            }
+        });
+        const topRules = Object.entries(rules).sort((a, b) => b[1] - a[1]).slice(0, 6);
+        new Chart(document.getElementById('ruleChart'), {
+            type: 'bar',
+            data: {
+                labels: topRules.map(r => r[0].length > 20 ? r[0].slice(0, 18) + '..' : r[0]),
+                datasets: [{
+                    label: 'Times Triggered',
+                    data: topRules.map(r => r[1]),
+                    backgroundColor: 'rgba(0,229,255,0.6)',
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { ticks: { color: '#3d6b8f', font: { size: 9 } }, grid: { color: 'rgba(26,58,92,0.4)' } },
+                    y: { ticks: { color: '#7ba7c9', font: { family: 'Share Tech Mono', size: 9 } }, grid: { color: 'rgba(26,58,92,0.4)' } }
+                }
+            }
+        });
+
+        // ── PER METER TABLE ──
+        const tbody = document.getElementById('meter-table');
+        tbody.innerHTML = '';
+        meters.forEach((m, i) => {
+            const mReadings = mD.filter(d => d.meter_id === m).length;
+            const mAttacks = aD.filter(d => d.meter_id === m && d.is_attack).length;
+            const mDet = dD.filter(d => d.meter_id === m && d.detected === 1).length;
+            const mMissed = dD.filter(d => d.meter_id === m && d.detected === 0 && d.ground_truth === 1).length;
+            const mRisks = dD.filter(d => d.meter_id === m).map(d => d.risk_score || 0);
+            const mAvgRisk = mRisks.length > 0 ? (mRisks.reduce((s, r) => s + r, 0) / mRisks.length).toFixed(1) : 0;
+            const mMaxRisk = mRisks.length > 0 ? Math.max(...mRisks) : 0;
+            const mRate = mAttacks > 0 ? ((mDet / mAttacks) * 100).toFixed(1) + '%' : 'N/A';
+            const riskLevel = mMaxRisk >= 90 ? 'CRITICAL' : mMaxRisk >= 70 ? 'HIGH' : mMaxRisk >= 50 ? 'MEDIUM' : mMaxRisk >= 30 ? 'LOW' : 'NORMAL';
+            const rateColor = parseFloat(mRate) >= 70 ? 'var(--green)' : parseFloat(mRate) >= 50 ? 'var(--yellow)' : 'var(--red)';
+
+            tbody.innerHTML += `
+                <tr>
+                    <td class="t-muted mid">${i + 1}</td>
+                    <td class="t-blue mid">${m}</td>
+                    <td class="mid" style="color:var(--text2)">${mReadings.toLocaleString()}</td>
+                    <td class="mid" style="color:var(--red)">${mAttacks.toLocaleString()}</td>
+                    <td class="mid" style="color:var(--green)">${mDet.toLocaleString()}</td>
+                    <td class="mid" style="color:var(--orange)">${mMissed.toLocaleString()}</td>
+                    <td class="mid" style="color:var(--yellow)">${mAvgRisk}</td>
+                    <td class="mid" style="color:var(--red)">${mMaxRisk}</td>
+                    <td><span class="badge ${riskLevel}">${riskLevel}</span></td>
+                    <td class="mid" style="color:${rateColor}">${mRate}</td>
+                </tr>`;
+        });
+
+    } catch (e) {
+        console.error(e);
+        document.getElementById('meter-table').innerHTML = `<tr><td colspan="10" style="text-align:center;padding:30px;color:var(--red);font-family:var(--mono)">⚠ CANNOT CONNECT TO BACKEND — Make sure Flask is running on port 5000</td></tr>`;
+    }
+}
+
+init();
+</script>
+</body>
+</html>
