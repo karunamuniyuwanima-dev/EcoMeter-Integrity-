@@ -5,6 +5,7 @@ on:
     branches: [main, Backend]
   pull_request:
     branches: [main]
+  workflow_dispatch:
 
 jobs:
   # ── 1. BACKEND — Install & Syntax Check ─────────────────────────────────────
