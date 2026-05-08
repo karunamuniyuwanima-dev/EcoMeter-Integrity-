@@ -101,7 +101,8 @@
 
         @keyframes blink { 0%,100%{opacity:1}50%{opacity:0.4} }
 
-        .header-nav { display: flex; align-items: center; height: 44px; gap: 2px; }
+        .header-nav { display: flex; align-items: center; height: 44px; gap: 2px; width: 100%; }
+        .header-nav .nav-spacer { flex: 1; }
 
         .nav-btn {
             background: transparent; border: none; color: var(--text2);
@@ -145,6 +146,15 @@
         .card-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
         .card-title { font-family:var(--display); font-size:0.82rem; font-weight:600; letter-spacing:2px; text-transform:uppercase; }
         .card-tag { font-family:var(--mono); font-size:0.62rem; padding:3px 9px; border-radius:10px; background:rgba(0,168,255,0.08); border:1px solid rgba(0,168,255,0.2); color:var(--blue); }
+        .loading-bar { position:fixed; top:0; left:0; height:2px; z-index:99999; background:linear-gradient(90deg,var(--blue),var(--cyan)); width:0; transition:width 0.4s; box-shadow:0 0 8px var(--cyan); }
+        .loading-bar.active { animation:lbar 1.4s ease-in-out infinite; }
+        @keyframes lbar { 0%{width:0;margin-left:0} 50%{width:60%;margin-left:20%} 100%{width:0;margin-left:100%} }
+        .toolbar { display:flex; align-items:center; gap:10px; margin-bottom:14px; }
+        .refresh-btn { background:rgba(0,229,255,0.08); border:1px solid var(--border2); color:var(--cyan); font-family:var(--mono); font-size:0.68rem; padding:5px 12px; border-radius:6px; cursor:pointer; transition:all 0.2s; letter-spacing:1px; }
+        .refresh-btn:hover { background:rgba(0,229,255,0.15); border-color:var(--cyan); }
+        .refresh-btn.spinning { animation:spin 1s linear infinite; }
+        @keyframes spin { 100%{transform:rotate(360deg)} }
+        .last-updated { font-family:var(--mono); font-size:0.65rem; color:var(--text3); }
 
         .top-row { display:grid; grid-template-columns:1fr 280px; gap:14px; margin-bottom:14px; }
         .mid-row { display:grid; grid-template-columns:1.4fr 1fr 1fr; gap:14px; margin-bottom:14px; }
@@ -217,7 +227,6 @@
         .spin { width:14px;height:14px; border:2px solid var(--border); border-top-color:var(--cyan); border-radius:50%; animation:spin 0.8s linear infinite; }
         @keyframes spin { to{transform:rotate(360deg)} }
 
-        footer { text-align:center; padding:16px; color:var(--text3); font-family:var(--mono); font-size:0.62rem; letter-spacing:2px; border-top:1px solid var(--border); margin-top:8px; }
 
         @media(max-width:1100px){
             .stats-row{grid-template-columns:repeat(3,1fr)}
@@ -236,33 +245,39 @@
             <div class="logo-text">EcoMeter <span>Dashboard</span></div>
         </div>
         <div class="header-info">
-            <span>User: Admin</span>
+            <span id="hdr-user">User: --</span>
             <span class="sep">|</span>
-            <span>Role: Admin</span>
-            <div class="user-btn"><div class="dot"></div>👤 User: Admin ▾</div>
+            <span id="hdr-role">Role: --</span>
+            <div class="user-btn"><div class="dot"></div>👤 <span id="hdr-name">Admin</span></div>
+            <button onclick="logout()" style="background:rgba(255,23,68,0.12);border:1px solid rgba(255,23,68,0.3);color:#ff1744;font-family:'Share Tech Mono',monospace;font-size:0.7rem;padding:5px 12px;border-radius:6px;cursor:pointer;letter-spacing:1px;">LOGOUT</button>
         </div>
     </div>
     <div class="header-nav">
         <button class="nav-btn active">Dashboard</button>
         <span class="nav-sep">|</span>
-        <button class="nav-btn">Reports</button>
+        <button class="nav-btn" onclick="location.href='reports.html'">Reports</button>
         <span class="nav-sep">|</span>
-        <button class="nav-btn">Alert History</button>
+        <button class="nav-btn" onclick="location.href='alert_history.html'">Alert History</button>
         <span class="nav-sep">|</span>
-        <button class="nav-btn">User Management</button>
+        <button class="nav-btn" onclick="location.href='analytics.html'">Analytics</button>
         <span class="nav-sep">|</span>
-        <button class="nav-btn">Analytics</button>
-        <span class="nav-sep">|</span>
-        <button class="nav-btn">Settings</button>
-        <span class="nav-sep">|</span>
-        <button class="nav-btn">Notification</button>
+        <button class="nav-btn" onclick="location.href='settings.html'">Settings</button>
+
+        <div class="nav-spacer"></div>
         <button class="notif-btn">🔔</button>
     </div>
 </header>
 
+<div class="loading-bar" id="loading-bar"></div>
+
 <main>
 
-    <div class="sec-title">System Overview</div>
+    <div class="toolbar">
+        <div class="sec-title" style="margin-bottom:0">System Overview</div>
+        <div style="flex:1"></div>
+        <span class="last-updated" id="last-updated">Last updated: --</span>
+        <button class="refresh-btn" id="refresh-btn" onclick="manualRefresh()">⟳ Refresh</button>
+    </div>
     <div class="stats-row">
         <div class="stat s-blue"><div class="stat-icon">📊</div><div class="stat-lbl">Total Readings</div><div class="stat-val" id="s1">--</div><div class="stat-sub">Meter data points</div></div>
         <div class="stat s-red"><div class="stat-icon">⚔️</div><div class="stat-lbl">Total Attacks</div><div class="stat-val" id="s2">--</div><div class="stat-sub">Simulated attacks</div></div>
@@ -275,14 +290,12 @@
         <div class="card">
             <div class="card-head">
                 <div class="card-title">Energy Usage Chart (Line Graph)</div>
-                <div class="card-tag">NORMAL VS ATTACKED</div>
             </div>
             <canvas id="energyChart" height="90"></canvas>
         </div>
         <div class="card">
             <div class="card-head">
                 <div class="card-title">Risk Distribution</div>
-                <div class="card-tag">DONUT</div>
             </div>
             <canvas id="pieChart" height="175"></canvas>
             <div class="pie-lbl">Latest Three Months</div>
@@ -303,13 +316,12 @@
         <div class="card">
             <div class="card-head">
                 <div class="card-title">Risk Indicator</div>
-                <div class="card-tag">SCORES</div>
             </div>
             <div class="risk-grid">
                 <div class="risk-box r-h"><div class="risk-box-lbl">High</div><div class="risk-box-val" id="r1">--</div></div>
                 <div class="risk-box r-m"><div class="risk-box-lbl">Medium</div><div class="risk-box-val" id="r2">--</div></div>
-                <div class="risk-box r-l"><div class="risk-box-lbl">High</div><div class="risk-box-val">50</div></div>
-                <div class="risk-box r-n"><div class="risk-box-lbl">&lt;50</div><div class="risk-box-val">&lt;50</div></div>
+                <div class="risk-box r-l"><div class="risk-box-lbl">Low</div><div class="risk-box-val" id="r3">--</div></div>
+                <div class="risk-box r-n"><div class="risk-box-lbl">Normal</div><div class="risk-box-val" id="r4">--</div></div>
             </div>
         </div>
 
@@ -353,11 +365,28 @@
 
 </main>
 
-<footer>ECOMETER INTEGRITY — CYBERSECURITY PROTECTION FRAMEWORK FOR SMART ENERGY METER SYSTEMS &nbsp;|&nbsp; GROUP 24 | CSG3101 | EDITH COWAN UNIVERSITY</footer>
 </div>
 
 <script>
-const API = 'http://127.0.0.1:5000';
+const API = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+    ? `http://${window.location.hostname}:5000`
+    : 'https://ecometer-api.onrender.com';
+function authHeaders() { const t = sessionStorage.getItem('ecometer_token'); return t ? { 'Authorization': `Bearer ${t}` } : {}; }
+
+// Session guard — redirect to login if not logged in
+const _sess = JSON.parse(sessionStorage.getItem('ecometer_user') || '{}');
+if (!_sess.name) { window.location.href = 'login.html'; }
+
+// Load user info into header
+document.getElementById('hdr-user').textContent = 'User: ' + (_sess.name || 'Admin');
+document.getElementById('hdr-role').textContent = 'Role: ' + (_sess.role || 'analyst');
+document.getElementById('hdr-name').textContent = _sess.name || 'Admin';
+
+function logout() {
+    sessionStorage.removeItem('ecometer_user');
+    sessionStorage.removeItem('ecometer_token');
+    window.location.href = 'login.html';
+}
 
 function getNotes(diff, detected) {
     if (!detected) return { cls:'note-norm', txt:'Normal' };
@@ -368,21 +397,51 @@ function getNotes(diff, detected) {
     return { cls:'note-dev', txt:'⚠ Deviation' };
 }
 
+let _autoRefreshTimer = null;
+
+function startLoading() {
+    const b = document.getElementById('loading-bar');
+    const r = document.getElementById('refresh-btn');
+    b.classList.add('active');
+    if (r) r.style.opacity = '0.5';
+}
+function stopLoading() {
+    const b = document.getElementById('loading-bar');
+    const r = document.getElementById('refresh-btn');
+    b.classList.remove('active');
+    b.style.width = '0';
+    if (r) r.style.opacity = '1';
+    const now = new Date();
+    const el = document.getElementById('last-updated');
+    if (el) el.textContent = `Last updated: ${now.toLocaleTimeString()}`;
+}
+function manualRefresh() { load(); }
+
+function setupAutoRefresh() {
+    if (_autoRefreshTimer) clearInterval(_autoRefreshTimer);
+    const interval = parseInt(sessionStorage.getItem('refresh_interval') || '30') * 1000;
+    _autoRefreshTimer = setInterval(() => load(), interval);
+}
+
 async function load() {
+    startLoading();
     try {
-        const [mR,aR,dR] = await Promise.all([
-            fetch(`${API}/api/meter-data`),
-            fetch(`${API}/api/attacked-data`),
-            fetch(`${API}/api/detection-results`)
+        const [mR,aR,dR,ovR] = await Promise.all([
+            fetch(`${API}/api/meter-data?limit=500`,        { headers: authHeaders() }),
+            fetch(`${API}/api/attacked-data?limit=500`,     { headers: authHeaders() }),
+            fetch(`${API}/api/detection-results?limit=500`, { headers: authHeaders() }),
+            fetch(`${API}/api/attack-overview`,             { headers: authHeaders() })
         ]);
         const mD = await mR.json();
         const aD = await aR.json();
         const dD = await dR.json();
+        const ov = await ovR.json();
 
         const totalAtk = aD.filter(d=>d.is_attack).length;
         const totalDet = dD.filter(d=>d.detected===1).length;
         const avgRisk = dD.reduce((s,d)=>s+(d.risk_score||0),0)/dD.length;
-        const rate = totalAtk>0?((totalDet/totalAtk)*100).toFixed(1)+'%':'N/A';
+        const ratePct = totalAtk>0 ? Math.min(100, (totalDet/totalAtk)*100).toFixed(1) : 'N/A';
+        const rate = ratePct !== 'N/A' ? ratePct+'%' : 'N/A';
 
         document.getElementById('s1').textContent = mD.length.toLocaleString();
         document.getElementById('s2').textContent = totalAtk.toLocaleString();
@@ -394,22 +453,46 @@ async function load() {
         dD.forEach(d=>{if(rc[d.risk_level]!==undefined)rc[d.risk_level]++;});
         document.getElementById('r1').textContent=(rc.HIGH+rc.CRITICAL).toLocaleString();
         document.getElementById('r2').textContent=rc.MEDIUM.toLocaleString();
+        document.getElementById('r3').textContent=rc.LOW.toLocaleString();
+        document.getElementById('r4').textContent=rc.NORMAL.toLocaleString();
 
         new Chart(document.getElementById('energyChart'),{
             type:'line',
             data:{
                 labels:mD.slice(0,100).map(d=>d.timestamp?d.timestamp.toString().slice(11,16):''),
                 datasets:[
-                    {label:'Normal Energy (kWh)',data:mD.slice(0,100).map(d=>d.energy_kwh),borderColor:'#00a8ff',backgroundColor:'rgba(0,168,255,0.06)',borderWidth:1.5,tension:0.4,pointRadius:0,fill:true},
-                    {label:'Attacked Energy (kWh)',data:aD.slice(0,100).map(d=>d.attacked_kwh),borderColor:'#ff1744',backgroundColor:'rgba(255,23,68,0.06)',borderWidth:1.5,tension:0.4,pointRadius:0,fill:true}
+                    {label:'Normal Energy (kWh)',data:mD.slice(0,100).map(d=>d.energy_kwh),borderColor:'#00a8ff',backgroundColor:'rgba(0,168,255,0.06)',borderWidth:1.5,tension:0.4,pointRadius:0,pointHoverRadius:5,pointHoverBackgroundColor:'#00a8ff',pointHoverBorderColor:'#ffffff',pointHoverBorderWidth:2,fill:true},
+                    {label:'Attacked Energy (kWh)',data:aD.slice(0,100).map(d=>d.attacked_kwh),borderColor:'#ff1744',backgroundColor:'rgba(255,23,68,0.06)',borderWidth:1.5,tension:0.4,pointRadius:0,pointHoverRadius:5,pointHoverBackgroundColor:'#ff1744',pointHoverBorderColor:'#ffffff',pointHoverBorderWidth:2,fill:true}
                 ]
             },
             options:{
                 responsive:true,
-                plugins:{legend:{labels:{color:'#7ba7c9',font:{family:'Share Tech Mono',size:10}}}},
+                interaction:{ mode:'index', intersect:false },
+                plugins:{
+                    legend:{labels:{color:'#7ba7c9',font:{family:'Share Tech Mono',size:10}}},
+                    tooltip:{
+                        mode:'index',
+                        intersect:false,
+                        backgroundColor:'rgba(6,13,26,0.95)',
+                        titleColor:'#00e5ff',
+                        titleFont:{family:'Share Tech Mono',size:11},
+                        bodyColor:'#7ba7c9',
+                        bodyFont:{family:'Share Tech Mono',size:10},
+                        borderColor:'#1e4d7b',
+                        borderWidth:1,
+                        padding:10,
+                        displayColors:true,
+                        callbacks:{
+                            label:function(ctx){
+                                const val = ctx.parsed.y != null ? ctx.parsed.y.toFixed(4) : 'N/A';
+                                return `  ${ctx.dataset.label}: ${val} kWh`;
+                            }
+                        }
+                    }
+                },
                 scales:{
                     x:{ticks:{color:'#3d6b8f',font:{size:9},maxTicksLimit:12},grid:{color:'rgba(26,58,92,0.4)'}},
-                    y:{ticks:{color:'#3d6b8f',font:{size:9}},grid:{color:'rgba(26,58,92,0.4)'}}
+                    y:{ticks:{color:'#3d6b8f',font:{size:9}},grid:{color:'rgba(26,58,92,0.4)'},title:{display:true,text:'kWh',color:'#3d6b8f',font:{size:9}}}
                 }
             }
         });
@@ -437,7 +520,10 @@ async function load() {
 
         const atkTypes={};
         aD.forEach(d=>{if(d.attack_type)atkTypes[d.attack_type]=(atkTypes[d.attack_type]||0)+1;});
-        const maxA=Math.max(...Object.values(atkTypes));
+        // Add brute force and DoS from attack-overview
+        if(ov && ov.brute_force && ov.brute_force.total_events > 0) atkTypes['brute_force']=(atkTypes['brute_force']||0)+ov.brute_force.total_events;
+        if(ov && ov.dos && ov.dos.total_events > 0) atkTypes['dos']=(atkTypes['dos']||0)+ov.dos.total_events;
+        const maxA=Math.max(...Object.values(atkTypes),1);
         const colors=['#00a8ff','#ff1744','#ffd600','#00e676','#ff6d00'];
         const atkEl=document.getElementById('atk-list');
         atkEl.innerHTML='';
@@ -469,13 +555,16 @@ async function load() {
                 </tr>`;
         });
 
+        stopLoading();
     } catch(e) {
+        stopLoading();
         console.error(e);
-        document.getElementById('tbl').innerHTML=`<tr><td colspan="9" style="text-align:center;padding:30px;color:var(--red);font-family:var(--mono)">⚠ CANNOT CONNECT TO BACKEND — Make sure Flask is running on port 5000</td></tr>`;
+        document.getElementById('tbl').innerHTML=`<tr><td colspan="9" style="text-align:center;padding:30px;color:var(--red);font-family:var(--mono)">⚠ Cannot connect to backend. Make sure the server is running.</td></tr>`;
     }
 }
 
 load();
+setupAutoRefresh();
 </script>
 </body>
 </html>
