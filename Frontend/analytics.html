@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EcoMeter — Analytics</title>
+    <title>EcoMeter â€” Analytics</title>
     <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&family=Exo+2:wght@300;400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -152,14 +152,14 @@
 <header>
     <div class="header-top">
         <div class="logo">
-            <div class="logo-icon">⚡</div>
+            <div class="logo-icon">âš¡</div>
             <div class="logo-text">EcoMeter <span>Dashboard</span></div>
         </div>
         <div class="header-info">
             <span id="hdr-user">User: --</span>
             <span style="color:var(--border2)">|</span>
             <span id="hdr-role">Role: --</span>
-            <div class="user-btn"><div class="dot"></div>👤 <span id="hdr-name">Admin</span></div>
+            <div class="user-btn"><div class="dot"></div>ðŸ‘¤ <span id="hdr-name">Admin</span></div>
             <button onclick="logout()" style="background:rgba(255,23,68,0.12);border:1px solid rgba(255,23,68,0.3);color:#ff1744;font-family:'Share Tech Mono',monospace;font-size:0.7rem;padding:5px 12px;border-radius:6px;cursor:pointer;letter-spacing:1px;">LOGOUT</button>
         </div>
     </div>
@@ -175,7 +175,7 @@
         <button class="nav-btn" onclick="location.href='settings.html'">Settings</button>
 
         <div class="nav-spacer"></div>
-        <button class="notif-btn">🔔</button>
+        <button class="notif-btn">ðŸ””</button>
     </div>
 </header>
 
@@ -185,11 +185,11 @@
     <!-- STATS -->
     <div class="sec-title">Analytics Overview</div>
     <div class="stats-row">
-        <div class="stat s-green"><div class="stat-icon">🎯</div><div class="stat-lbl">Detection Rate</div><div class="stat-val" id="a-rate">--</div><div class="stat-sub">Overall accuracy</div></div>
-        <div class="stat s-blue"><div class="stat-icon">✅</div><div class="stat-lbl">True Positive</div><div class="stat-val" id="a-tp">--</div><div class="stat-sub">Correctly detected</div></div>
-        <div class="stat s-red"><div class="stat-icon">❌</div><div class="stat-lbl">False Negative</div><div class="stat-val" id="a-fn">--</div><div class="stat-sub">Missed attacks</div></div>
-        <div class="stat s-yellow"><div class="stat-icon">⚠️</div><div class="stat-lbl">False Positive</div><div class="stat-val" id="a-fp">--</div><div class="stat-sub">False alarms</div></div>
-        <div class="stat s-cyan"><div class="stat-icon">📊</div><div class="stat-lbl">Avg Risk Score</div><div class="stat-val" id="a-risk">--</div><div class="stat-sub">Out of 100</div></div>
+        <div class="stat s-green"><div class="stat-icon">ðŸŽ¯</div><div class="stat-lbl">Detection Rate</div><div class="stat-val" id="a-rate">--</div><div class="stat-sub">Overall accuracy</div></div>
+        <div class="stat s-blue"><div class="stat-icon">âœ…</div><div class="stat-lbl">True Positive</div><div class="stat-val" id="a-tp">--</div><div class="stat-sub">Correctly detected</div></div>
+        <div class="stat s-red"><div class="stat-icon">âŒ</div><div class="stat-lbl">False Negative</div><div class="stat-val" id="a-fn">--</div><div class="stat-sub">Missed attacks</div></div>
+        <div class="stat s-yellow"><div class="stat-icon">âš ï¸</div><div class="stat-lbl">False Positive</div><div class="stat-val" id="a-fp">--</div><div class="stat-sub">False alarms</div></div>
+        <div class="stat s-cyan"><div class="stat-icon">ðŸ“Š</div><div class="stat-lbl">Avg Risk Score</div><div class="stat-val" id="a-risk">--</div><div class="stat-sub">Out of 100</div></div>
     </div>
 
     <!-- ROW 1: Accuracy Gauge + TP vs FN Chart -->
@@ -345,7 +345,7 @@
 <script>
 const API = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
     ? `http://${window.location.hostname}:5000`
-    : 'https://ecometer-api.onrender.com';
+    : 'https://ecometer-integrity-production.up.railway.app';
 function authHeaders() { const t = sessionStorage.getItem('ecometer_token'); return t ? { 'Authorization': `Bearer ${t}` } : {}; }
 const _sess = JSON.parse(sessionStorage.getItem('ecometer_user') || '{}');
 if (!_sess.name) { window.location.href = 'login.html'; }
@@ -369,7 +369,7 @@ async function init() {
         const aD = await aR.json();
         const dD = await dR.json();
 
-        // ── CORE METRICS ──
+        // â”€â”€ CORE METRICS â”€â”€
         const tp = dD.filter(d => d.detected === 1 && d.ground_truth === 1).length;
         const fn = dD.filter(d => d.detected === 0 && d.ground_truth === 1).length;
         const fp = dD.filter(d => d.detected === 1 && d.ground_truth === 0).length;
@@ -398,7 +398,7 @@ async function init() {
         document.getElementById('m-fp').textContent = fp.toLocaleString();
         document.getElementById('m-tn').textContent = tn.toLocaleString();
 
-        // ── GAUGE CHART ──
+        // â”€â”€ GAUGE CHART â”€â”€
         new Chart(document.getElementById('gaugeChart'), {
             type: 'doughnut',
             data: {
@@ -411,7 +411,7 @@ async function init() {
             options: { responsive: false, cutout: '78%', plugins: { legend: { display: false }, tooltip: { enabled: false } } }
         });
 
-        // ── TP vs FN Chart ──
+        // â”€â”€ TP vs FN Chart â”€â”€
         const meters = [...new Set(dD.map(d => d.meter_id))].sort();
         const tpByMeter = meters.map(m => dD.filter(d => d.meter_id === m && d.detected === 1 && d.ground_truth === 1).length);
         const fnByMeter = meters.map(m => dD.filter(d => d.meter_id === m && d.detected === 0 && d.ground_truth === 1).length);
@@ -435,7 +435,7 @@ async function init() {
             }
         });
 
-        // ── RISK DISTRIBUTION ──
+        // â”€â”€ RISK DISTRIBUTION â”€â”€
         const rc = { NORMAL: 0, LOW: 0, MEDIUM: 0, HIGH: 0, CRITICAL: 0 };
         dD.forEach(d => { if (rc[d.risk_level] !== undefined) rc[d.risk_level]++; });
         new Chart(document.getElementById('riskDistChart'), {
@@ -460,7 +460,7 @@ async function init() {
             }
         });
 
-        // ── ATTACK TYPE PROGRESS ──
+        // â”€â”€ ATTACK TYPE PROGRESS â”€â”€
         const atkTypes = {};
         aD.forEach(d => { if (d.attack_type) atkTypes[d.attack_type] = (atkTypes[d.attack_type] || 0) + 1; });
         const maxA = Math.max(...Object.values(atkTypes));
@@ -483,7 +483,7 @@ async function init() {
                 </div>`;
         });
 
-        // ── RULE TRIGGER CHART ──
+        // â”€â”€ RULE TRIGGER CHART â”€â”€
         const rules = {};
         dD.filter(d => d.detected === 1).forEach(d => {
             if (d.rule_triggered && d.rule_triggered !== 'none') {
@@ -513,7 +513,7 @@ async function init() {
             }
         });
 
-        // ── PER METER TABLE ──
+        // â”€â”€ PER METER TABLE â”€â”€
         const tbody = document.getElementById('meter-table');
         tbody.innerHTML = '';
         meters.forEach((m, i) => {
@@ -547,7 +547,7 @@ async function init() {
     } catch (e) {
         hideLoader();
         console.error(e);
-        document.getElementById('meter-table').innerHTML = `<tr><td colspan="10" style="text-align:center;padding:30px;color:var(--red);font-family:var(--mono)">⚠ Cannot connect to backend. Make sure the server is running.</td></tr>`;
+        document.getElementById('meter-table').innerHTML = `<tr><td colspan="10" style="text-align:center;padding:30px;color:var(--red);font-family:var(--mono)">âš  Cannot connect to backend. Make sure the server is running.</td></tr>`;
     }
 }
 
@@ -555,3 +555,4 @@ init();
 </script>
 </body>
 </html>
+

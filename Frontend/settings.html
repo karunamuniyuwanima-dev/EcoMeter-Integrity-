@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EcoMeter — Settings</title>
+    <title>EcoMeter â€” Settings</title>
     <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&family=Exo+2:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -159,14 +159,14 @@
 <header>
     <div class="header-top">
         <div class="logo">
-            <div class="logo-icon">⚡</div>
+            <div class="logo-icon">âš¡</div>
             <div class="logo-text">EcoMeter <span>Dashboard</span></div>
         </div>
         <div class="header-info">
             <span id="hdr-user">User: --</span>
             <span style="color:var(--border2)">|</span>
             <span id="hdr-role">Role: --</span>
-            <div class="user-btn"><div class="dot"></div>👤 <span id="hdr-name">Admin</span></div>
+            <div class="user-btn"><div class="dot"></div>ðŸ‘¤ <span id="hdr-name">Admin</span></div>
             <button onclick="logout()" style="background:rgba(255,23,68,0.12);border:1px solid rgba(255,23,68,0.3);color:#ff1744;font-family:'Share Tech Mono',monospace;font-size:0.7rem;padding:5px 12px;border-radius:6px;cursor:pointer;letter-spacing:1px;">LOGOUT</button>
         </div>
     </div>
@@ -182,7 +182,7 @@
         <button class="nav-btn active">Settings</button>
 
         <div class="nav-spacer"></div>
-        <button class="notif-btn">🔔</button>
+        <button class="notif-btn">ðŸ””</button>
     </div>
 </header>
 
@@ -222,16 +222,16 @@
                     <input type="range" class="slider" min="5" max="50" value="15" id="reduce-threshold" oninput="updateSlider('reduce-threshold','reduce-threshold-val','%')">
                     <span class="slider-val" id="reduce-threshold-val">15%</span>
                 </div>
-                <div class="form-desc">Energy drop below this % of baseline triggers reduce detection (15–20% recommended)</div>
+                <div class="form-desc">Energy drop below this % of baseline triggers reduce detection (15â€“20% recommended)</div>
             </div>
 
             <div class="form-group">
-                <div class="form-label">Noise Attack Threshold (±%)</div>
+                <div class="form-label">Noise Attack Threshold (Â±%)</div>
                 <div class="slider-wrap">
                     <input type="range" class="slider" min="1" max="30" value="10" id="noise-threshold" oninput="updateSlider('noise-threshold','noise-threshold-val','%')">
                     <span class="slider-val" id="noise-threshold-val">10%</span>
                 </div>
-                <div class="form-desc">Random variation within ±this % is considered noise attack</div>
+                <div class="form-desc">Random variation within Â±this % is considered noise attack</div>
             </div>
 
             <div class="form-group">
@@ -329,7 +329,7 @@
         <div class="card">
             <div class="card-head">
                 <div class="card-title">Database Connection</div>
-                <div id="db-status-badge" class="db-badge connected">● Connected</div>
+                <div id="db-status-badge" class="db-badge connected">â— Connected</div>
             </div>
 
             <div class="form-group">
@@ -350,26 +350,26 @@
             </div>
             <div class="form-group">
                 <div class="form-label">Password</div>
-                <input type="password" class="form-input" id="db-pass" placeholder="••••••••••••">
+                <input type="password" class="form-input" id="db-pass" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢">
             </div>
 
             <div style="margin-top:6px">
                 <div class="sec-title" style="margin-bottom:8px">Connection Status</div>
                 <div class="status-row">
                     <span class="status-label">PostgreSQL Server</span>
-                    <span class="status-value status-dot-connected" id="pg-status">● Running</span>
+                    <span class="status-value status-dot-connected" id="pg-status">â— Running</span>
                 </div>
                 <div class="status-row">
                     <span class="status-label">Database</span>
-                    <span class="status-value status-dot-connected">● ecometer</span>
+                    <span class="status-value status-dot-connected">â— ecometer</span>
                 </div>
                 <div class="status-row">
                     <span class="status-label">Flask Backend</span>
-                    <span class="status-value" id="flask-status">● Checking...</span>
+                    <span class="status-value" id="flask-status">â— Checking...</span>
                 </div>
                 <div class="status-row">
                     <span class="status-label">Tables</span>
-                    <span class="status-value status-dot-connected">● 3 tables ready</span>
+                    <span class="status-value status-dot-connected">â— 3 tables ready</span>
                 </div>
             </div>
 
@@ -392,9 +392,9 @@
                 <div class="form-label" style="margin-bottom:8px">Import New Data</div>
                 <div style="font-size:0.75rem;color:var(--text2);margin-bottom:10px">Update database with new CSV files from teammates</div>
                 <div style="display:flex;flex-direction:column;gap:6px">
-                    <div class="status-row" style="padding:4px 0"><span class="status-label">meter_data.csv</span><span class="status-value status-dot-connected">● Loaded</span></div>
-                    <div class="status-row" style="padding:4px 0"><span class="status-label">attacked_meter_data.csv</span><span class="status-value status-dot-connected">● Loaded</span></div>
-                    <div class="status-row" style="padding:4px 0"><span class="status-label">detection_results.csv</span><span class="status-value status-dot-connected">● Loaded</span></div>
+                    <div class="status-row" style="padding:4px 0"><span class="status-label">meter_data.csv</span><span class="status-value status-dot-connected">â— Loaded</span></div>
+                    <div class="status-row" style="padding:4px 0"><span class="status-label">attacked_meter_data.csv</span><span class="status-value status-dot-connected">â— Loaded</span></div>
+                    <div class="status-row" style="padding:4px 0"><span class="status-label">detection_results.csv</span><span class="status-value status-dot-connected">â— Loaded</span></div>
                 </div>
                 <div style="margin-top:10px;font-family:var(--mono);font-size:0.65rem;color:var(--text3)">Run import_data.py to update</div>
             </div>
@@ -409,10 +409,10 @@
             </div>
             <div>
                 <div class="form-label" style="margin-bottom:8px">Danger Zone</div>
-                <div style="font-size:0.75rem;color:var(--text2);margin-bottom:10px">Irreversible actions — use with caution</div>
+                <div style="font-size:0.75rem;color:var(--text2);margin-bottom:10px">Irreversible actions â€” use with caution</div>
                 <div style="display:flex;flex-direction:column;gap:8px">
-                    <button class="danger-btn" onclick="confirmClear()">🗑 Clear All Data</button>
-                    <button class="danger-btn" onclick="confirmReset()">⚠ Reset System</button>
+                    <button class="danger-btn" onclick="confirmClear()">ðŸ—‘ Clear All Data</button>
+                    <button class="danger-btn" onclick="confirmReset()">âš  Reset System</button>
                 </div>
             </div>
         </div>
@@ -434,44 +434,44 @@
                 <div class="faq-item">
                     <div class="faq-q" onclick="toggleFaq(this)">
                         What is a False Data Injection Attack (FDIA)?
-                        <span class="faq-arrow">▼</span>
+                        <span class="faq-arrow">â–¼</span>
                     </div>
-                    <div class="faq-a">An FDIA is a cyber attack where an adversary manipulates meter readings sent to the utility company. EcoMeter detects three types: <strong>Spike</strong> (sudden +80% surge), <strong>Stealth Reduce</strong> (gradual -15% drop to steal energy undetected), and <strong>Noise</strong> (random ±10% fluctuations to mask theft).</div>
+                    <div class="faq-a">An FDIA is a cyber attack where an adversary manipulates meter readings sent to the utility company. EcoMeter detects three types: <strong>Spike</strong> (sudden +80% surge), <strong>Stealth Reduce</strong> (gradual -15% drop to steal energy undetected), and <strong>Noise</strong> (random Â±10% fluctuations to mask theft).</div>
                 </div>
 
                 <div class="faq-item">
                     <div class="faq-q" onclick="toggleFaq(this)">
                         How does the detection engine work?
-                        <span class="faq-arrow">▼</span>
+                        <span class="faq-arrow">â–¼</span>
                     </div>
-                    <div class="faq-a">The engine uses statistical anomaly detection — Z-score and IQR (Interquartile Range) analysis — to compare each reading against a rolling baseline window. When a reading deviates beyond the configured threshold, a risk score (0–100) is calculated and a rule is triggered (energy_spike_gap or energy_drop_gap).</div>
+                    <div class="faq-a">The engine uses statistical anomaly detection â€” Z-score and IQR (Interquartile Range) analysis â€” to compare each reading against a rolling baseline window. When a reading deviates beyond the configured threshold, a risk score (0â€“100) is calculated and a rule is triggered (energy_spike_gap or energy_drop_gap).</div>
                 </div>
 
                 <div class="faq-item">
                     <div class="faq-q" onclick="toggleFaq(this)">
                         What do the risk levels mean?
-                        <span class="faq-arrow">▼</span>
+                        <span class="faq-arrow">â–¼</span>
                     </div>
                     <div class="faq-a">
-                        <span class="risk-badge risk-low">LOW</span> 0–39 — Normal variation, no action needed.<br>
-                        <span class="risk-badge risk-med">MEDIUM</span> 40–59 — Minor anomaly, monitor closely.<br>
-                        <span class="risk-badge risk-high">HIGH</span> 60–79 — Likely attack, investigate meter.<br>
-                        <span class="risk-badge risk-crit">CRITICAL</span> 80–100 — Confirmed FDIA, immediate action required.
+                        <span class="risk-badge risk-low">LOW</span> 0â€“39 â€” Normal variation, no action needed.<br>
+                        <span class="risk-badge risk-med">MEDIUM</span> 40â€“59 â€” Minor anomaly, monitor closely.<br>
+                        <span class="risk-badge risk-high">HIGH</span> 60â€“79 â€” Likely attack, investigate meter.<br>
+                        <span class="risk-badge risk-crit">CRITICAL</span> 80â€“100 â€” Confirmed FDIA, immediate action required.
                     </div>
                 </div>
 
                 <div class="faq-item">
                     <div class="faq-q" onclick="toggleFaq(this)">
                         How do I update the database with new data?
-                        <span class="faq-arrow">▼</span>
+                        <span class="faq-arrow">â–¼</span>
                     </div>
-                    <div class="faq-a">Place updated CSV files (meter_data.csv, attacked_meter_data.csv, detection_results.csv) into the <strong>Database/</strong> folder, then run <strong>python import_data.py</strong> from the Backend directory. Alert history is preserved — only meter and attack data is replaced.</div>
+                    <div class="faq-a">Place updated CSV files (meter_data.csv, attacked_meter_data.csv, detection_results.csv) into the <strong>Database/</strong> folder, then run <strong>python import_data.py</strong> from the Backend directory. Alert history is preserved â€” only meter and attack data is replaced.</div>
                 </div>
 
                 <div class="faq-item">
                     <div class="faq-q" onclick="toggleFaq(this)">
                         Why can't other computers access the dashboard?
-                        <span class="faq-arrow">▼</span>
+                        <span class="faq-arrow">â–¼</span>
                     </div>
                     <div class="faq-a">The dashboard must be accessed via the host machine's network IP (e.g. <strong>http://10.5.50.104:3000</strong>), not 127.0.0.1. The Flask backend must be started with <strong>host='0.0.0.0'</strong> to accept connections from other devices on the same network.</div>
                 </div>
@@ -479,7 +479,7 @@
                 <div class="faq-item">
                     <div class="faq-q" onclick="toggleFaq(this)">
                         How do I add a new user account?
-                        <span class="faq-arrow">▼</span>
+                        <span class="faq-arrow">â–¼</span>
                     </div>
                     <div class="faq-a">Go to the Login page and click <strong>Create Account</strong>. Enter a name, bill number and password (min 6 characters). Roles available: <strong>analyst</strong> (default), <strong>engineer</strong>, or <strong>admin</strong>. To reset a password, use <strong>Forgot Password</strong> on the login screen.</div>
                 </div>
@@ -488,23 +488,23 @@
                     <div class="sec-title" style="margin-bottom:10px">Quick Start Guide</div>
                     <div class="help-step">
                         <div class="step-num">1</div>
-                        <div class="step-text"><strong>Start the backend</strong> — Run <code style="color:var(--cyan);font-size:0.72rem">python app.py</code> from the Backend folder. Flask starts on port 5000.</div>
+                        <div class="step-text"><strong>Start the backend</strong> â€” Run <code style="color:var(--cyan);font-size:0.72rem">python app.py</code> from the Backend folder. Flask starts on port 5000.</div>
                     </div>
                     <div class="help-step">
                         <div class="step-num">2</div>
-                        <div class="step-text"><strong>Serve the frontend</strong> — Run <code style="color:var(--cyan);font-size:0.72rem">python -m http.server 3000</code> from the Frontend folder.</div>
+                        <div class="step-text"><strong>Serve the frontend</strong> â€” Run <code style="color:var(--cyan);font-size:0.72rem">python -m http.server 3000</code> from the Frontend folder.</div>
                     </div>
                     <div class="help-step">
                         <div class="step-num">3</div>
-                        <div class="step-text"><strong>Import data</strong> — Run <code style="color:var(--cyan);font-size:0.72rem">python import_data.py</code> from Backend to load CSV data into PostgreSQL.</div>
+                        <div class="step-text"><strong>Import data</strong> â€” Run <code style="color:var(--cyan);font-size:0.72rem">python import_data.py</code> from Backend to load CSV data into PostgreSQL.</div>
                     </div>
                     <div class="help-step">
                         <div class="step-num">4</div>
-                        <div class="step-text"><strong>Open dashboard</strong> — Navigate to <code style="color:var(--cyan);font-size:0.72rem">http://localhost:3000/login.html</code> and sign in.</div>
+                        <div class="step-text"><strong>Open dashboard</strong> â€” Navigate to <code style="color:var(--cyan);font-size:0.72rem">http://localhost:3000/login.html</code> and sign in.</div>
                     </div>
                     <div class="help-step">
                         <div class="step-num">5</div>
-                        <div class="step-text"><strong>Monitor attacks</strong> — Use the <strong>Dashboard</strong> for live stats, <strong>Analytics</strong> for trends, and <strong>Alert History</strong> for all detected events.</div>
+                        <div class="step-text"><strong>Monitor attacks</strong> â€” Use the <strong>Dashboard</strong> for live stats, <strong>Analytics</strong> for trends, and <strong>Alert History</strong> for all detected events.</div>
                     </div>
                 </div>
             </div>
@@ -513,7 +513,7 @@
             <div>
                 <div class="sec-title" style="margin-bottom:10px">Contact & Support</div>
                 <div class="contact-item">
-                    <div class="contact-icon">📧</div>
+                    <div class="contact-icon">ðŸ“§</div>
                     <div class="contact-info">
                         <div class="contact-label">Team Email</div>
                         <div class="contact-val">tchna222222@gmail.com</div>
@@ -528,7 +528,7 @@
     <div class="card" style="text-align:center;padding:24px">
         <div style="font-family:var(--display);font-size:1rem;font-weight:600;letter-spacing:2px;color:var(--text2);margin-bottom:14px">SAVE ALL SETTINGS</div>
         <div style="display:flex;justify-content:center;gap:12px">
-            <button class="save-btn" style="padding:12px 40px;font-size:0.9rem" onclick="saveAll()">✓ Save All Changes</button>
+            <button class="save-btn" style="padding:12px 40px;font-size:0.9rem" onclick="saveAll()">âœ“ Save All Changes</button>
             <button class="reset-btn" style="padding:12px 28px" onclick="resetAll()">Reset All to Default</button>
         </div>
     </div>
@@ -544,7 +544,7 @@
 <script>
 const API = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
     ? `http://${window.location.hostname}:5000`
-    : 'https://ecometer-api.onrender.com';
+    : 'https://ecometer-integrity-production.up.railway.app';
 function authHeaders() { const t = sessionStorage.getItem('ecometer_token'); return t ? { 'Authorization': `Bearer ${t}` } : {}; }
 const _sess = JSON.parse(sessionStorage.getItem('ecometer_user') || '{}');
 if (!_sess.name) { window.location.href = 'login.html'; }
@@ -567,7 +567,7 @@ function showToast(msg, isError = false) {
 }
 
 function saveThresholds() {
-    showToast('✓ Detection thresholds saved successfully!');
+    showToast('âœ“ Detection thresholds saved successfully!');
 }
 
 function resetThresholds() {
@@ -581,15 +581,15 @@ function resetThresholds() {
     document.getElementById('noise-threshold-val').textContent = '10%';
     document.getElementById('baseline-window').value = 24;
     document.getElementById('baseline-window-val').textContent = '24';
-    showToast('✓ Thresholds reset to default values!');
+    showToast('âœ“ Thresholds reset to default values!');
 }
 
 function saveNotifications() {
-    showToast('✓ Notification settings saved!');
+    showToast('âœ“ Notification settings saved!');
 }
 
 function saveDatabase() {
-    showToast('✓ Database settings saved!');
+    showToast('âœ“ Database settings saved!');
 }
 
 async function testConnection() {
@@ -597,18 +597,18 @@ async function testConnection() {
     try {
         const res = await fetch(`${API}/`, { headers: authHeaders() });
         if (res.ok) {
-            document.getElementById('flask-status').textContent = '● Running';
+            document.getElementById('flask-status').textContent = 'â— Running';
             document.getElementById('flask-status').className = 'status-value status-dot-connected';
-            document.getElementById('db-status-badge').textContent = '● Connected';
+            document.getElementById('db-status-badge').textContent = 'â— Connected';
             document.getElementById('db-status-badge').className = 'db-badge connected';
-            showToast('✓ Connection successful! Flask & PostgreSQL are running.');
+            showToast('âœ“ Connection successful! Flask & PostgreSQL are running.');
         }
     } catch (e) {
-        document.getElementById('flask-status').textContent = '● Not Running';
+        document.getElementById('flask-status').textContent = 'â— Not Running';
         document.getElementById('flask-status').className = 'status-value status-dot-error';
-        document.getElementById('db-status-badge').textContent = '● Disconnected';
+        document.getElementById('db-status-badge').textContent = 'â— Disconnected';
         document.getElementById('db-status-badge').className = 'db-badge disconnected';
-        showToast('⚠ Cannot connect to Flask backend!', true);
+        showToast('âš  Cannot connect to Flask backend!', true);
     }
 }
 
@@ -626,44 +626,44 @@ async function testAllEndpoints() {
             const res = await fetch(`${API}${ep.url}`, { headers: authHeaders() });
             const el = document.getElementById(ep.id);
             if (res.ok) {
-                el.textContent = '● Active';
+                el.textContent = 'â— Active';
                 el.className = 'status-value status-dot-connected';
             } else {
-                el.textContent = '● Error';
+                el.textContent = 'â— Error';
                 el.className = 'status-value status-dot-error';
                 allOk = false;
             }
         } catch (e) {
             const el = document.getElementById(ep.id);
-            el.textContent = '● Offline';
+            el.textContent = 'â— Offline';
             el.className = 'status-value status-dot-error';
             allOk = false;
         }
     }
-    showToast(allOk ? '✓ All endpoints are active!' : '⚠ Some endpoints are offline!', !allOk);
+    showToast(allOk ? 'âœ“ All endpoints are active!' : 'âš  Some endpoints are offline!', !allOk);
 }
 
 function confirmClear() {
-    if (confirm('⚠ Are you sure you want to clear ALL data from the database?\n\nThis action cannot be undone!')) {
-        showToast('⚠ Data cleared! Run import_data.py to reload.', true);
+    if (confirm('âš  Are you sure you want to clear ALL data from the database?\n\nThis action cannot be undone!')) {
+        showToast('âš  Data cleared! Run import_data.py to reload.', true);
     }
 }
 
 function confirmReset() {
-    if (confirm('⚠ Are you sure you want to reset the entire system?\n\nAll settings will return to default!')) {
+    if (confirm('âš  Are you sure you want to reset the entire system?\n\nAll settings will return to default!')) {
         resetThresholds();
-        showToast('⚠ System reset to default settings!', true);
+        showToast('âš  System reset to default settings!', true);
     }
 }
 
 function saveAll() {
-    showToast('✓ All settings saved successfully!');
+    showToast('âœ“ All settings saved successfully!');
 }
 
 function resetAll() {
     if (confirm('Reset ALL settings to default values?')) {
         resetThresholds();
-        showToast('✓ All settings reset to default!');
+        showToast('âœ“ All settings reset to default!');
     }
 }
 
@@ -680,15 +680,15 @@ async function loadDataCounts() {
         document.getElementById('count-meter').textContent = mD.length.toLocaleString() + ' rows';
         document.getElementById('count-attacked').textContent = aD.length.toLocaleString() + ' rows';
         document.getElementById('count-detection').textContent = dD.length.toLocaleString() + ' rows';
-        document.getElementById('flask-status').textContent = '● Running';
+        document.getElementById('flask-status').textContent = 'â— Running';
         document.getElementById('flask-status').className = 'status-value status-dot-connected';
     } catch (e) {
         document.getElementById('count-meter').textContent = 'N/A';
         document.getElementById('count-attacked').textContent = 'N/A';
         document.getElementById('count-detection').textContent = 'N/A';
-        document.getElementById('flask-status').textContent = '● Not Running';
+        document.getElementById('flask-status').textContent = 'â— Not Running';
         document.getElementById('flask-status').className = 'status-value status-dot-error';
-        document.getElementById('db-status-badge').textContent = '● Disconnected';
+        document.getElementById('db-status-badge').textContent = 'â— Disconnected';
         document.getElementById('db-status-badge').className = 'db-badge disconnected';
     }
 }
@@ -711,3 +711,4 @@ document.addEventListener('keydown', e => {
 </script>
 </body>
 </html>
+
