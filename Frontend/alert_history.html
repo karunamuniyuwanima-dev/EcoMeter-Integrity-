@@ -191,6 +191,20 @@
         <button class="notif-btn" style="margin-left:auto">🔔</button>
     </div>
 </header>
+<script>
+(function(){
+    const u = JSON.parse(sessionStorage.getItem('ecometer_user')||'{}');
+    if(u.role !== 'admin'){
+        document.querySelectorAll('.nav-btn').forEach(btn=>{
+            if(btn.textContent.trim()==='User Management'){
+                const prev = btn.previousElementSibling;
+                if(prev && prev.classList.contains('nav-sep')) prev.remove();
+                btn.remove();
+            }
+        });
+    }
+})();
+</script>
 
 <main>
 
@@ -489,11 +503,14 @@ async function init() {
         allData = await res.json();
         filteredData = [...allData];
 
-        // Populate attack type filter
+        // Populate attack type filter with friendly labels
+        const typeLabels = { spike: 'Energy Spike', stealth_reduce: 'Stealth Reduction', noise: 'Noise Pattern', none: 'No Attack' };
         const types = [...new Set(allData.map(d => d.attack_type).filter(Boolean))].sort();
         const select = document.getElementById('attack-type-filter');
+        select.innerHTML = '<option value="all">All Types</option>';
         types.forEach(t => {
-            select.innerHTML += `<option value="${t}">${t}</option>`;
+            const label = typeLabels[t] || t.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+            select.innerHTML += `<option value="${t}">${label}</option>`;
         });
 
         renderAll();
