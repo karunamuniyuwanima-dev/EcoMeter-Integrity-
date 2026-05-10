@@ -239,7 +239,7 @@
             <span>User: Admin</span>
             <span class="sep">|</span>
             <span>Role: Admin</span>
-            <button class="notif-btn" style="margin-left:8px">🔔</button><div class="user-btn"><div class="dot"></div>👤 User: Admin</div>
+            <div class="user-btn"><div class="dot"></div>👤 User: Admin</div>
         </div>
     </div>
     <div class="header-nav">
@@ -254,6 +254,7 @@
         <button class="nav-btn" onclick="location.href='analytics.html'">Analytics</button>
         <span class="nav-sep">|</span>
         <button class="nav-btn" onclick="location.href='settings.html'">Settings</button>
+        <button class="notif-btn" style="margin-left:auto">🔔</button>
     </div>
 </header>
 
@@ -272,14 +273,12 @@
         <div class="card">
             <div class="card-head">
                 <div class="card-title">Energy Usage Chart (Line Graph)</div>
-                <div class="card-tag">NORMAL VS ATTACKED</div>
             </div>
             <canvas id="energyChart" height="90"></canvas>
         </div>
         <div class="card">
             <div class="card-head">
                 <div class="card-title">Risk Distribution</div>
-                <div class="card-tag">DONUT</div>
             </div>
             <canvas id="pieChart" height="175"></canvas>
             <div class="pie-lbl">Latest Three Months</div>
@@ -290,7 +289,6 @@
         <div class="card">
             <div class="card-head">
                 <div class="card-title">Anomaly Alerts</div>
-                <div class="card-tag">LIVE</div>
             </div>
             <div class="alert-list" id="alert-list">
                 <div class="loading"><div class="spin"></div>LOADING</div>
@@ -300,7 +298,6 @@
         <div class="card">
             <div class="card-head">
                 <div class="card-title">Risk Indicator</div>
-                <div class="card-tag">SCORES</div>
             </div>
             <div class="risk-grid">
                 <div class="risk-box r-h"><div class="risk-box-lbl">High</div><div class="risk-box-val" id="r1">--</div></div>
@@ -313,7 +310,6 @@
         <div class="card">
             <div class="card-head">
                 <div class="card-title">Attack Types</div>
-                <div class="card-tag">BREAKDOWN</div>
             </div>
             <div class="atk-list" id="atk-list">
                 <div class="loading"><div class="spin"></div>LOADING</div>
@@ -324,7 +320,6 @@
     <div class="card">
         <div class="card-head">
             <div class="card-title">Energy Data Table</div>
-            <div class="card-tag">LATEST 50 RECORDS</div>
         </div>
         <div class="table-wrap">
             <table>
@@ -350,7 +345,7 @@
 
 </main>
 
-<footer>ECOMETER INTEGRITY — CYBERSECURITY PROTECTION FRAMEWORK FOR SMART ENERGY METER SYSTEMS &nbsp;|&nbsp; GROUP 24 | CSG3101 | EDITH COWAN UNIVERSITY</footer>
+<footer></footer>
 </div>
 
 <script>

@@ -153,7 +153,7 @@
             <span>User: Admin</span>
             <span style="color:var(--border2)">|</span>
             <span>Role: Admin</span>
-            <button class="notif-btn" style="margin-left:8px">🔔</button><div class="user-btn"><div class="dot"></div>👤 User: Admin</div>
+            <div class="user-btn"><div class="dot"></div>👤 User: Admin</div>
         </div>
     </div>
     <div class="header-nav">
@@ -168,6 +168,7 @@
         <button class="nav-btn" onclick="location.href='analytics.html'">Analytics</button>
         <span class="nav-sep">|</span>
         <button class="nav-btn" onclick="location.href='settings.html'">Settings</button>
+        <button class="notif-btn" style="margin-left:auto">🔔</button>
     </div>
 </header>
 
@@ -178,7 +179,6 @@
     <div class="card">
         <div class="card-head">
             <div class="card-title">Report Filters</div>
-            <div class="card-tag">CUSTOMIZE VIEW</div>
         </div>
         <div class="filter-row">
             <div class="filter-group">
@@ -222,14 +222,12 @@
         <div class="card">
             <div class="card-head">
                 <div class="card-title">Energy Consumption Over Time</div>
-                <div class="card-tag">LINE CHART</div>
             </div>
             <canvas id="energyTrendChart" height="110"></canvas>
         </div>
         <div class="card">
             <div class="card-head">
                 <div class="card-title">Attack Frequency Over Time</div>
-                <div class="card-tag">BAR CHART</div>
             </div>
             <canvas id="attackFreqChart" height="110"></canvas>
         </div>
@@ -240,7 +238,6 @@
         <div class="card">
             <div class="card-head">
                 <div class="card-title">Detection Accuracy</div>
-                <div class="card-tag">GAUGE</div>
             </div>
             <div class="accuracy-display">
                 <div class="accuracy-circle">
@@ -278,14 +275,12 @@
         <div class="card">
             <div class="card-head">
                 <div class="card-title">Risk Score Trend</div>
-                <div class="card-tag">LINE CHART</div>
             </div>
             <canvas id="riskTrendChart" height="130"></canvas>
         </div>
         <div class="card">
             <div class="card-head">
                 <div class="card-title">Attack Type Breakdown</div>
-                <div class="card-tag">PIE CHART</div>
             </div>
             <canvas id="attackTypeChart" height="130"></canvas>
         </div>
@@ -326,7 +321,7 @@
 
 </main>
 
-<footer>ECOMETER INTEGRITY — CYBERSECURITY PROTECTION FRAMEWORK FOR SMART ENERGY METER SYSTEMS &nbsp;|&nbsp; GROUP 24 | CSG3101 | EDITH COWAN UNIVERSITY</footer>
+<footer></footer>
 </div>
 
 <script>
