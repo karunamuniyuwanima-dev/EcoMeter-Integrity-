@@ -1,0 +1,819 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoMeter Integrity â€” Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&family=Exo+2:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #060d1a; --bg2: #0a1628; --bg3: #0d1f35;
+            --border: #1a3a5c; --border2: #1e4d7b;
+            --blue: #00a8ff; --cyan: #00e5ff; --green: #00e676;
+            --yellow: #ffd600; --orange: #ff6d00; --red: #ff1744;
+            --text: #e8f4fd; --text2: #7ba7c9; --text3: #3d6b8f;
+            --mono: 'Share Tech Mono', monospace;
+            --display: 'Rajdhani', sans-serif;
+            --body: 'Exo 2', sans-serif;
+        }
+
+        * { margin:0; padding:0; box-sizing:border-box; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--body);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(0,168,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,168,255,0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: repeating-linear-gradient(
+                0deg, transparent, transparent 2px,
+                rgba(0,168,255,0.012) 2px, rgba(0,168,255,0.012) 4px
+            );
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        .particles { position: fixed; inset: 0; overflow: hidden; z-index: 0; }
+        .particle {
+            position: absolute; width: 2px; height: 2px;
+            background: var(--blue); border-radius: 50%;
+            animation: float linear infinite; opacity: 0.4;
+        }
+        @keyframes float {
+            0%   { transform: translateY(100vh) translateX(0); opacity: 0; }
+            10%  { opacity: 0.4; }
+            90%  { opacity: 0.4; }
+            100% { transform: translateY(-100px) translateX(20px); opacity: 0; }
+        }
+
+        .login-wrap {
+            position: relative; z-index: 1;
+            display: flex; width: 100%; min-height: 100vh;
+        }
+
+        /* Left panel */
+        .left-panel {
+            flex: 1;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            padding: 40px;
+            background: linear-gradient(135deg, #060d1a 0%, #0a1628 50%, #060d1a 100%);
+            border-right: 1px solid var(--border2);
+            position: relative; overflow: hidden;
+        }
+        .left-panel::before {
+            content: '';
+            position: absolute; top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: radial-gradient(ellipse at center, rgba(0,168,255,0.05) 0%, transparent 60%);
+            animation: rotate 20s linear infinite;
+        }
+        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        .brand { position: relative; z-index: 1; text-align: center; margin-bottom: 40px; }
+        .brand-icon {
+            width: 80px; height: 80px;
+            background: linear-gradient(135deg, var(--blue), var(--cyan));
+            border-radius: 20px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 36px; margin: 0 auto 20px;
+            box-shadow: 0 0 40px rgba(0,168,255,0.4);
+            animation: glow 3s ease-in-out infinite;
+        }
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 40px rgba(0,168,255,0.4); }
+            50%       { box-shadow: 0 0 60px rgba(0,229,255,0.6); }
+        }
+        .brand-name { font-family: var(--display); font-size: 2.5rem; font-weight: 700; letter-spacing: 4px; }
+        .brand-name span { color: var(--cyan); }
+        .brand-sub { font-family: var(--mono); font-size: 0.72rem; color: var(--text3); letter-spacing: 2px; margin-top: 8px; }
+
+        .features { position: relative; z-index: 1; display: flex; flex-direction: column; gap: 16px; width: 100%; max-width: 380px; }
+        .feature-item {
+            display: flex; align-items: center; gap: 14px;
+            padding: 14px 18px;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid var(--border); border-radius: 10px;
+            transition: all 0.3s;
+        }
+        .feature-item:hover { border-color: var(--border2); background: rgba(0,168,255,0.05); }
+        .feature-icon { font-size: 1.4rem; flex-shrink: 0; }
+        .feature-text { flex: 1; }
+        .feature-title { font-family: var(--display); font-size: 0.85rem; font-weight: 600; letter-spacing: 1px; margin-bottom: 3px; }
+        .feature-desc { font-family: var(--mono); font-size: 0.62rem; color: var(--text3); }
+
+        .sys-stats { position: relative; z-index: 1; display: flex; gap: 20px; margin-top: 40px; }
+        .sys-stat { text-align: center; }
+        .sys-stat-val { font-family: var(--display); font-size: 1.4rem; font-weight: 700; color: var(--cyan); }
+        .sys-stat-lbl { font-family: var(--mono); font-size: 0.6rem; color: var(--text3); letter-spacing: 1px; }
+        .sys-stat-sep { width: 1px; background: var(--border2); }
+
+        /* Right panel */
+        .right-panel {
+            width: 500px;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            padding: 40px 36px;
+            background: var(--bg2);
+            overflow-y: auto;
+        }
+        .login-card { width: 100%; }
+
+        /* Tab navigation */
+        .tab-nav {
+            display: flex; gap: 3px;
+            background: var(--bg3);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 4px;
+            margin-bottom: 24px;
+        }
+        .tab-btn {
+            flex: 1; background: transparent; border: none;
+            border-radius: 7px; padding: 9px 4px;
+            color: var(--text3);
+            font-family: var(--display); font-size: 0.68rem;
+            font-weight: 600; letter-spacing: 0.5px;
+            text-transform: uppercase; cursor: pointer; transition: all 0.2s;
+        }
+        .tab-btn.active { background: linear-gradient(135deg, var(--blue), var(--cyan)); color: #000; }
+        .tab-btn:hover:not(.active) { color: var(--text); background: rgba(255,255,255,0.05); }
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
+
+        /* Form elements */
+        .login-title { font-family: var(--display); font-size: 1.6rem; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 6px; }
+        .login-title span { color: var(--cyan); }
+        .login-sub { font-family: var(--mono); font-size: 0.68rem; color: var(--text3); letter-spacing: 1px; margin-bottom: 22px; }
+
+        .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+        .form-label { font-family: var(--mono); font-size: 0.62rem; color: var(--text3); letter-spacing: 2px; text-transform: uppercase; }
+        .input-wrap { position: relative; }
+        .input-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 1rem; color: var(--text3); pointer-events: none; }
+        .form-input {
+            width: 100%; background: var(--bg3);
+            border: 1px solid var(--border2); border-radius: 8px;
+            padding: 12px 14px 12px 42px;
+            color: var(--text); font-family: var(--mono); font-size: 0.82rem;
+            outline: none; transition: all 0.2s;
+        }
+        .form-input:focus { border-color: var(--cyan); background: rgba(0,229,255,0.03); box-shadow: 0 0 0 3px rgba(0,229,255,0.08); }
+        .form-input::placeholder { color: var(--text3); }
+        .toggle-pass {
+            position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+            background: none; border: none; color: var(--text3); cursor: pointer;
+            font-size: 0.9rem; padding: 0; transition: color 0.2s;
+        }
+        .toggle-pass:hover { color: var(--cyan); }
+
+        .role-selector { display: flex; gap: 8px; margin-bottom: 16px; }
+        .role-btn {
+            flex: 1; background: var(--bg3);
+            border: 1px solid var(--border2); border-radius: 8px;
+            padding: 10px; text-align: center; cursor: pointer; transition: all 0.2s;
+        }
+        .role-btn.active { background: rgba(0,168,255,0.1); border-color: var(--blue); }
+        .role-btn-icon { font-size: 1.2rem; margin-bottom: 4px; }
+        .role-btn-name { font-family: var(--display); font-size: 0.72rem; font-weight: 600; letter-spacing: 1px; color: var(--text2); }
+        .role-btn.active .role-btn-name { color: var(--blue); }
+
+        .login-btn {
+            width: 100%; background: linear-gradient(135deg, var(--blue), var(--cyan));
+            border: none; border-radius: 8px; padding: 14px; color: #000;
+            font-family: var(--display); font-size: 1rem; font-weight: 700;
+            letter-spacing: 2px; text-transform: uppercase; cursor: pointer;
+            transition: all 0.2s; margin-top: 8px; position: relative; overflow: hidden;
+        }
+        .login-btn::before {
+            content: ''; position: absolute; top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        .login-btn:hover::before { left: 100%; }
+        .login-btn:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 8px 20px rgba(0,168,255,0.3); }
+        .login-btn:active { transform: translateY(0); }
+        .login-btn:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+
+        .error-msg {
+            display: none; background: rgba(255,23,68,0.1);
+            border: 1px solid rgba(255,23,68,0.3); border-radius: 6px;
+            padding: 10px 14px; font-family: var(--mono); font-size: 0.72rem;
+            color: var(--red); margin-top: 12px; text-align: center;
+        }
+        .success-msg {
+            display: none; background: rgba(0,230,118,0.1);
+            border: 1px solid rgba(0,230,118,0.3); border-radius: 6px;
+            padding: 10px 14px; font-family: var(--mono); font-size: 0.72rem;
+            color: var(--green); margin-top: 12px; text-align: center;
+        }
+        .error-msg.show { display: block; }
+        .success-msg.show { display: block; }
+
+        .divider { display: flex; align-items: center; gap: 12px; margin: 18px 0; }
+        .divider-line { flex: 1; height: 1px; background: var(--border); }
+        .divider-text { font-family: var(--mono); font-size: 0.62rem; color: var(--text3); letter-spacing: 2px; }
+
+
+        .login-footer { margin-top: 24px; text-align: center; font-family: var(--mono); font-size: 0.62rem; color: var(--text3); letter-spacing: 1px; }
+
+        .link-btn { color: var(--cyan); cursor: pointer; font-family: var(--mono); font-size: 0.68rem; text-decoration: underline; text-underline-offset: 3px; }
+        .link-btn:hover { color: var(--blue); }
+
+        .spin {
+            display: inline-block; width: 16px; height: 16px;
+            border: 2px solid rgba(0,0,0,0.3); border-top-color: #000;
+            border-radius: 50%; animation: spin 0.8s linear infinite;
+            vertical-align: middle; margin-right: 8px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        @media (max-width: 900px) {
+            .left-panel { display: none; }
+            .right-panel { width: 100%; padding: 40px 24px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="particles" id="particles"></div>
+
+<div class="login-wrap">
+
+    <!-- LEFT PANEL -->
+    <div class="left-panel">
+        <div class="brand">
+            <div class="brand-icon">âš¡</div>
+            <div class="brand-name">Eco<span>Meter</span></div>
+            <div class="brand-name" style="font-size:1.2rem;letter-spacing:6px;color:var(--text2)">INTEGRITY</div>
+            <div class="brand-sub">CYBERSECURITY MONITORING SYSTEM</div>
+        </div>
+        <div class="features">
+            <div class="feature-item">
+                <div class="feature-icon">ðŸ”</div>
+                <div class="feature-text">
+                    <div class="feature-title">Anomaly Detection</div>
+                    <div class="feature-desc">Real-time detection of False Data Injection Attacks</div>
+                </div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">âš¡</div>
+                <div class="feature-text">
+                    <div class="feature-title">Smart Meter Monitoring</div>
+                    <div class="feature-desc">Live energy consumption tracking across all meters</div>
+                </div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">âš ï¸</div>
+                <div class="feature-text">
+                    <div class="feature-title">Risk Assessment</div>
+                    <div class="feature-desc">Automated risk scoring with CRITICAL/HIGH/MEDIUM/LOW levels</div>
+                </div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">ðŸ“Š</div>
+                <div class="feature-text">
+                    <div class="feature-title">Interactive Dashboard</div>
+                    <div class="feature-desc">6-page analytics dashboard with real-time charts</div>
+                </div>
+            </div>
+        </div>
+        <div class="sys-stats">
+            <div class="sys-stat"><div class="sys-stat-val" id="stat-readings">--</div><div class="sys-stat-lbl">READINGS</div></div>
+            <div class="sys-stat-sep"></div>
+            <div class="sys-stat"><div class="sys-stat-val" id="stat-meters">--</div><div class="sys-stat-lbl">METERS</div></div>
+            <div class="sys-stat-sep"></div>
+            <div class="sys-stat"><div class="sys-stat-val" id="stat-attacks">--</div><div class="sys-stat-lbl">ATTACK TYPES</div></div>
+            <div class="sys-stat-sep"></div>
+            <div class="sys-stat"><div class="sys-stat-val" id="stat-uptime">99%</div><div class="sys-stat-lbl">UPTIME</div></div>
+        </div>
+    </div>
+
+    <!-- RIGHT PANEL -->
+    <div class="right-panel">
+        <div class="login-card">
+
+            <!-- TAB NAVIGATION (hidden â€” navigation via buttons inside panels) -->
+            <div class="tab-nav" style="display:none">
+                <button class="tab-btn active" id="tab-signin"   onclick="switchTab('signin')">ðŸ” Sign In</button>
+                <button class="tab-btn"         id="tab-register" onclick="switchTab('register')">âœš Create Account</button>
+                <button class="tab-btn"         id="tab-forgot"  onclick="switchTab('forgot')">ðŸ”‘ Forgot Password</button>
+            </div>
+
+            <!-- â”€â”€ SIGN IN PANEL â”€â”€ -->
+            <div class="tab-panel active" id="panel-signin">
+                <div class="login-title">Welcome <span>Back</span></div>
+                <div class="login-sub">SIGN IN TO YOUR ECOMETER ACCOUNT</div>
+
+                <div style="margin-bottom:14px">
+                    <div class="form-label" style="margin-bottom:8px">Select Role</div>
+                    <div class="role-selector">
+                        <div class="role-btn active" id="role-admin" onclick="selectRole('admin')"><div class="role-btn-icon">ðŸ”</div><div class="role-btn-name">ADMIN</div></div>
+                        <div class="role-btn"        id="role-user"  onclick="selectRole('user')"><div class="role-btn-icon">ðŸ‘¤</div><div class="role-btn-name">USER</div></div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="form-label">Bill Number</div>
+                    <div class="input-wrap">
+                        <span class="input-icon">ðŸ“‹</span>
+                        <input type="text" class="form-input" id="bill-number" placeholder="e.g. BILL-2026-001" autocomplete="off" onkeypress="if(event.key==='Enter') document.getElementById('password').focus()">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="form-label">Password</div>
+                    <div class="input-wrap">
+                        <span class="input-icon">ðŸ”‘</span>
+                        <input type="password" class="form-input" id="password" placeholder="Enter your password" onkeypress="if(event.key==='Enter') login()">
+                        <button class="toggle-pass" onclick="togglePass('password','toggle-btn')" id="toggle-btn">ðŸ‘</button>
+                    </div>
+                </div>
+
+                <button class="login-btn" onclick="login()" id="login-btn">Login to Dashboard</button>
+                <div class="error-msg"   id="error-msg">âš  Invalid bill number or password.</div>
+                <div class="success-msg" id="success-msg">âœ“ Login successful! Redirecting...</div>
+
+                <button class="login-btn" onclick="switchTab('forgot')" style="margin-top:10px;background:transparent;border:1px solid var(--border2);color:var(--text2);font-size:0.78rem;">
+                    ðŸ”‘ Forgot Password?
+                </button>
+
+                <div style="display:flex;align-items:center;gap:10px;margin-top:14px">
+                    <div style="flex:1;height:1px;background:var(--border)"></div>
+                    <span style="font-family:var(--mono);font-size:0.6rem;color:var(--text3);letter-spacing:1px">OR</span>
+                    <div style="flex:1;height:1px;background:var(--border)"></div>
+                </div>
+
+                <button class="login-btn" onclick="switchTab('register')" style="margin-top:14px;background:rgba(0,230,118,0.08);border:1px solid rgba(0,230,118,0.3);color:var(--green);font-size:0.82rem;">
+                    âœš Sign In
+                </button>
+
+            </div>
+
+            <!-- â”€â”€ CREATE ACCOUNT PANEL â”€â”€ -->
+            <div class="tab-panel" id="panel-register">
+                <div class="login-title">Create <span>Account</span></div>
+                <div class="login-sub">REGISTER A NEW ECOMETER ACCOUNT</div>
+
+                <div class="form-group">
+                    <div class="form-label">Full Name</div>
+                    <div class="input-wrap">
+                        <span class="input-icon">ðŸ‘¤</span>
+                        <input type="text" class="form-input" id="reg-name" placeholder="e.g. Jane Smith">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="form-label">Email Address</div>
+                    <div class="input-wrap">
+                        <span class="input-icon">ðŸ“§</span>
+                        <input type="email" class="form-input" id="reg-email" placeholder="e.g. jane@email.com">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="form-label">Bill Number</div>
+                    <div class="input-wrap">
+                        <span class="input-icon">ðŸ“‹</span>
+                        <input type="text" class="form-input" id="reg-bill" placeholder="e.g. BILL-2026-006">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="form-label">Password</div>
+                    <div class="input-wrap">
+                        <span class="input-icon">ðŸ”‘</span>
+                        <input type="password" class="form-input" id="reg-password" placeholder="Min. 6 characters">
+                        <button class="toggle-pass" onclick="togglePass('reg-password','reg-toggle')" id="reg-toggle">ðŸ‘</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="form-label">Confirm Password</div>
+                    <div class="input-wrap">
+                        <span class="input-icon">ðŸ”’</span>
+                        <input type="password" class="form-input" id="reg-confirm" placeholder="Re-enter password" onkeypress="if(event.key==='Enter') register()">
+                    </div>
+                </div>
+
+                <div style="margin-bottom:16px">
+                    <div class="form-label" style="margin-bottom:8px">Role</div>
+                    <div class="role-selector">
+                        <div class="role-btn active" id="reg-role-admin" onclick="selectRegRole('admin')"><div class="role-btn-icon">ðŸ”</div><div class="role-btn-name">ADMIN</div></div>
+                        <div class="role-btn"        id="reg-role-user"  onclick="selectRegRole('user')"><div class="role-btn-icon">ðŸ‘¤</div><div class="role-btn-name">USER</div></div>
+                    </div>
+                </div>
+
+                <button class="login-btn" onclick="register()" id="reg-btn" style="background:linear-gradient(135deg,#00e676,#00bfa5)">
+                    Create Account
+                </button>
+                <div class="error-msg"   id="reg-error">âš  Please fill in all fields.</div>
+                <div class="success-msg" id="reg-success">âœ“ Account created! Redirecting...</div>
+
+                <button class="login-btn" onclick="switchTab('signin')" style="margin-top:10px;background:transparent;border:1px solid var(--border2);color:var(--text2);font-size:0.78rem;">
+                    Already have an account? Sign In
+                </button>
+            </div>
+
+            <!-- â”€â”€ FORGOT PASSWORD PANEL â”€â”€ -->
+            <div class="tab-panel" id="panel-forgot">
+                <div class="login-title">Reset <span>Password</span></div>
+                <div class="login-sub">ENTER YOUR EMAIL TO RECEIVE AN OTP</div>
+
+                <!-- Step 1: Enter email -->
+                <div id="fp-step1">
+                    <div class="form-group">
+                        <div class="form-label">Email Address</div>
+                        <div class="input-wrap">
+                            <span class="input-icon">ðŸ“§</span>
+                            <input type="email" class="form-input" id="forgot-email" placeholder="Enter your registered email" onkeypress="if(event.key==='Enter') sendOtp()">
+                        </div>
+                    </div>
+                    <button class="login-btn" onclick="sendOtp()" id="send-otp-btn" style="background:linear-gradient(135deg,#ff6d00,#ff1744)">
+                        Send OTP
+                    </button>
+                </div>
+
+                <!-- Step 2: Enter OTP -->
+                <div id="fp-step2" style="display:none; margin-top:4px;">
+                    <div style="font-family:var(--mono);font-size:0.72rem;color:var(--text2);margin-bottom:14px;padding:10px 14px;background:rgba(0,229,255,0.05);border:1px solid rgba(0,229,255,0.15);border-radius:6px;">
+                        ðŸ“§ OTP sent to <span id="otp-sent-to" style="color:var(--cyan)"></span><br>
+                        <span style="font-size:0.65rem;color:var(--text3)">Valid for 5 minutes. Check your inbox.</span>
+                    </div>
+                    <div class="form-group">
+                        <div class="form-label">Enter OTP Code</div>
+                        <div class="input-wrap">
+                            <span class="input-icon">ðŸ”¢</span>
+                            <input type="text" class="form-input" id="otp-input" placeholder="6-digit code" maxlength="6" style="letter-spacing:6px;font-size:1.1rem;text-align:center;" onkeypress="if(event.key==='Enter') verifyOtp()">
+                        </div>
+                    </div>
+                    <button class="login-btn" onclick="verifyOtp()" id="verify-otp-btn" style="background:linear-gradient(135deg,#ffd600,#ff6d00);color:#000">
+                        Verify OTP
+                    </button>
+                    <div style="text-align:center;margin-top:10px;font-family:var(--mono);font-size:0.65rem;color:var(--text3)">
+                        Didn't receive it? <span class="link-btn" onclick="resetForgotForm()">Try again</span>
+                    </div>
+                </div>
+
+                <!-- Step 3: Set new password -->
+                <div id="fp-step3" style="display:none; margin-top:4px;">
+                    <div style="font-family:var(--mono);font-size:0.72rem;color:var(--green);margin-bottom:14px;padding:10px 14px;background:rgba(0,230,118,0.05);border:1px solid rgba(0,230,118,0.2);border-radius:6px;">
+                        âœ“ OTP verified! Set your new password below.
+                    </div>
+                    <div class="form-group">
+                        <div class="form-label">New Password</div>
+                        <div class="input-wrap">
+                            <span class="input-icon">ðŸ”‘</span>
+                            <input type="password" class="form-input" id="new-password" placeholder="Min. 6 characters">
+                            <button class="toggle-pass" onclick="togglePass('new-password','np-toggle')" id="np-toggle">ðŸ‘</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="form-label">Confirm New Password</div>
+                        <div class="input-wrap">
+                            <span class="input-icon">ðŸ”’</span>
+                            <input type="password" class="form-input" id="confirm-new-password" placeholder="Re-enter new password" onkeypress="if(event.key==='Enter') resetPassword()">
+                        </div>
+                    </div>
+                    <button class="login-btn" onclick="resetPassword()" id="reset-pass-btn" style="background:linear-gradient(135deg,#00e676,#00bfa5)">
+                        Reset Password
+                    </button>
+                </div>
+
+                <div class="error-msg"   id="forgot-error"></div>
+                <div class="success-msg" id="forgot-success"></div>
+
+                <button class="login-btn" onclick="switchTab('signin')" style="margin-top:10px;background:transparent;border:1px solid var(--border2);color:var(--text2);font-size:0.78rem;">
+                    Remember your password? Sign In
+                </button>
+            </div>
+
+
+        </div>
+    </div>
+
+</div>
+
+<script>
+    const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+        ? `http://${window.location.hostname}:5000`
+        : 'https://ecometer-integrity-production.up.railway.app';
+
+    let selectedRole    = 'admin';
+    let selectedRegRole = 'admin';
+    let verifiedBill    = null;
+
+    // â”€â”€ Tabs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    function switchTab(tab) {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        document.getElementById('tab-' + tab).classList.add('active');
+        document.getElementById('panel-' + tab).classList.add('active');
+        if (tab !== 'forgot') resetForgotForm();
+    }
+
+    // â”€â”€ Role selectors â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    function selectRole(role) {
+        selectedRole = role;
+        ['admin','user'].forEach(r => document.getElementById('role-' + r).classList.remove('active'));
+        document.getElementById('role-' + role).classList.add('active');
+    }
+
+    function selectRegRole(role) {
+        selectedRegRole = role;
+        ['admin','user'].forEach(r => document.getElementById('reg-role-' + r).classList.remove('active'));
+        document.getElementById('reg-role-' + role).classList.add('active');
+    }
+
+    // â”€â”€ Password toggle â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    function togglePass(inputId, btnId) {
+        const el  = document.getElementById(inputId);
+        const btn = document.getElementById(btnId);
+        if (el.type === 'password') { el.type = 'text';     btn.textContent = 'ðŸ™ˆ'; }
+        else                        { el.type = 'password'; btn.textContent = 'ðŸ‘'; }
+    }
+
+
+    // â”€â”€ Sign In â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    async function login() {
+        const bill     = document.getElementById('bill-number').value.trim();
+        const password = document.getElementById('password').value;
+        const btn      = document.getElementById('login-btn');
+        const errEl    = document.getElementById('error-msg');
+        const okEl     = document.getElementById('success-msg');
+
+        errEl.classList.remove('show');
+        okEl.classList.remove('show');
+
+        if (!bill || !password) {
+            errEl.textContent = 'âš  Please enter your Bill Number and Password.';
+            errEl.classList.add('show'); return;
+        }
+
+        btn.innerHTML = '<span class="spin"></span> Authenticating...';
+        btn.disabled  = true;
+
+        try {
+            const res  = await fetch(`${API_BASE}/api/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ bill, password })
+            });
+            const data = await res.json();
+
+            if (data.success) {
+                sessionStorage.setItem('ecometer_user', JSON.stringify({
+                    name: data.name, role: data.role, bill: data.bill,
+                    loginTime: new Date().toISOString()
+                }));
+                sessionStorage.setItem('ecometer_token', data.token);
+                okEl.textContent = 'âœ“ Welcome ' + data.name + '! Redirecting...';
+                okEl.classList.add('show');
+                btn.innerHTML = 'âœ“ Login Successful!';
+                setTimeout(() => { window.location.href = 'index.html'; }, 1500);
+            } else {
+                errEl.textContent = 'âš  ' + (data.error || 'Invalid bill number or password.');
+                errEl.classList.add('show');
+                btn.innerHTML = 'Login to Dashboard';
+                btn.disabled  = false;
+            }
+        } catch (e) {
+            errEl.textContent = 'âš  Cannot connect to server. Make sure Flask is running on port 5000.';
+            errEl.classList.add('show');
+            btn.innerHTML = 'Login to Dashboard';
+            btn.disabled  = false;
+        }
+    }
+
+    // â”€â”€ Create Account â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    async function register() {
+        const name     = document.getElementById('reg-name').value.trim();
+        const email    = document.getElementById('reg-email').value.trim();
+        const bill     = document.getElementById('reg-bill').value.trim();
+        const password = document.getElementById('reg-password').value;
+        const confirm  = document.getElementById('reg-confirm').value;
+        const btn      = document.getElementById('reg-btn');
+        const errEl    = document.getElementById('reg-error');
+        const okEl     = document.getElementById('reg-success');
+
+        errEl.classList.remove('show');
+        okEl.classList.remove('show');
+
+        if (!name || !email || !bill || !password || !confirm) {
+            errEl.textContent = 'âš  Please fill in all fields.'; errEl.classList.add('show'); return;
+        }
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            errEl.textContent = 'âš  Please enter a valid email address.'; errEl.classList.add('show'); return;
+        }
+        if (password !== confirm) {
+            errEl.textContent = 'âš  Passwords do not match.'; errEl.classList.add('show'); return;
+        }
+        if (password.length < 6) {
+            errEl.textContent = 'âš  Password must be at least 6 characters.'; errEl.classList.add('show'); return;
+        }
+
+        btn.innerHTML = '<span class="spin"></span> Creating account...';
+        btn.disabled  = true;
+
+        try {
+            const res  = await fetch(`${API_BASE}/api/register`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email, bill, password, role: selectedRegRole })
+            });
+            const data = await res.json();
+
+            if (data.success) {
+                sessionStorage.setItem('ecometer_user', JSON.stringify({
+                    name: data.name, role: data.role, bill: data.bill,
+                    loginTime: new Date().toISOString()
+                }));
+                sessionStorage.setItem('ecometer_token', data.token);
+                okEl.textContent = 'âœ“ Account created! Welcome ' + data.name + '!';
+                okEl.classList.add('show');
+                btn.innerHTML = 'âœ“ Account Created!';
+                setTimeout(() => { window.location.href = 'index.html'; }, 1500);
+            } else {
+                errEl.textContent = 'âš  ' + (data.error || 'Registration failed.');
+                errEl.classList.add('show');
+                btn.innerHTML = 'Create Account';
+                btn.disabled  = false;
+            }
+        } catch (e) {
+            errEl.textContent = 'âš  Cannot connect to server. Make sure Flask is running.';
+            errEl.classList.add('show');
+            btn.innerHTML = 'Create Account';
+            btn.disabled  = false;
+        }
+    }
+
+    let verifiedEmail = null;
+    let verifiedOtp   = null;
+
+    function fpErr(msg)  { const e = document.getElementById('forgot-error');   e.textContent = 'âš  ' + msg; e.classList.add('show'); }
+    function fpOk(msg)   { const e = document.getElementById('forgot-success'); e.textContent = 'âœ“ ' + msg; e.classList.add('show'); }
+    function fpClear()   { document.getElementById('forgot-error').classList.remove('show'); document.getElementById('forgot-success').classList.remove('show'); }
+
+    function resetForgotForm() {
+        document.getElementById('fp-step1').style.display = '';
+        document.getElementById('fp-step2').style.display = 'none';
+        document.getElementById('fp-step3').style.display = 'none';
+        document.getElementById('forgot-email').value = '';
+        document.getElementById('otp-input').value    = '';
+        document.getElementById('send-otp-btn').innerHTML = 'Send OTP';
+        document.getElementById('send-otp-btn').disabled  = false;
+        verifiedEmail = null; verifiedOtp = null;
+        fpClear();
+    }
+
+    // â”€â”€ Step 1: Send OTP to email â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    async function sendOtp() {
+        const email = document.getElementById('forgot-email').value.trim();
+        const btn   = document.getElementById('send-otp-btn');
+        fpClear();
+        if (!email) { fpErr('Please enter your email address.'); return; }
+
+        btn.innerHTML = '<span class="spin"></span> Sending OTP...';
+        btn.disabled  = true;
+        try {
+            const res  = await fetch(`${API_BASE}/api/send-otp`, {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email })
+            });
+            const data = await res.json();
+            if (data.success) {
+                verifiedEmail = email;
+                document.getElementById('otp-sent-to').textContent = email;
+                document.getElementById('fp-step1').style.display = 'none';
+                document.getElementById('fp-step2').style.display = '';
+                // Demo mode: show OTP on screen if email not configured
+                if (data.demo_otp) {
+                    fpOk(`Demo mode â€” your OTP is: ${data.demo_otp}`);
+                }
+            } else {
+                fpErr(data.error || 'Could not send OTP.');
+                btn.innerHTML = 'Send OTP'; btn.disabled = false;
+            }
+        } catch (e) {
+            fpErr('Cannot connect to server.');
+            btn.innerHTML = 'Send OTP'; btn.disabled = false;
+        }
+    }
+
+    // â”€â”€ Step 2: Verify OTP â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    async function verifyOtp() {
+        const otp = document.getElementById('otp-input').value.trim();
+        const btn = document.getElementById('verify-otp-btn');
+        fpClear();
+        if (!otp || otp.length !== 6) { fpErr('Please enter the 6-digit OTP.'); return; }
+
+        btn.innerHTML = '<span class="spin"></span> Verifying...';
+        btn.disabled  = true;
+        try {
+            const res  = await fetch(`${API_BASE}/api/verify-otp`, {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: verifiedEmail, otp })
+            });
+            const data = await res.json();
+            if (data.success) {
+                verifiedOtp = otp;
+                document.getElementById('fp-step2').style.display = 'none';
+                document.getElementById('fp-step3').style.display = '';
+            } else {
+                fpErr(data.error || 'Invalid OTP.');
+                btn.innerHTML = 'Verify OTP'; btn.disabled = false;
+            }
+        } catch (e) {
+            fpErr('Cannot connect to server.');
+            btn.innerHTML = 'Verify OTP'; btn.disabled = false;
+        }
+    }
+
+    // â”€â”€ Step 3: Reset password â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    async function resetPassword() {
+        const newPass  = document.getElementById('new-password').value;
+        const confPass = document.getElementById('confirm-new-password').value;
+        const btn      = document.getElementById('reset-pass-btn');
+        fpClear();
+        if (!newPass || !confPass) { fpErr('Please enter and confirm your new password.'); return; }
+        if (newPass !== confPass)  { fpErr('Passwords do not match.'); return; }
+        if (newPass.length < 6)   { fpErr('Password must be at least 6 characters.'); return; }
+
+        btn.innerHTML = '<span class="spin"></span> Resetting...';
+        btn.disabled  = true;
+        try {
+            const res  = await fetch(`${API_BASE}/api/reset-password`, {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: verifiedEmail, otp: verifiedOtp, new_password: newPass })
+            });
+            const data = await res.json();
+            if (data.success) {
+                fpOk('Password reset! Redirecting to sign in...');
+                btn.innerHTML = 'âœ“ Password Reset!';
+                setTimeout(() => { switchTab('signin'); resetForgotForm(); }, 2000);
+            } else {
+                fpErr(data.error || 'Password reset failed.');
+                btn.innerHTML = 'Reset Password'; btn.disabled = false;
+            }
+        } catch (e) {
+            fpErr('Cannot connect to server.');
+            btn.innerHTML = 'Reset Password'; btn.disabled = false;
+        }
+    }
+
+    // â”€â”€ Particles â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    function createParticles() {
+        const container = document.getElementById('particles');
+        for (let i = 0; i < 20; i++) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            p.style.left              = Math.random() * 100 + '%';
+            p.style.animationDuration = (Math.random() * 10 + 8) + 's';
+            p.style.animationDelay    = (Math.random() * 10) + 's';
+            p.style.width = p.style.height = (Math.random() * 3 + 1) + 'px';
+            container.appendChild(p);
+        }
+    }
+    createParticles();
+
+    // Load live stats from backend
+    (async function loadStats() {
+        try {
+            const res  = await fetch(`${API_BASE}/api/stats`);
+            const data = await res.json();
+            const readings = data.total_readings || 0;
+            document.getElementById('stat-readings').textContent =
+                readings >= 1000 ? Math.round(readings / 1000) + 'k+' : readings;
+            document.getElementById('stat-meters').textContent  = data.total_meters  || '--';
+            document.getElementById('stat-attacks').textContent = '3';
+        } catch (_) {
+            document.getElementById('stat-readings').textContent = '28k+';
+            document.getElementById('stat-meters').textContent   = '5';
+            document.getElementById('stat-attacks').textContent  = '3';
+        }
+    })();
+
+    if (sessionStorage.getItem('ecometer_user')) {
+        window.location.href = 'index.html';
+    }
+</script>
+</body>
+</html>
+

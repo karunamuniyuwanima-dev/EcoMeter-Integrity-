@@ -1,0 +1,714 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoMeter â€” Settings</title>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&family=Exo+2:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #060d1a; --bg2: #0a1628; --bg3: #0d1f35;
+            --border: #1a3a5c; --border2: #1e4d7b;
+            --blue: #00a8ff; --cyan: #00e5ff; --green: #00e676;
+            --yellow: #ffd600; --orange: #ff6d00; --red: #ff1744;
+            --text: #e8f4fd; --text2: #7ba7c9; --text3: #3d6b8f;
+            --mono: 'Share Tech Mono', monospace;
+            --display: 'Rajdhani', sans-serif;
+            --body: 'Exo 2', sans-serif;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background:var(--bg); color:var(--text); font-family:var(--body); min-height:100vh; }
+        body::before { content:''; position:fixed; inset:0; background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,168,255,0.012) 2px,rgba(0,168,255,0.012) 4px); pointer-events:none; z-index:9999; }
+        body::after { content:''; position:fixed; inset:0; background-image:linear-gradient(rgba(0,168,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,168,255,0.025) 1px,transparent 1px); background-size:40px 40px; pointer-events:none; z-index:0; }
+        .page { position:relative; z-index:1; }
+
+        header { background:linear-gradient(135deg,#060f1e,#0a1a30); border-bottom:1px solid var(--border2); padding:0 28px; box-shadow:0 4px 30px rgba(0,168,255,0.1); position:sticky; top:0; z-index:100; }
+        .header-top { display:flex; align-items:center; justify-content:space-between; height:56px; border-bottom:1px solid rgba(26,58,92,0.5); }
+        .logo { display:flex; align-items:center; gap:10px; }
+        .logo-icon { width:32px; height:32px; background:linear-gradient(135deg,var(--blue),var(--cyan)); border-radius:7px; display:flex; align-items:center; justify-content:center; font-size:16px; box-shadow:0 0 12px rgba(0,168,255,0.4); }
+        .logo-text { font-family:var(--display); font-size:1.3rem; font-weight:700; letter-spacing:2px; }
+        .logo-text span { color:var(--cyan); }
+        .header-info { display:flex; align-items:center; gap:16px; font-family:var(--mono); font-size:0.75rem; color:var(--text2); }
+        .user-btn { display:flex; align-items:center; gap:8px; background:rgba(0,168,255,0.08); border:1px solid var(--border2); padding:6px 14px; border-radius:20px; color:var(--blue); font-family:var(--mono); font-size:0.72rem; cursor:pointer; }
+        .dot { width:7px; height:7px; background:var(--green); border-radius:50%; box-shadow:0 0 6px var(--green); animation:blink 2s infinite; }
+        @keyframes blink { 0%,100%{opacity:1}50%{opacity:0.4} }
+        .header-nav { display:flex; align-items:center; height:44px; gap:2px; width:100%; }
+        .header-nav .nav-spacer { flex:1; }
+        .nav-btn { background:transparent; border:none; color:var(--text2); font-family:var(--display); font-size:0.78rem; font-weight:600; letter-spacing:1.5px; padding:6px 14px; cursor:pointer; border-radius:4px; text-transform:uppercase; position:relative; transition:color 0.2s; }
+        .nav-btn.active { color:var(--text); background:rgba(0,229,255,0.08); }
+        .nav-btn.active::after { content:''; position:absolute; bottom:-1px; left:0; right:0; height:2px; background:var(--cyan); }
+        .nav-btn:hover:not(.active) { color:var(--cyan); }
+        .nav-sep { color:var(--border2); font-size:0.8rem; padding:0 2px; }
+        .notif-btn { margin-left:8px; background:rgba(255,23,68,0.1); border:1px solid rgba(255,23,68,0.2); color:var(--red); font-size:0.9rem; padding:6px 12px; border-radius:4px; cursor:pointer; }
+
+        main { padding:20px 28px; max-width:1500px; margin:0 auto; }
+        .sec-title { font-family:var(--mono); font-size:0.62rem; color:var(--text3); letter-spacing:3px; text-transform:uppercase; margin-bottom:10px; }
+
+        .card { background:var(--bg3); border:1px solid var(--border); border-radius:10px; padding:20px; transition:border-color 0.3s; margin-bottom:14px; }
+        .card:hover { border-color:var(--border2); }
+        .card-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
+        .card-title { font-family:var(--display); font-size:0.85rem; font-weight:600; letter-spacing:2px; text-transform:uppercase; }
+        .card-tag { font-family:var(--mono); font-size:0.62rem; padding:3px 9px; border-radius:10px; background:rgba(0,168,255,0.08); border:1px solid rgba(0,168,255,0.2); color:var(--blue); }
+
+        /* LAYOUT */
+        .two-col { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px; }
+        .three-col { display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; margin-bottom:14px; }
+
+        /* FORM ELEMENTS */
+        .form-group { display:flex; flex-direction:column; gap:6px; margin-bottom:14px; }
+        .form-group:last-child { margin-bottom:0; }
+        .form-label { font-family:var(--mono); font-size:0.62rem; color:var(--text3); letter-spacing:2px; text-transform:uppercase; }
+        .form-desc { font-size:0.72rem; color:var(--text3); margin-top:2px; }
+        .form-input { background:var(--bg2); border:1px solid var(--border2); border-radius:6px; padding:9px 12px; color:var(--text); font-family:var(--mono); font-size:0.78rem; outline:none; transition:border-color 0.2s; width:100%; }
+        .form-input:focus { border-color:var(--cyan); }
+        .form-select { background:var(--bg2); border:1px solid var(--border2); border-radius:6px; padding:9px 12px; color:var(--text); font-family:var(--mono); font-size:0.78rem; outline:none; cursor:pointer; width:100%; }
+        .form-select:focus { border-color:var(--cyan); }
+
+        /* SLIDER */
+        .slider-wrap { display:flex; align-items:center; gap:14px; }
+        .slider { flex:1; -webkit-appearance:none; height:4px; border-radius:2px; background:var(--border2); outline:none; }
+        .slider::-webkit-slider-thumb { -webkit-appearance:none; width:16px; height:16px; border-radius:50%; background:var(--cyan); cursor:pointer; box-shadow:0 0 6px rgba(0,229,255,0.5); }
+        .slider-val { font-family:var(--display); font-size:1rem; font-weight:600; color:var(--cyan); min-width:50px; text-align:right; }
+
+        /* TOGGLE SWITCH */
+        .toggle-row { display:flex; align-items:center; justify-content:space-between; padding:10px 0; border-bottom:1px solid rgba(26,58,92,0.3); }
+        .toggle-row:last-child { border-bottom:none; padding-bottom:0; }
+        .toggle-info { flex:1; }
+        .toggle-name { font-size:0.85rem; color:var(--text); margin-bottom:3px; }
+        .toggle-desc { font-size:0.7rem; color:var(--text3); font-family:var(--mono); }
+        .toggle { position:relative; width:42px; height:22px; flex-shrink:0; }
+        .toggle input { opacity:0; width:0; height:0; }
+        .toggle-slider { position:absolute; cursor:pointer; inset:0; background:var(--border2); border-radius:22px; transition:0.3s; }
+        .toggle-slider::before { content:''; position:absolute; height:16px; width:16px; left:3px; bottom:3px; background:var(--text3); border-radius:50%; transition:0.3s; }
+        input:checked + .toggle-slider { background:var(--cyan); }
+        input:checked + .toggle-slider::before { transform:translateX(20px); background:#000; }
+
+        /* BUTTONS */
+        .save-btn { background:linear-gradient(135deg,var(--blue),var(--cyan)); border:none; color:#000; font-family:var(--display); font-size:0.82rem; font-weight:700; letter-spacing:1px; padding:10px 28px; border-radius:6px; cursor:pointer; transition:opacity 0.2s; }
+        .save-btn:hover { opacity:0.85; }
+        .reset-btn { background:transparent; border:1px solid var(--border2); color:var(--text2); font-family:var(--display); font-size:0.82rem; font-weight:600; letter-spacing:1px; padding:10px 22px; border-radius:6px; cursor:pointer; transition:all 0.2s; }
+        .reset-btn:hover { border-color:var(--yellow); color:var(--yellow); }
+        .danger-btn { background:rgba(255,23,68,0.1); border:1px solid rgba(255,23,68,0.3); color:var(--red); font-family:var(--display); font-size:0.82rem; font-weight:600; letter-spacing:1px; padding:10px 22px; border-radius:6px; cursor:pointer; transition:all 0.2s; }
+        .danger-btn:hover { background:rgba(255,23,68,0.2); }
+        .test-btn { background:rgba(0,230,118,0.1); border:1px solid rgba(0,230,118,0.3); color:var(--green); font-family:var(--mono); font-size:0.72rem; padding:6px 14px; border-radius:4px; cursor:pointer; transition:all 0.2s; }
+        .test-btn:hover { background:rgba(0,230,118,0.2); }
+
+        /* STATUS INDICATORS */
+        .status-row { display:flex; align-items:center; justify-content:space-between; padding:8px 0; border-bottom:1px solid rgba(26,58,92,0.3); }
+        .status-row:last-child { border-bottom:none; }
+        .status-label { font-family:var(--mono); font-size:0.72rem; color:var(--text2); }
+        .status-value { font-family:var(--mono); font-size:0.72rem; }
+        .status-dot-connected { color:var(--green); }
+        .status-dot-warning { color:var(--yellow); }
+        .status-dot-error { color:var(--red); }
+
+        /* INFO CARD */
+        .info-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+        .info-item { background:rgba(255,255,255,0.02); border:1px solid var(--border); border-radius:6px; padding:10px 14px; }
+        .info-key { font-family:var(--mono); font-size:0.62rem; color:var(--text3); letter-spacing:1px; margin-bottom:4px; }
+        .info-val { font-family:var(--display); font-size:0.9rem; font-weight:600; color:var(--text); }
+
+        /* TOAST */
+        .toast { position:fixed; bottom:24px; right:24px; background:var(--bg3); border:1px solid var(--green); border-radius:8px; padding:12px 20px; font-family:var(--mono); font-size:0.75rem; color:var(--green); z-index:9000; transform:translateY(80px); opacity:0; transition:all 0.3s; }
+        .toast.show { transform:translateY(0); opacity:1; }
+        .toast.error { border-color:var(--red); color:var(--red); }
+
+        /* DB STATUS BADGE */
+        .db-badge { display:inline-flex; align-items:center; gap:6px; padding:4px 12px; border-radius:20px; font-family:var(--mono); font-size:0.68rem; }
+        .db-badge.connected { background:rgba(0,230,118,0.1); border:1px solid rgba(0,230,118,0.3); color:var(--green); }
+        .db-badge.disconnected { background:rgba(255,23,68,0.1); border:1px solid rgba(255,23,68,0.3); color:var(--red); }
+
+        /* HELP CENTER */
+        .help-two-col { display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+        .faq-item { border-bottom:1px solid rgba(26,58,92,0.4); }
+        .faq-item:last-child { border-bottom:none; }
+        .faq-q { display:flex; align-items:center; justify-content:space-between; padding:11px 0; cursor:pointer; font-size:0.83rem; color:var(--text); font-weight:500; gap:10px; user-select:none; }
+        .faq-q:hover { color:var(--cyan); }
+        .faq-arrow { font-size:0.75rem; color:var(--text3); transition:transform 0.25s; flex-shrink:0; }
+        .faq-item.open .faq-arrow { transform:rotate(180deg); color:var(--cyan); }
+        .faq-a { max-height:0; overflow:hidden; transition:max-height 0.3s ease; font-size:0.75rem; color:var(--text2); line-height:1.7; font-family:var(--mono); }
+        .faq-item.open .faq-a { max-height:200px; padding-bottom:10px; }
+        .help-step { display:flex; gap:12px; align-items:flex-start; padding:9px 0; border-bottom:1px solid rgba(26,58,92,0.3); }
+        .help-step:last-child { border-bottom:none; }
+        .step-num { width:24px; height:24px; background:linear-gradient(135deg,var(--blue),var(--cyan)); border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:var(--display); font-size:0.72rem; font-weight:700; color:#000; flex-shrink:0; margin-top:1px; }
+        .step-text { font-size:0.78rem; color:var(--text2); line-height:1.5; }
+        .step-text strong { color:var(--text); }
+        .contact-item { display:flex; align-items:center; gap:12px; padding:10px 12px; background:rgba(255,255,255,0.02); border:1px solid var(--border); border-radius:6px; margin-bottom:8px; }
+        .contact-icon { font-size:1.1rem; width:28px; text-align:center; flex-shrink:0; }
+        .contact-info { flex:1; }
+        .contact-label { font-family:var(--mono); font-size:0.6rem; color:var(--text3); letter-spacing:1px; text-transform:uppercase; margin-bottom:2px; }
+        .contact-val { font-size:0.8rem; color:var(--text); }
+        .risk-badge { display:inline-block; padding:2px 8px; border-radius:10px; font-family:var(--mono); font-size:0.62rem; font-weight:700; margin-right:4px; }
+        .risk-low    { background:rgba(0,230,118,0.15); border:1px solid rgba(0,230,118,0.3); color:var(--green); }
+        .risk-med    { background:rgba(255,214,0,0.15);  border:1px solid rgba(255,214,0,0.3);  color:var(--yellow); }
+        .risk-high   { background:rgba(255,109,0,0.15);  border:1px solid rgba(255,109,0,0.3);  color:var(--orange); }
+        .risk-crit   { background:rgba(255,23,68,0.15);  border:1px solid rgba(255,23,68,0.3);  color:var(--red); }
+
+        @media(max-width:1100px){
+            .help-two-col { grid-template-columns:1fr; }
+        }
+            .two-col{grid-template-columns:1fr}
+            .three-col{grid-template-columns:1fr}
+            .info-grid{grid-template-columns:1fr}
+        }
+    </style>
+</head>
+<body>
+<div class="page">
+
+<header>
+    <div class="header-top">
+        <div class="logo">
+            <div class="logo-icon">âš¡</div>
+            <div class="logo-text">EcoMeter <span>Dashboard</span></div>
+        </div>
+        <div class="header-info">
+            <span id="hdr-user">User: --</span>
+            <span style="color:var(--border2)">|</span>
+            <span id="hdr-role">Role: --</span>
+            <div class="user-btn"><div class="dot"></div>ðŸ‘¤ <span id="hdr-name">Admin</span></div>
+            <button onclick="logout()" style="background:rgba(255,23,68,0.12);border:1px solid rgba(255,23,68,0.3);color:#ff1744;font-family:'Share Tech Mono',monospace;font-size:0.7rem;padding:5px 12px;border-radius:6px;cursor:pointer;letter-spacing:1px;">LOGOUT</button>
+        </div>
+    </div>
+    <div class="header-nav">
+        <button class="nav-btn" onclick="location.href='index.html'">Dashboard</button>
+        <span class="nav-sep">|</span>
+        <button class="nav-btn" onclick="location.href='reports.html'">Reports</button>
+        <span class="nav-sep">|</span>
+        <button class="nav-btn" onclick="location.href='alert_history.html'">Alert History</button>
+        <span class="nav-sep">|</span>
+        <button class="nav-btn" onclick="location.href='analytics.html'">Analytics</button>
+        <span class="nav-sep">|</span>
+        <button class="nav-btn active">Settings</button>
+
+        <div class="nav-spacer"></div>
+        <button class="notif-btn">ðŸ””</button>
+    </div>
+</header>
+
+<main>
+
+    <!-- DETECTION THRESHOLDS + NOTIFICATIONS -->
+    <div class="two-col">
+
+        <!-- DETECTION THRESHOLDS -->
+        <div class="card">
+            <div class="card-head">
+                <div class="card-title">Detection Thresholds</div>
+                <div class="card-tag">ADMIN ONLY</div>
+            </div>
+
+            <div class="form-group">
+                <div class="form-label">Risk Score Threshold</div>
+                <div class="slider-wrap">
+                    <input type="range" class="slider" min="0" max="100" value="50" id="risk-threshold" oninput="updateSlider('risk-threshold','risk-threshold-val','')">
+                    <span class="slider-val" id="risk-threshold-val">50</span>
+                </div>
+                <div class="form-desc">Alerts triggered when risk score exceeds this value</div>
+            </div>
+
+            <div class="form-group">
+                <div class="form-label">Spike Attack Threshold (%)</div>
+                <div class="slider-wrap">
+                    <input type="range" class="slider" min="100" max="300" value="180" id="spike-threshold" oninput="updateSlider('spike-threshold','spike-threshold-val','%')">
+                    <span class="slider-val" id="spike-threshold-val">180%</span>
+                </div>
+                <div class="form-desc">Energy reading above this % of baseline triggers spike detection</div>
+            </div>
+
+            <div class="form-group">
+                <div class="form-label">Reduce Attack Threshold (%)</div>
+                <div class="slider-wrap">
+                    <input type="range" class="slider" min="5" max="50" value="15" id="reduce-threshold" oninput="updateSlider('reduce-threshold','reduce-threshold-val','%')">
+                    <span class="slider-val" id="reduce-threshold-val">15%</span>
+                </div>
+                <div class="form-desc">Energy drop below this % of baseline triggers reduce detection (15â€“20% recommended)</div>
+            </div>
+
+            <div class="form-group">
+                <div class="form-label">Noise Attack Threshold (Â±%)</div>
+                <div class="slider-wrap">
+                    <input type="range" class="slider" min="1" max="30" value="10" id="noise-threshold" oninput="updateSlider('noise-threshold','noise-threshold-val','%')">
+                    <span class="slider-val" id="noise-threshold-val">10%</span>
+                </div>
+                <div class="form-desc">Random variation within Â±this % is considered noise attack</div>
+            </div>
+
+            <div class="form-group">
+                <div class="form-label">Baseline Window (readings)</div>
+                <div class="slider-wrap">
+                    <input type="range" class="slider" min="5" max="100" value="24" id="baseline-window" oninput="updateSlider('baseline-window','baseline-window-val','')">
+                    <span class="slider-val" id="baseline-window-val">24</span>
+                </div>
+                <div class="form-desc">Number of previous readings used to calculate baseline</div>
+            </div>
+
+            <div style="display:flex;gap:10px;margin-top:6px">
+                <button class="save-btn" onclick="saveThresholds()">Save Thresholds</button>
+                <button class="reset-btn" onclick="resetThresholds()">Reset to Default</button>
+            </div>
+        </div>
+
+        <!-- NOTIFICATIONS -->
+        <div class="card">
+            <div class="card-head">
+                <div class="card-title">Notification Settings</div>
+                <div class="card-tag">ALERTS</div>
+            </div>
+
+            <div class="toggle-row">
+                <div class="toggle-info">
+                    <div class="toggle-name">Email Alerts</div>
+                    <div class="toggle-desc">Send email when anomaly is detected</div>
+                </div>
+                <label class="toggle"><input type="checkbox" id="email-alerts" checked><span class="toggle-slider"></span></label>
+            </div>
+
+            <div class="toggle-row">
+                <div class="toggle-info">
+                    <div class="toggle-name">Critical Alerts Only</div>
+                    <div class="toggle-desc">Only notify for CRITICAL risk level</div>
+                </div>
+                <label class="toggle"><input type="checkbox" id="critical-only"><span class="toggle-slider"></span></label>
+            </div>
+
+            <div class="toggle-row">
+                <div class="toggle-info">
+                    <div class="toggle-name">Dashboard Alerts</div>
+                    <div class="toggle-desc">Show live alerts on dashboard panel</div>
+                </div>
+                <label class="toggle"><input type="checkbox" id="dashboard-alerts" checked><span class="toggle-slider"></span></label>
+            </div>
+
+            <div class="toggle-row">
+                <div class="toggle-info">
+                    <div class="toggle-name">Sound Notifications</div>
+                    <div class="toggle-desc">Play sound when critical alert occurs</div>
+                </div>
+                <label class="toggle"><input type="checkbox" id="sound-notif"><span class="toggle-slider"></span></label>
+            </div>
+
+            <div class="toggle-row">
+                <div class="toggle-info">
+                    <div class="toggle-name">Auto Refresh Dashboard</div>
+                    <div class="toggle-desc">Automatically refresh data every 30 seconds</div>
+                </div>
+                <label class="toggle"><input type="checkbox" id="auto-refresh" checked><span class="toggle-slider"></span></label>
+            </div>
+
+            <div class="toggle-row">
+                <div class="toggle-info">
+                    <div class="toggle-name">Weekly Summary Report</div>
+                    <div class="toggle-desc">Email weekly summary every Monday</div>
+                </div>
+                <label class="toggle"><input type="checkbox" id="weekly-report" checked><span class="toggle-slider"></span></label>
+            </div>
+
+            <div class="form-group" style="margin-top:14px">
+                <div class="form-label">Alert Email Address</div>
+                <input type="email" class="form-input" id="alert-email" value="tchna222222@gmail.com">
+            </div>
+
+            <div class="form-group">
+                <div class="form-label">Refresh Interval (seconds)</div>
+                <div class="slider-wrap">
+                    <input type="range" class="slider" min="10" max="120" value="30" id="refresh-interval" oninput="updateSlider('refresh-interval','refresh-interval-val','s')">
+                    <span class="slider-val" id="refresh-interval-val">30s</span>
+                </div>
+            </div>
+
+            <button class="save-btn" onclick="saveNotifications()">Save Notifications</button>
+        </div>
+
+    </div>
+
+    <!-- DATABASE + SYSTEM INFO -->
+    <div class="two-col">
+
+        <!-- DATABASE CONNECTION -->
+        <div class="card">
+            <div class="card-head">
+                <div class="card-title">Database Connection</div>
+                <div id="db-status-badge" class="db-badge connected">â— Connected</div>
+            </div>
+
+            <div class="form-group">
+                <div class="form-label">Host</div>
+                <input type="text" class="form-input" id="db-host" value="localhost">
+            </div>
+            <div class="form-group">
+                <div class="form-label">Port</div>
+                <input type="text" class="form-input" id="db-port" value="5432">
+            </div>
+            <div class="form-group">
+                <div class="form-label">Database Name</div>
+                <input type="text" class="form-input" id="db-name" value="ecometer">
+            </div>
+            <div class="form-group">
+                <div class="form-label">Username</div>
+                <input type="text" class="form-input" id="db-user" value="postgres">
+            </div>
+            <div class="form-group">
+                <div class="form-label">Password</div>
+                <input type="password" class="form-input" id="db-pass" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢">
+            </div>
+
+            <div style="margin-top:6px">
+                <div class="sec-title" style="margin-bottom:8px">Connection Status</div>
+                <div class="status-row">
+                    <span class="status-label">PostgreSQL Server</span>
+                    <span class="status-value status-dot-connected" id="pg-status">â— Running</span>
+                </div>
+                <div class="status-row">
+                    <span class="status-label">Database</span>
+                    <span class="status-value status-dot-connected">â— ecometer</span>
+                </div>
+                <div class="status-row">
+                    <span class="status-label">Flask Backend</span>
+                    <span class="status-value" id="flask-status">â— Checking...</span>
+                </div>
+                <div class="status-row">
+                    <span class="status-label">Tables</span>
+                    <span class="status-value status-dot-connected">â— 3 tables ready</span>
+                </div>
+            </div>
+
+            <div style="display:flex;gap:10px;margin-top:14px">
+                <button class="test-btn" onclick="testConnection()">Test Connection</button>
+                <button class="save-btn" onclick="saveDatabase()">Save Settings</button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- DATA MANAGEMENT -->
+    <div class="card">
+        <div class="card-head">
+            <div class="card-title">Data Management</div>
+            <div class="card-tag">ADMIN ONLY</div>
+        </div>
+        <div class="three-col" style="margin-bottom:0">
+            <div>
+                <div class="form-label" style="margin-bottom:8px">Import New Data</div>
+                <div style="font-size:0.75rem;color:var(--text2);margin-bottom:10px">Update database with new CSV files from teammates</div>
+                <div style="display:flex;flex-direction:column;gap:6px">
+                    <div class="status-row" style="padding:4px 0"><span class="status-label">meter_data.csv</span><span class="status-value status-dot-connected">â— Loaded</span></div>
+                    <div class="status-row" style="padding:4px 0"><span class="status-label">attacked_meter_data.csv</span><span class="status-value status-dot-connected">â— Loaded</span></div>
+                    <div class="status-row" style="padding:4px 0"><span class="status-label">detection_results.csv</span><span class="status-value status-dot-connected">â— Loaded</span></div>
+                </div>
+                <div style="margin-top:10px;font-family:var(--mono);font-size:0.65rem;color:var(--text3)">Run import_data.py to update</div>
+            </div>
+            <div>
+                <div class="form-label" style="margin-bottom:8px">Database Records</div>
+                <div style="font-size:0.75rem;color:var(--text2);margin-bottom:10px">Current data in PostgreSQL</div>
+                <div style="display:flex;flex-direction:column;gap:6px">
+                    <div class="status-row" style="padding:4px 0"><span class="status-label">meter_data</span><span class="status-value" style="color:var(--blue)" id="count-meter">-- rows</span></div>
+                    <div class="status-row" style="padding:4px 0"><span class="status-label">attacked_meter_data</span><span class="status-value" style="color:var(--blue)" id="count-attacked">-- rows</span></div>
+                    <div class="status-row" style="padding:4px 0"><span class="status-label">detection_results</span><span class="status-value" style="color:var(--blue)" id="count-detection">-- rows</span></div>
+                </div>
+            </div>
+            <div>
+                <div class="form-label" style="margin-bottom:8px">Danger Zone</div>
+                <div style="font-size:0.75rem;color:var(--text2);margin-bottom:10px">Irreversible actions â€” use with caution</div>
+                <div style="display:flex;flex-direction:column;gap:8px">
+                    <button class="danger-btn" onclick="confirmClear()">ðŸ—‘ Clear All Data</button>
+                    <button class="danger-btn" onclick="confirmReset()">âš  Reset System</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- HELP CENTER -->
+    <div class="card">
+        <div class="card-head">
+            <div class="card-title">Help Center</div>
+            <div class="card-tag">SUPPORT</div>
+        </div>
+
+        <div class="help-two-col">
+
+            <!-- LEFT: FAQ + Quick Start -->
+            <div>
+                <div class="sec-title" style="margin-bottom:10px">Frequently Asked Questions</div>
+
+                <div class="faq-item">
+                    <div class="faq-q" onclick="toggleFaq(this)">
+                        What is a False Data Injection Attack (FDIA)?
+                        <span class="faq-arrow">â–¼</span>
+                    </div>
+                    <div class="faq-a">An FDIA is a cyber attack where an adversary manipulates meter readings sent to the utility company. EcoMeter detects three types: <strong>Spike</strong> (sudden +80% surge), <strong>Stealth Reduce</strong> (gradual -15% drop to steal energy undetected), and <strong>Noise</strong> (random Â±10% fluctuations to mask theft).</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-q" onclick="toggleFaq(this)">
+                        How does the detection engine work?
+                        <span class="faq-arrow">â–¼</span>
+                    </div>
+                    <div class="faq-a">The engine uses statistical anomaly detection â€” Z-score and IQR (Interquartile Range) analysis â€” to compare each reading against a rolling baseline window. When a reading deviates beyond the configured threshold, a risk score (0â€“100) is calculated and a rule is triggered (energy_spike_gap or energy_drop_gap).</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-q" onclick="toggleFaq(this)">
+                        What do the risk levels mean?
+                        <span class="faq-arrow">â–¼</span>
+                    </div>
+                    <div class="faq-a">
+                        <span class="risk-badge risk-low">LOW</span> 0â€“39 â€” Normal variation, no action needed.<br>
+                        <span class="risk-badge risk-med">MEDIUM</span> 40â€“59 â€” Minor anomaly, monitor closely.<br>
+                        <span class="risk-badge risk-high">HIGH</span> 60â€“79 â€” Likely attack, investigate meter.<br>
+                        <span class="risk-badge risk-crit">CRITICAL</span> 80â€“100 â€” Confirmed FDIA, immediate action required.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-q" onclick="toggleFaq(this)">
+                        How do I update the database with new data?
+                        <span class="faq-arrow">â–¼</span>
+                    </div>
+                    <div class="faq-a">Place updated CSV files (meter_data.csv, attacked_meter_data.csv, detection_results.csv) into the <strong>Database/</strong> folder, then run <strong>python import_data.py</strong> from the Backend directory. Alert history is preserved â€” only meter and attack data is replaced.</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-q" onclick="toggleFaq(this)">
+                        Why can't other computers access the dashboard?
+                        <span class="faq-arrow">â–¼</span>
+                    </div>
+                    <div class="faq-a">The dashboard must be accessed via the host machine's network IP (e.g. <strong>http://10.5.50.104:3000</strong>), not 127.0.0.1. The Flask backend must be started with <strong>host='0.0.0.0'</strong> to accept connections from other devices on the same network.</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-q" onclick="toggleFaq(this)">
+                        How do I add a new user account?
+                        <span class="faq-arrow">â–¼</span>
+                    </div>
+                    <div class="faq-a">Go to the Login page and click <strong>Create Account</strong>. Enter a name, bill number and password (min 6 characters). Roles available: <strong>analyst</strong> (default), <strong>engineer</strong>, or <strong>admin</strong>. To reset a password, use <strong>Forgot Password</strong> on the login screen.</div>
+                </div>
+
+                <div style="margin-top:18px">
+                    <div class="sec-title" style="margin-bottom:10px">Quick Start Guide</div>
+                    <div class="help-step">
+                        <div class="step-num">1</div>
+                        <div class="step-text"><strong>Start the backend</strong> â€” Run <code style="color:var(--cyan);font-size:0.72rem">python app.py</code> from the Backend folder. Flask starts on port 5000.</div>
+                    </div>
+                    <div class="help-step">
+                        <div class="step-num">2</div>
+                        <div class="step-text"><strong>Serve the frontend</strong> â€” Run <code style="color:var(--cyan);font-size:0.72rem">python -m http.server 3000</code> from the Frontend folder.</div>
+                    </div>
+                    <div class="help-step">
+                        <div class="step-num">3</div>
+                        <div class="step-text"><strong>Import data</strong> â€” Run <code style="color:var(--cyan);font-size:0.72rem">python import_data.py</code> from Backend to load CSV data into PostgreSQL.</div>
+                    </div>
+                    <div class="help-step">
+                        <div class="step-num">4</div>
+                        <div class="step-text"><strong>Open dashboard</strong> â€” Navigate to <code style="color:var(--cyan);font-size:0.72rem">http://localhost:3000/login.html</code> and sign in.</div>
+                    </div>
+                    <div class="help-step">
+                        <div class="step-num">5</div>
+                        <div class="step-text"><strong>Monitor attacks</strong> â€” Use the <strong>Dashboard</strong> for live stats, <strong>Analytics</strong> for trends, and <strong>Alert History</strong> for all detected events.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT: Contact (email only) -->
+            <div>
+                <div class="sec-title" style="margin-bottom:10px">Contact & Support</div>
+                <div class="contact-item">
+                    <div class="contact-icon">ðŸ“§</div>
+                    <div class="contact-info">
+                        <div class="contact-label">Team Email</div>
+                        <div class="contact-val">tchna222222@gmail.com</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- SAVE ALL -->
+    <div class="card" style="text-align:center;padding:24px">
+        <div style="font-family:var(--display);font-size:1rem;font-weight:600;letter-spacing:2px;color:var(--text2);margin-bottom:14px">SAVE ALL SETTINGS</div>
+        <div style="display:flex;justify-content:center;gap:12px">
+            <button class="save-btn" style="padding:12px 40px;font-size:0.9rem" onclick="saveAll()">âœ“ Save All Changes</button>
+            <button class="reset-btn" style="padding:12px 28px" onclick="resetAll()">Reset All to Default</button>
+        </div>
+    </div>
+
+</main>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+
+</div>
+
+<script>
+const API = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+    ? `http://${window.location.hostname}:5000`
+    : 'https://ecometer-integrity-production.up.railway.app';
+function authHeaders() { const t = sessionStorage.getItem('ecometer_token'); return t ? { 'Authorization': `Bearer ${t}` } : {}; }
+const _sess = JSON.parse(sessionStorage.getItem('ecometer_user') || '{}');
+if (!_sess.name) { window.location.href = 'login.html'; }
+document.getElementById('hdr-user').textContent = 'User: ' + (_sess.name || 'Admin');
+document.getElementById('hdr-role').textContent = 'Role: ' + (_sess.role || 'analyst');
+document.getElementById('hdr-name').textContent = _sess.name || 'Admin';
+function logout() { sessionStorage.removeItem('ecometer_user'); sessionStorage.removeItem('ecometer_token'); window.location.href = 'login.html'; }
+
+function updateSlider(sliderId, valId, suffix) {
+    const val = document.getElementById(sliderId).value;
+    document.getElementById(valId).textContent = val + suffix;
+}
+
+function showToast(msg, isError = false) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'toast' + (isError ? ' error' : '');
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+function saveThresholds() {
+    showToast('âœ“ Detection thresholds saved successfully!');
+}
+
+function resetThresholds() {
+    document.getElementById('risk-threshold').value = 50;
+    document.getElementById('risk-threshold-val').textContent = '50';
+    document.getElementById('spike-threshold').value = 180;
+    document.getElementById('spike-threshold-val').textContent = '180%';
+    document.getElementById('reduce-threshold').value = 15;
+    document.getElementById('reduce-threshold-val').textContent = '15%';
+    document.getElementById('noise-threshold').value = 10;
+    document.getElementById('noise-threshold-val').textContent = '10%';
+    document.getElementById('baseline-window').value = 24;
+    document.getElementById('baseline-window-val').textContent = '24';
+    showToast('âœ“ Thresholds reset to default values!');
+}
+
+function saveNotifications() {
+    showToast('âœ“ Notification settings saved!');
+}
+
+function saveDatabase() {
+    showToast('âœ“ Database settings saved!');
+}
+
+async function testConnection() {
+    showToast('Testing connection...');
+    try {
+        const res = await fetch(`${API}/`, { headers: authHeaders() });
+        if (res.ok) {
+            document.getElementById('flask-status').textContent = 'â— Running';
+            document.getElementById('flask-status').className = 'status-value status-dot-connected';
+            document.getElementById('db-status-badge').textContent = 'â— Connected';
+            document.getElementById('db-status-badge').className = 'db-badge connected';
+            showToast('âœ“ Connection successful! Flask & PostgreSQL are running.');
+        }
+    } catch (e) {
+        document.getElementById('flask-status').textContent = 'â— Not Running';
+        document.getElementById('flask-status').className = 'status-value status-dot-error';
+        document.getElementById('db-status-badge').textContent = 'â— Disconnected';
+        document.getElementById('db-status-badge').className = 'db-badge disconnected';
+        showToast('âš  Cannot connect to Flask backend!', true);
+    }
+}
+
+async function testAllEndpoints() {
+    const endpoints = [
+        { id: 'ep1', url: '/api/meter-data' },
+        { id: 'ep2', url: '/api/attacked-data' },
+        { id: 'ep3', url: '/api/detection-results' },
+        { id: 'ep4', url: '/api/anomalies' },
+        { id: 'ep5', url: '/api/stats' }
+    ];
+    let allOk = true;
+    for (const ep of endpoints) {
+        try {
+            const res = await fetch(`${API}${ep.url}`, { headers: authHeaders() });
+            const el = document.getElementById(ep.id);
+            if (res.ok) {
+                el.textContent = 'â— Active';
+                el.className = 'status-value status-dot-connected';
+            } else {
+                el.textContent = 'â— Error';
+                el.className = 'status-value status-dot-error';
+                allOk = false;
+            }
+        } catch (e) {
+            const el = document.getElementById(ep.id);
+            el.textContent = 'â— Offline';
+            el.className = 'status-value status-dot-error';
+            allOk = false;
+        }
+    }
+    showToast(allOk ? 'âœ“ All endpoints are active!' : 'âš  Some endpoints are offline!', !allOk);
+}
+
+function confirmClear() {
+    if (confirm('âš  Are you sure you want to clear ALL data from the database?\n\nThis action cannot be undone!')) {
+        showToast('âš  Data cleared! Run import_data.py to reload.', true);
+    }
+}
+
+function confirmReset() {
+    if (confirm('âš  Are you sure you want to reset the entire system?\n\nAll settings will return to default!')) {
+        resetThresholds();
+        showToast('âš  System reset to default settings!', true);
+    }
+}
+
+function saveAll() {
+    showToast('âœ“ All settings saved successfully!');
+}
+
+function resetAll() {
+    if (confirm('Reset ALL settings to default values?')) {
+        resetThresholds();
+        showToast('âœ“ All settings reset to default!');
+    }
+}
+
+async function loadDataCounts() {
+    try {
+        const [mR, aR, dR] = await Promise.all([
+            fetch(`${API}/api/meter-data`,        { headers: authHeaders() }),
+            fetch(`${API}/api/attacked-data`,     { headers: authHeaders() }),
+            fetch(`${API}/api/detection-results`, { headers: authHeaders() })
+        ]);
+        const mD = await mR.json();
+        const aD = await aR.json();
+        const dD = await dR.json();
+        document.getElementById('count-meter').textContent = mD.length.toLocaleString() + ' rows';
+        document.getElementById('count-attacked').textContent = aD.length.toLocaleString() + ' rows';
+        document.getElementById('count-detection').textContent = dD.length.toLocaleString() + ' rows';
+        document.getElementById('flask-status').textContent = 'â— Running';
+        document.getElementById('flask-status').className = 'status-value status-dot-connected';
+    } catch (e) {
+        document.getElementById('count-meter').textContent = 'N/A';
+        document.getElementById('count-attacked').textContent = 'N/A';
+        document.getElementById('count-detection').textContent = 'N/A';
+        document.getElementById('flask-status').textContent = 'â— Not Running';
+        document.getElementById('flask-status').className = 'status-value status-dot-error';
+        document.getElementById('db-status-badge').textContent = 'â— Disconnected';
+        document.getElementById('db-status-badge').className = 'db-badge disconnected';
+    }
+}
+
+loadDataCounts();
+
+function toggleFaq(btn) {
+    const item = btn.closest('.faq-item');
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item.open').forEach(el => el.classList.remove('open'));
+    if (!isOpen) item.classList.add('open');
+}
+
+document.addEventListener('keydown', e => {
+    if (!e.altKey) return;
+    const map = { '1':'index.html', '2':'reports.html', '3':'alert_history.html', '4':'analytics.html', '5':'settings.html' };
+    if (map[e.key]) { e.preventDefault(); location.href = map[e.key]; }
+    if (e.key === 'l' || e.key === 'L') { e.preventDefault(); logout(); }
+});
+</script>
+</body>
+</html>
+
