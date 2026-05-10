@@ -257,6 +257,20 @@
         <button class="notif-btn" style="margin-left:auto">🔔</button>
     </div>
 </header>
+<script>
+(function(){
+    const u = JSON.parse(sessionStorage.getItem('ecometer_user')||'{}');
+    if(u.role !== 'admin'){
+        document.querySelectorAll('.nav-btn').forEach(btn=>{
+            if(btn.textContent.trim()==='User Management'){
+                const prev = btn.previousElementSibling;
+                if(prev && prev.classList.contains('nav-sep')) prev.remove();
+                btn.remove();
+            }
+        });
+    }
+})();
+</script>
 
 <main>
 
