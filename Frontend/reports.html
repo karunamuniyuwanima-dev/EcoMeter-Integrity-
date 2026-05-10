@@ -191,14 +191,9 @@
             </div>
             <div class="filter-group">
                 <div class="filter-label">Meter ID</div>
-                <div class="filter-btns" id="meter-filters">
-                    <button class="filter-btn active" onclick="filterMeter(this, 'all')">All Meters</button>
-                    <button class="filter-btn" onclick="filterMeter(this, 'M001')">M001</button>
-                    <button class="filter-btn" onclick="filterMeter(this, 'M002')">M002</button>
-                    <button class="filter-btn" onclick="filterMeter(this, 'M003')">M003</button>
-                    <button class="filter-btn" onclick="filterMeter(this, 'M004')">M004</button>
-                    <button class="filter-btn" onclick="filterMeter(this, 'M005')">M005</button>
-                </div>
+                <select class="filter-input" id="meter-select" onchange="selectedMeter=this.value">
+                    <option value="all">All Meters</option>
+                </select>
             </div>
         </div>
         <div style="display:flex;gap:10px;align-items:center;margin-top:8px">
@@ -332,10 +327,17 @@ let allAttacked = [];
 let selectedMeter = 'all';
 let energyChart, attackChart, riskChart, attackTypeChart, accChart;
 
-function filterMeter(btn, meter) {
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    selectedMeter = meter;
+async function loadMeterIds() {
+    try {
+        const data = await fetch(`${API}/api/meter-data?limit=500`).then(r => r.json());
+        const meters = [...new Set(data.map(d => d.meter_id))].sort();
+        const sel = document.getElementById('meter-select');
+        meters.forEach(m => {
+            const opt = document.createElement('option');
+            opt.value = m; opt.textContent = m;
+            sel.appendChild(opt);
+        });
+    } catch(e) {}
 }
 
 function getFilteredData() {
@@ -495,12 +497,14 @@ async function init() {
         allAttacked = await aR.json();
         allDetection = await dR.json();
 
-        // Get unique meter IDs
+        // Populate meter ID dropdown
         const meters = [...new Set(allMeter.map(d => d.meter_id))].sort();
-        const filterBtns = document.getElementById('meter-filters');
-        filterBtns.innerHTML = '<button class="filter-btn active" onclick="filterMeter(this, \'all\')">All Meters</button>';
+        const sel = document.getElementById('meter-select');
+        sel.innerHTML = '<option value="all">All Meters</option>';
         meters.forEach(m => {
-            filterBtns.innerHTML += `<button class="filter-btn" onclick="filterMeter(this, '${m}')">${m}</button>`;
+            const opt = document.createElement('option');
+            opt.value = m; opt.textContent = m;
+            sel.appendChild(opt);
         });
 
         loadReports();
