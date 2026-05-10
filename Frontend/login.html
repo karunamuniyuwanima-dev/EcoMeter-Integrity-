@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EcoMeter Integrity — Login</title>
+    <title>EcoMeter Integrity â€” Login</title>
     <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&family=Exo+2:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -264,35 +264,35 @@
     <!-- LEFT PANEL -->
     <div class="left-panel">
         <div class="brand">
-            <div class="brand-icon">⚡</div>
+            <div class="brand-icon">âš¡</div>
             <div class="brand-name">Eco<span>Meter</span></div>
             <div class="brand-name" style="font-size:1.2rem;letter-spacing:6px;color:var(--text2)">INTEGRITY</div>
             <div class="brand-sub">CYBERSECURITY MONITORING SYSTEM</div>
         </div>
         <div class="features">
             <div class="feature-item">
-                <div class="feature-icon">🔍</div>
+                <div class="feature-icon">ðŸ”</div>
                 <div class="feature-text">
                     <div class="feature-title">Anomaly Detection</div>
                     <div class="feature-desc">Real-time detection of False Data Injection Attacks</div>
                 </div>
             </div>
             <div class="feature-item">
-                <div class="feature-icon">⚡</div>
+                <div class="feature-icon">âš¡</div>
                 <div class="feature-text">
                     <div class="feature-title">Smart Meter Monitoring</div>
                     <div class="feature-desc">Live energy consumption tracking across all meters</div>
                 </div>
             </div>
             <div class="feature-item">
-                <div class="feature-icon">⚠️</div>
+                <div class="feature-icon">âš ï¸</div>
                 <div class="feature-text">
                     <div class="feature-title">Risk Assessment</div>
                     <div class="feature-desc">Automated risk scoring with CRITICAL/HIGH/MEDIUM/LOW levels</div>
                 </div>
             </div>
             <div class="feature-item">
-                <div class="feature-icon">📊</div>
+                <div class="feature-icon">ðŸ“Š</div>
                 <div class="feature-text">
                     <div class="feature-title">Interactive Dashboard</div>
                     <div class="feature-desc">6-page analytics dashboard with real-time charts</div>
@@ -314,14 +314,14 @@
     <div class="right-panel">
         <div class="login-card">
 
-            <!-- TAB NAVIGATION (hidden — navigation via buttons inside panels) -->
+            <!-- TAB NAVIGATION (hidden â€” navigation via buttons inside panels) -->
             <div class="tab-nav" style="display:none">
-                <button class="tab-btn active" id="tab-signin"   onclick="switchTab('signin')">🔐 Sign In</button>
-                <button class="tab-btn"         id="tab-register" onclick="switchTab('register')">✚ Create Account</button>
-                <button class="tab-btn"         id="tab-forgot"  onclick="switchTab('forgot')">🔑 Forgot Password</button>
+                <button class="tab-btn active" id="tab-signin"   onclick="switchTab('signin')">ðŸ” Sign In</button>
+                <button class="tab-btn"         id="tab-register" onclick="switchTab('register')">âœš Create Account</button>
+                <button class="tab-btn"         id="tab-forgot"  onclick="switchTab('forgot')">ðŸ”‘ Forgot Password</button>
             </div>
 
-            <!-- ── SIGN IN PANEL ── -->
+            <!-- â”€â”€ SIGN IN PANEL â”€â”€ -->
             <div class="tab-panel active" id="panel-signin">
                 <div class="login-title">Welcome <span>Back</span></div>
                 <div class="login-sub">SIGN IN TO YOUR ECOMETER ACCOUNT</div>
@@ -329,15 +329,15 @@
                 <div style="margin-bottom:14px">
                     <div class="form-label" style="margin-bottom:8px">Select Role</div>
                     <div class="role-selector">
-                        <div class="role-btn active" id="role-admin" onclick="selectRole('admin')"><div class="role-btn-icon">🔐</div><div class="role-btn-name">ADMIN</div></div>
-                        <div class="role-btn"        id="role-user"  onclick="selectRole('user')"><div class="role-btn-icon">👤</div><div class="role-btn-name">USER</div></div>
+                        <div class="role-btn active" id="role-admin" onclick="selectRole('admin')"><div class="role-btn-icon">ðŸ”</div><div class="role-btn-name">ADMIN</div></div>
+                        <div class="role-btn"        id="role-user"  onclick="selectRole('user')"><div class="role-btn-icon">ðŸ‘¤</div><div class="role-btn-name">USER</div></div>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <div class="form-label">Bill Number</div>
                     <div class="input-wrap">
-                        <span class="input-icon">📋</span>
+                        <span class="input-icon">ðŸ“‹</span>
                         <input type="text" class="form-input" id="bill-number" placeholder="e.g. BILL-2026-001" autocomplete="off" onkeypress="if(event.key==='Enter') document.getElementById('password').focus()">
                     </div>
                 </div>
@@ -345,18 +345,18 @@
                 <div class="form-group">
                     <div class="form-label">Password</div>
                     <div class="input-wrap">
-                        <span class="input-icon">🔑</span>
+                        <span class="input-icon">ðŸ”‘</span>
                         <input type="password" class="form-input" id="password" placeholder="Enter your password" onkeypress="if(event.key==='Enter') login()">
-                        <button class="toggle-pass" onclick="togglePass('password','toggle-btn')" id="toggle-btn">👁</button>
+                        <button class="toggle-pass" onclick="togglePass('password','toggle-btn')" id="toggle-btn">ðŸ‘</button>
                     </div>
                 </div>
 
                 <button class="login-btn" onclick="login()" id="login-btn">Login to Dashboard</button>
-                <div class="error-msg"   id="error-msg">⚠ Invalid bill number or password.</div>
-                <div class="success-msg" id="success-msg">✓ Login successful! Redirecting...</div>
+                <div class="error-msg"   id="error-msg">âš  Invalid bill number or password.</div>
+                <div class="success-msg" id="success-msg">âœ“ Login successful! Redirecting...</div>
 
                 <button class="login-btn" onclick="switchTab('forgot')" style="margin-top:10px;background:transparent;border:1px solid var(--border2);color:var(--text2);font-size:0.78rem;">
-                    🔑 Forgot Password?
+                    ðŸ”‘ Forgot Password?
                 </button>
 
                 <div style="display:flex;align-items:center;gap:10px;margin-top:14px">
@@ -366,12 +366,12 @@
                 </div>
 
                 <button class="login-btn" onclick="switchTab('register')" style="margin-top:14px;background:rgba(0,230,118,0.08);border:1px solid rgba(0,230,118,0.3);color:var(--green);font-size:0.82rem;">
-                    ✚ Sign In
+                    âœš Sign In
                 </button>
 
             </div>
 
-            <!-- ── CREATE ACCOUNT PANEL ── -->
+            <!-- â”€â”€ CREATE ACCOUNT PANEL â”€â”€ -->
             <div class="tab-panel" id="panel-register">
                 <div class="login-title">Create <span>Account</span></div>
                 <div class="login-sub">REGISTER A NEW ECOMETER ACCOUNT</div>
@@ -379,36 +379,36 @@
                 <div class="form-group">
                     <div class="form-label">Full Name</div>
                     <div class="input-wrap">
-                        <span class="input-icon">👤</span>
+                        <span class="input-icon">ðŸ‘¤</span>
                         <input type="text" class="form-input" id="reg-name" placeholder="e.g. Jane Smith">
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="form-label">Email Address</div>
                     <div class="input-wrap">
-                        <span class="input-icon">📧</span>
+                        <span class="input-icon">ðŸ“§</span>
                         <input type="email" class="form-input" id="reg-email" placeholder="e.g. jane@email.com">
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="form-label">Bill Number</div>
                     <div class="input-wrap">
-                        <span class="input-icon">📋</span>
+                        <span class="input-icon">ðŸ“‹</span>
                         <input type="text" class="form-input" id="reg-bill" placeholder="e.g. BILL-2026-006">
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="form-label">Password</div>
                     <div class="input-wrap">
-                        <span class="input-icon">🔑</span>
+                        <span class="input-icon">ðŸ”‘</span>
                         <input type="password" class="form-input" id="reg-password" placeholder="Min. 6 characters">
-                        <button class="toggle-pass" onclick="togglePass('reg-password','reg-toggle')" id="reg-toggle">👁</button>
+                        <button class="toggle-pass" onclick="togglePass('reg-password','reg-toggle')" id="reg-toggle">ðŸ‘</button>
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="form-label">Confirm Password</div>
                     <div class="input-wrap">
-                        <span class="input-icon">🔒</span>
+                        <span class="input-icon">ðŸ”’</span>
                         <input type="password" class="form-input" id="reg-confirm" placeholder="Re-enter password" onkeypress="if(event.key==='Enter') register()">
                     </div>
                 </div>
@@ -416,23 +416,23 @@
                 <div style="margin-bottom:16px">
                     <div class="form-label" style="margin-bottom:8px">Role</div>
                     <div class="role-selector">
-                        <div class="role-btn active" id="reg-role-admin" onclick="selectRegRole('admin')"><div class="role-btn-icon">🔐</div><div class="role-btn-name">ADMIN</div></div>
-                        <div class="role-btn"        id="reg-role-user"  onclick="selectRegRole('user')"><div class="role-btn-icon">👤</div><div class="role-btn-name">USER</div></div>
+                        <div class="role-btn active" id="reg-role-admin" onclick="selectRegRole('admin')"><div class="role-btn-icon">ðŸ”</div><div class="role-btn-name">ADMIN</div></div>
+                        <div class="role-btn"        id="reg-role-user"  onclick="selectRegRole('user')"><div class="role-btn-icon">ðŸ‘¤</div><div class="role-btn-name">USER</div></div>
                     </div>
                 </div>
 
                 <button class="login-btn" onclick="register()" id="reg-btn" style="background:linear-gradient(135deg,#00e676,#00bfa5)">
                     Create Account
                 </button>
-                <div class="error-msg"   id="reg-error">⚠ Please fill in all fields.</div>
-                <div class="success-msg" id="reg-success">✓ Account created! Redirecting...</div>
+                <div class="error-msg"   id="reg-error">âš  Please fill in all fields.</div>
+                <div class="success-msg" id="reg-success">âœ“ Account created! Redirecting...</div>
 
                 <button class="login-btn" onclick="switchTab('signin')" style="margin-top:10px;background:transparent;border:1px solid var(--border2);color:var(--text2);font-size:0.78rem;">
                     Already have an account? Sign In
                 </button>
             </div>
 
-            <!-- ── FORGOT PASSWORD PANEL ── -->
+            <!-- â”€â”€ FORGOT PASSWORD PANEL â”€â”€ -->
             <div class="tab-panel" id="panel-forgot">
                 <div class="login-title">Reset <span>Password</span></div>
                 <div class="login-sub">ENTER YOUR EMAIL TO RECEIVE AN OTP</div>
@@ -442,7 +442,7 @@
                     <div class="form-group">
                         <div class="form-label">Email Address</div>
                         <div class="input-wrap">
-                            <span class="input-icon">📧</span>
+                            <span class="input-icon">ðŸ“§</span>
                             <input type="email" class="form-input" id="forgot-email" placeholder="Enter your registered email" onkeypress="if(event.key==='Enter') sendOtp()">
                         </div>
                     </div>
@@ -454,13 +454,13 @@
                 <!-- Step 2: Enter OTP -->
                 <div id="fp-step2" style="display:none; margin-top:4px;">
                     <div style="font-family:var(--mono);font-size:0.72rem;color:var(--text2);margin-bottom:14px;padding:10px 14px;background:rgba(0,229,255,0.05);border:1px solid rgba(0,229,255,0.15);border-radius:6px;">
-                        📧 OTP sent to <span id="otp-sent-to" style="color:var(--cyan)"></span><br>
+                        ðŸ“§ OTP sent to <span id="otp-sent-to" style="color:var(--cyan)"></span><br>
                         <span style="font-size:0.65rem;color:var(--text3)">Valid for 5 minutes. Check your inbox.</span>
                     </div>
                     <div class="form-group">
                         <div class="form-label">Enter OTP Code</div>
                         <div class="input-wrap">
-                            <span class="input-icon">🔢</span>
+                            <span class="input-icon">ðŸ”¢</span>
                             <input type="text" class="form-input" id="otp-input" placeholder="6-digit code" maxlength="6" style="letter-spacing:6px;font-size:1.1rem;text-align:center;" onkeypress="if(event.key==='Enter') verifyOtp()">
                         </div>
                     </div>
@@ -475,20 +475,20 @@
                 <!-- Step 3: Set new password -->
                 <div id="fp-step3" style="display:none; margin-top:4px;">
                     <div style="font-family:var(--mono);font-size:0.72rem;color:var(--green);margin-bottom:14px;padding:10px 14px;background:rgba(0,230,118,0.05);border:1px solid rgba(0,230,118,0.2);border-radius:6px;">
-                        ✓ OTP verified! Set your new password below.
+                        âœ“ OTP verified! Set your new password below.
                     </div>
                     <div class="form-group">
                         <div class="form-label">New Password</div>
                         <div class="input-wrap">
-                            <span class="input-icon">🔑</span>
+                            <span class="input-icon">ðŸ”‘</span>
                             <input type="password" class="form-input" id="new-password" placeholder="Min. 6 characters">
-                            <button class="toggle-pass" onclick="togglePass('new-password','np-toggle')" id="np-toggle">👁</button>
+                            <button class="toggle-pass" onclick="togglePass('new-password','np-toggle')" id="np-toggle">ðŸ‘</button>
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="form-label">Confirm New Password</div>
                         <div class="input-wrap">
-                            <span class="input-icon">🔒</span>
+                            <span class="input-icon">ðŸ”’</span>
                             <input type="password" class="form-input" id="confirm-new-password" placeholder="Re-enter new password" onkeypress="if(event.key==='Enter') resetPassword()">
                         </div>
                     </div>
@@ -514,13 +514,13 @@
 <script>
     const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
         ? `http://${window.location.hostname}:5000`
-        : 'https://ecometer-api.onrender.com';
+        : 'https://ecometer-integrity-production.up.railway.app';
 
     let selectedRole    = 'admin';
     let selectedRegRole = 'admin';
     let verifiedBill    = null;
 
-    // ── Tabs ──────────────────────────────────────────────────────────────────
+    // â”€â”€ Tabs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     function switchTab(tab) {
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
         document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
@@ -529,7 +529,7 @@
         if (tab !== 'forgot') resetForgotForm();
     }
 
-    // ── Role selectors ────────────────────────────────────────────────────────
+    // â”€â”€ Role selectors â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     function selectRole(role) {
         selectedRole = role;
         ['admin','user'].forEach(r => document.getElementById('role-' + r).classList.remove('active'));
@@ -542,16 +542,16 @@
         document.getElementById('reg-role-' + role).classList.add('active');
     }
 
-    // ── Password toggle ───────────────────────────────────────────────────────
+    // â”€â”€ Password toggle â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     function togglePass(inputId, btnId) {
         const el  = document.getElementById(inputId);
         const btn = document.getElementById(btnId);
-        if (el.type === 'password') { el.type = 'text';     btn.textContent = '🙈'; }
-        else                        { el.type = 'password'; btn.textContent = '👁'; }
+        if (el.type === 'password') { el.type = 'text';     btn.textContent = 'ðŸ™ˆ'; }
+        else                        { el.type = 'password'; btn.textContent = 'ðŸ‘'; }
     }
 
 
-    // ── Sign In ───────────────────────────────────────────────────────────────
+    // â”€â”€ Sign In â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     async function login() {
         const bill     = document.getElementById('bill-number').value.trim();
         const password = document.getElementById('password').value;
@@ -563,7 +563,7 @@
         okEl.classList.remove('show');
 
         if (!bill || !password) {
-            errEl.textContent = '⚠ Please enter your Bill Number and Password.';
+            errEl.textContent = 'âš  Please enter your Bill Number and Password.';
             errEl.classList.add('show'); return;
         }
 
@@ -584,25 +584,25 @@
                     loginTime: new Date().toISOString()
                 }));
                 sessionStorage.setItem('ecometer_token', data.token);
-                okEl.textContent = '✓ Welcome ' + data.name + '! Redirecting...';
+                okEl.textContent = 'âœ“ Welcome ' + data.name + '! Redirecting...';
                 okEl.classList.add('show');
-                btn.innerHTML = '✓ Login Successful!';
+                btn.innerHTML = 'âœ“ Login Successful!';
                 setTimeout(() => { window.location.href = 'index.html'; }, 1500);
             } else {
-                errEl.textContent = '⚠ ' + (data.error || 'Invalid bill number or password.');
+                errEl.textContent = 'âš  ' + (data.error || 'Invalid bill number or password.');
                 errEl.classList.add('show');
                 btn.innerHTML = 'Login to Dashboard';
                 btn.disabled  = false;
             }
         } catch (e) {
-            errEl.textContent = '⚠ Cannot connect to server. Make sure Flask is running on port 5000.';
+            errEl.textContent = 'âš  Cannot connect to server. Make sure Flask is running on port 5000.';
             errEl.classList.add('show');
             btn.innerHTML = 'Login to Dashboard';
             btn.disabled  = false;
         }
     }
 
-    // ── Create Account ────────────────────────────────────────────────────────
+    // â”€â”€ Create Account â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     async function register() {
         const name     = document.getElementById('reg-name').value.trim();
         const email    = document.getElementById('reg-email').value.trim();
@@ -617,16 +617,16 @@
         okEl.classList.remove('show');
 
         if (!name || !email || !bill || !password || !confirm) {
-            errEl.textContent = '⚠ Please fill in all fields.'; errEl.classList.add('show'); return;
+            errEl.textContent = 'âš  Please fill in all fields.'; errEl.classList.add('show'); return;
         }
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-            errEl.textContent = '⚠ Please enter a valid email address.'; errEl.classList.add('show'); return;
+            errEl.textContent = 'âš  Please enter a valid email address.'; errEl.classList.add('show'); return;
         }
         if (password !== confirm) {
-            errEl.textContent = '⚠ Passwords do not match.'; errEl.classList.add('show'); return;
+            errEl.textContent = 'âš  Passwords do not match.'; errEl.classList.add('show'); return;
         }
         if (password.length < 6) {
-            errEl.textContent = '⚠ Password must be at least 6 characters.'; errEl.classList.add('show'); return;
+            errEl.textContent = 'âš  Password must be at least 6 characters.'; errEl.classList.add('show'); return;
         }
 
         btn.innerHTML = '<span class="spin"></span> Creating account...';
@@ -646,18 +646,18 @@
                     loginTime: new Date().toISOString()
                 }));
                 sessionStorage.setItem('ecometer_token', data.token);
-                okEl.textContent = '✓ Account created! Welcome ' + data.name + '!';
+                okEl.textContent = 'âœ“ Account created! Welcome ' + data.name + '!';
                 okEl.classList.add('show');
-                btn.innerHTML = '✓ Account Created!';
+                btn.innerHTML = 'âœ“ Account Created!';
                 setTimeout(() => { window.location.href = 'index.html'; }, 1500);
             } else {
-                errEl.textContent = '⚠ ' + (data.error || 'Registration failed.');
+                errEl.textContent = 'âš  ' + (data.error || 'Registration failed.');
                 errEl.classList.add('show');
                 btn.innerHTML = 'Create Account';
                 btn.disabled  = false;
             }
         } catch (e) {
-            errEl.textContent = '⚠ Cannot connect to server. Make sure Flask is running.';
+            errEl.textContent = 'âš  Cannot connect to server. Make sure Flask is running.';
             errEl.classList.add('show');
             btn.innerHTML = 'Create Account';
             btn.disabled  = false;
@@ -667,8 +667,8 @@
     let verifiedEmail = null;
     let verifiedOtp   = null;
 
-    function fpErr(msg)  { const e = document.getElementById('forgot-error');   e.textContent = '⚠ ' + msg; e.classList.add('show'); }
-    function fpOk(msg)   { const e = document.getElementById('forgot-success'); e.textContent = '✓ ' + msg; e.classList.add('show'); }
+    function fpErr(msg)  { const e = document.getElementById('forgot-error');   e.textContent = 'âš  ' + msg; e.classList.add('show'); }
+    function fpOk(msg)   { const e = document.getElementById('forgot-success'); e.textContent = 'âœ“ ' + msg; e.classList.add('show'); }
     function fpClear()   { document.getElementById('forgot-error').classList.remove('show'); document.getElementById('forgot-success').classList.remove('show'); }
 
     function resetForgotForm() {
@@ -683,7 +683,7 @@
         fpClear();
     }
 
-    // ── Step 1: Send OTP to email ─────────────────────────────────────────────
+    // â”€â”€ Step 1: Send OTP to email â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     async function sendOtp() {
         const email = document.getElementById('forgot-email').value.trim();
         const btn   = document.getElementById('send-otp-btn');
@@ -705,7 +705,7 @@
                 document.getElementById('fp-step2').style.display = '';
                 // Demo mode: show OTP on screen if email not configured
                 if (data.demo_otp) {
-                    fpOk(`Demo mode — your OTP is: ${data.demo_otp}`);
+                    fpOk(`Demo mode â€” your OTP is: ${data.demo_otp}`);
                 }
             } else {
                 fpErr(data.error || 'Could not send OTP.');
@@ -717,7 +717,7 @@
         }
     }
 
-    // ── Step 2: Verify OTP ────────────────────────────────────────────────────
+    // â”€â”€ Step 2: Verify OTP â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     async function verifyOtp() {
         const otp = document.getElementById('otp-input').value.trim();
         const btn = document.getElementById('verify-otp-btn');
@@ -746,7 +746,7 @@
         }
     }
 
-    // ── Step 3: Reset password ────────────────────────────────────────────────
+    // â”€â”€ Step 3: Reset password â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     async function resetPassword() {
         const newPass  = document.getElementById('new-password').value;
         const confPass = document.getElementById('confirm-new-password').value;
@@ -766,7 +766,7 @@
             const data = await res.json();
             if (data.success) {
                 fpOk('Password reset! Redirecting to sign in...');
-                btn.innerHTML = '✓ Password Reset!';
+                btn.innerHTML = 'âœ“ Password Reset!';
                 setTimeout(() => { switchTab('signin'); resetForgotForm(); }, 2000);
             } else {
                 fpErr(data.error || 'Password reset failed.');
@@ -778,7 +778,7 @@
         }
     }
 
-    // ── Particles ─────────────────────────────────────────────────────────────
+    // â”€â”€ Particles â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     function createParticles() {
         const container = document.getElementById('particles');
         for (let i = 0; i < 20; i++) {
@@ -816,3 +816,4 @@
 </script>
 </body>
 </html>
+

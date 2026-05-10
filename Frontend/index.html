@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -241,14 +241,14 @@
 <header>
     <div class="header-top">
         <div class="logo">
-            <div class="logo-icon">⚡</div>
+            <div class="logo-icon">âš¡</div>
             <div class="logo-text">EcoMeter <span>Dashboard</span></div>
         </div>
         <div class="header-info">
             <span id="hdr-user">User: --</span>
             <span class="sep">|</span>
             <span id="hdr-role">Role: --</span>
-            <div class="user-btn"><div class="dot"></div>👤 <span id="hdr-name">Admin</span></div>
+            <div class="user-btn"><div class="dot"></div>ðŸ‘¤ <span id="hdr-name">Admin</span></div>
             <button onclick="logout()" style="background:rgba(255,23,68,0.12);border:1px solid rgba(255,23,68,0.3);color:#ff1744;font-family:'Share Tech Mono',monospace;font-size:0.7rem;padding:5px 12px;border-radius:6px;cursor:pointer;letter-spacing:1px;">LOGOUT</button>
         </div>
     </div>
@@ -264,7 +264,7 @@
         <button class="nav-btn" onclick="location.href='settings.html'">Settings</button>
 
         <div class="nav-spacer"></div>
-        <button class="notif-btn">🔔</button>
+        <button class="notif-btn">ðŸ””</button>
     </div>
 </header>
 
@@ -276,14 +276,14 @@
         <div class="sec-title" style="margin-bottom:0">System Overview</div>
         <div style="flex:1"></div>
         <span class="last-updated" id="last-updated">Last updated: --</span>
-        <button class="refresh-btn" id="refresh-btn" onclick="manualRefresh()">⟳ Refresh</button>
+        <button class="refresh-btn" id="refresh-btn" onclick="manualRefresh()">âŸ³ Refresh</button>
     </div>
     <div class="stats-row">
-        <div class="stat s-blue"><div class="stat-icon">📊</div><div class="stat-lbl">Total Readings</div><div class="stat-val" id="s1">--</div><div class="stat-sub">Meter data points</div></div>
-        <div class="stat s-red"><div class="stat-icon">⚔️</div><div class="stat-lbl">Total Attacks</div><div class="stat-val" id="s2">--</div><div class="stat-sub">Simulated attacks</div></div>
-        <div class="stat s-cyan"><div class="stat-icon">🔍</div><div class="stat-lbl">Detections</div><div class="stat-val" id="s3">--</div><div class="stat-sub">Anomalies found</div></div>
-        <div class="stat s-yellow"><div class="stat-icon">⚠️</div><div class="stat-lbl">Avg Risk Score</div><div class="stat-val" id="s4">--</div><div class="stat-sub">Out of 100</div></div>
-        <div class="stat s-green"><div class="stat-icon">✅</div><div class="stat-lbl">Detection Rate</div><div class="stat-val" id="s5">--</div><div class="stat-sub">Accuracy</div></div>
+        <div class="stat s-blue"><div class="stat-icon">ðŸ“Š</div><div class="stat-lbl">Total Readings</div><div class="stat-val" id="s1">--</div><div class="stat-sub">Meter data points</div></div>
+        <div class="stat s-red"><div class="stat-icon">âš”ï¸</div><div class="stat-lbl">Total Attacks</div><div class="stat-val" id="s2">--</div><div class="stat-sub">Simulated attacks</div></div>
+        <div class="stat s-cyan"><div class="stat-icon">ðŸ”</div><div class="stat-lbl">Detections</div><div class="stat-val" id="s3">--</div><div class="stat-sub">Anomalies found</div></div>
+        <div class="stat s-yellow"><div class="stat-icon">âš ï¸</div><div class="stat-lbl">Avg Risk Score</div><div class="stat-val" id="s4">--</div><div class="stat-sub">Out of 100</div></div>
+        <div class="stat s-green"><div class="stat-icon">âœ…</div><div class="stat-lbl">Detection Rate</div><div class="stat-val" id="s5">--</div><div class="stat-sub">Accuracy</div></div>
     </div>
 
     <div class="top-row">
@@ -370,10 +370,10 @@
 <script>
 const API = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
     ? `http://${window.location.hostname}:5000`
-    : 'https://ecometer-api.onrender.com';
+    : 'https://ecometer-integrity-production.up.railway.app';
 function authHeaders() { const t = sessionStorage.getItem('ecometer_token'); return t ? { 'Authorization': `Bearer ${t}` } : {}; }
 
-// Session guard — redirect to login if not logged in
+// Session guard â€” redirect to login if not logged in
 const _sess = JSON.parse(sessionStorage.getItem('ecometer_user') || '{}');
 if (!_sess.name) { window.location.href = 'login.html'; }
 
@@ -390,11 +390,11 @@ function logout() {
 
 function getNotes(diff, detected) {
     if (!detected) return { cls:'note-norm', txt:'Normal' };
-    if (diff > 50) return { cls:'note-spike', txt:'⚠ Spike Detected' };
-    if (diff > 20) return { cls:'note-dev', txt:'⚠ Slight Deviation' };
-    if (diff > 0) return { cls:'note-small', txt:'⚠ Small Spike' };
-    if (diff < -10) return { cls:'note-spike', txt:'⚠ Reduce Attack' };
-    return { cls:'note-dev', txt:'⚠ Deviation' };
+    if (diff > 50) return { cls:'note-spike', txt:'âš  Spike Detected' };
+    if (diff > 20) return { cls:'note-dev', txt:'âš  Slight Deviation' };
+    if (diff > 0) return { cls:'note-small', txt:'âš  Small Spike' };
+    if (diff < -10) return { cls:'note-spike', txt:'âš  Reduce Attack' };
+    return { cls:'note-dev', txt:'âš  Deviation' };
 }
 
 let _autoRefreshTimer = null;
@@ -509,10 +509,10 @@ async function load() {
         const alertEl=document.getElementById('alert-list');
         alertEl.innerHTML='';
         const alerts=[
-            ...dD.filter(d=>d.risk_level==='CRITICAL').slice(0,1).map(d=>({cls:'c',icon:'🔴',name:'Critical Risk: '+( d.attack_type||'Attack Detected'),rule:d.rule_triggered||'N/A'})),
-            ...dD.filter(d=>d.risk_level==='HIGH').slice(0,1).map(d=>({cls:'h',icon:'🟠',name:'High Risk: Spike Detected',rule:d.rule_triggered||'N/A'})),
-            ...dD.filter(d=>d.risk_level==='MEDIUM').slice(0,1).map(d=>({cls:'m',icon:'🟡',name:'Medium Risk: Irregular Pattern',rule:d.rule_triggered||'N/A'})),
-            ...dD.filter(d=>d.risk_level==='LOW').slice(0,1).map(d=>({cls:'l',icon:'🟢',name:'Low Risk: No Issues',rule:'baseline_drop'}))
+            ...dD.filter(d=>d.risk_level==='CRITICAL').slice(0,1).map(d=>({cls:'c',icon:'ðŸ”´',name:'Critical Risk: '+( d.attack_type||'Attack Detected'),rule:d.rule_triggered||'N/A'})),
+            ...dD.filter(d=>d.risk_level==='HIGH').slice(0,1).map(d=>({cls:'h',icon:'ðŸŸ ',name:'High Risk: Spike Detected',rule:d.rule_triggered||'N/A'})),
+            ...dD.filter(d=>d.risk_level==='MEDIUM').slice(0,1).map(d=>({cls:'m',icon:'ðŸŸ¡',name:'Medium Risk: Irregular Pattern',rule:d.rule_triggered||'N/A'})),
+            ...dD.filter(d=>d.risk_level==='LOW').slice(0,1).map(d=>({cls:'l',icon:'ðŸŸ¢',name:'Low Risk: No Issues',rule:'baseline_drop'}))
         ];
         alerts.forEach(a=>{
             alertEl.innerHTML+=`<div class="alert-item ${a.cls}"><div class="alert-icon">${a.icon}</div><div class="alert-info"><div class="alert-name">${a.name}</div><div class="alert-rule">${a.rule}</div></div></div>`;
@@ -539,7 +539,7 @@ async function load() {
             const diffStr=atk.diff_pct!=null?(diff>0?'+':'')+diff.toFixed(1)+'%':'N/A';
             const diffColor=diff>0?'var(--red)':diff<0?'var(--cyan)':'var(--text3)';
             const thresh=d.energy_kwh!=null?(d.energy_kwh*1.3).toFixed(3):'N/A';
-            const anom=d.detected===1?'<span class="yes">⚠ Yes</span>':'<span class="no">No</span>';
+            const anom=d.detected===1?'<span class="yes">âš  Yes</span>':'<span class="no">No</span>';
             const n=getNotes(diff,d.detected===1);
             tbody.innerHTML+=`
                 <tr>
@@ -559,7 +559,7 @@ async function load() {
     } catch(e) {
         stopLoading();
         console.error(e);
-        document.getElementById('tbl').innerHTML=`<tr><td colspan="9" style="text-align:center;padding:30px;color:var(--red);font-family:var(--mono)">⚠ Cannot connect to backend. Make sure the server is running.</td></tr>`;
+        document.getElementById('tbl').innerHTML=`<tr><td colspan="9" style="text-align:center;padding:30px;color:var(--red);font-family:var(--mono)">âš  Cannot connect to backend. Make sure the server is running.</td></tr>`;
     }
 }
 
@@ -568,3 +568,4 @@ setupAutoRefresh();
 </script>
 </body>
 </html>
+

@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EcoMeter — Reports</title>
+    <title>EcoMeter â€” Reports</title>
     <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&family=Exo+2:wght@300;400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -150,14 +150,14 @@
 <header>
     <div class="header-top">
         <div class="logo">
-            <div class="logo-icon">⚡</div>
+            <div class="logo-icon">âš¡</div>
             <div class="logo-text">EcoMeter <span>Dashboard</span></div>
         </div>
         <div class="header-info">
             <span id="hdr-user">User: --</span>
             <span style="color:var(--border2)">|</span>
             <span id="hdr-role">Role: --</span>
-            <div class="user-btn"><div class="dot"></div>👤 <span id="hdr-name">Admin</span></div>
+            <div class="user-btn"><div class="dot"></div>ðŸ‘¤ <span id="hdr-name">Admin</span></div>
             <button onclick="logout()" style="background:rgba(255,23,68,0.12);border:1px solid rgba(255,23,68,0.3);color:#ff1744;font-family:'Share Tech Mono',monospace;font-size:0.7rem;padding:5px 12px;border-radius:6px;cursor:pointer;letter-spacing:1px;">LOGOUT</button>
         </div>
     </div>
@@ -173,7 +173,7 @@
         <button class="nav-btn" onclick="location.href='settings.html'">Settings</button>
 
         <div class="nav-spacer"></div>
-        <button class="notif-btn">🔔</button>
+        <button class="notif-btn">ðŸ””</button>
     </div>
 </header>
 
@@ -211,11 +211,11 @@
     <!-- STATS -->
     <div class="sec-title">Report Summary</div>
     <div class="stats-row">
-        <div class="stat s-blue"><div class="stat-icon">📊</div><div class="stat-lbl">Total Readings</div><div class="stat-val" id="r-readings">--</div><div class="stat-sub">In selected range</div></div>
-        <div class="stat s-red"><div class="stat-icon">⚔️</div><div class="stat-lbl">Total Attacks</div><div class="stat-val" id="r-attacks">--</div><div class="stat-sub">Simulated attacks</div></div>
-        <div class="stat s-cyan"><div class="stat-icon">🔍</div><div class="stat-lbl">Detections</div><div class="stat-val" id="r-detections">--</div><div class="stat-sub">Anomalies found</div></div>
-        <div class="stat s-green"><div class="stat-icon">✅</div><div class="stat-lbl">Detection Rate</div><div class="stat-val" id="r-rate">--</div><div class="stat-sub">Accuracy %</div></div>
-        <div class="stat s-yellow"><div class="stat-icon">⚠️</div><div class="stat-lbl">Avg Risk Score</div><div class="stat-val" id="r-risk">--</div><div class="stat-sub">Out of 100</div></div>
+        <div class="stat s-blue"><div class="stat-icon">ðŸ“Š</div><div class="stat-lbl">Total Readings</div><div class="stat-val" id="r-readings">--</div><div class="stat-sub">In selected range</div></div>
+        <div class="stat s-red"><div class="stat-icon">âš”ï¸</div><div class="stat-lbl">Total Attacks</div><div class="stat-val" id="r-attacks">--</div><div class="stat-sub">Simulated attacks</div></div>
+        <div class="stat s-cyan"><div class="stat-icon">ðŸ”</div><div class="stat-lbl">Detections</div><div class="stat-val" id="r-detections">--</div><div class="stat-sub">Anomalies found</div></div>
+        <div class="stat s-green"><div class="stat-icon">âœ…</div><div class="stat-lbl">Detection Rate</div><div class="stat-val" id="r-rate">--</div><div class="stat-sub">Accuracy %</div></div>
+        <div class="stat s-yellow"><div class="stat-icon">âš ï¸</div><div class="stat-lbl">Avg Risk Score</div><div class="stat-val" id="r-risk">--</div><div class="stat-sub">Out of 100</div></div>
     </div>
 
     <!-- CHARTS ROW 1 -->
@@ -293,7 +293,7 @@
             <div class="card-title">Full Report Table</div>
             <div style="display:flex;gap:10px;align-items:center">
                 <div class="card-tag" id="table-count">-- records</div>
-                <button class="export-btn" onclick="exportCSV()">⬇ Export CSV</button>
+                <button class="export-btn" onclick="exportCSV()">â¬‡ Export CSV</button>
             </div>
         </div>
         <div class="table-wrap">
@@ -328,7 +328,7 @@
 <script>
 const API = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
     ? `http://${window.location.hostname}:5000`
-    : 'https://ecometer-api.onrender.com';
+    : 'https://ecometer-integrity-production.up.railway.app';
 function authHeaders() { const t = sessionStorage.getItem('ecometer_token'); return t ? { 'Authorization': `Bearer ${t}` } : {}; }
 const _sess = JSON.parse(sessionStorage.getItem('ecometer_user') || '{}');
 if (!_sess.name) { window.location.href = 'login.html'; }
@@ -459,7 +459,7 @@ async function loadReports() {
     tbody.innerHTML = '';
     document.getElementById('table-count').textContent = det.length.toLocaleString() + ' records';
     det.slice(0, 100).forEach((d, i) => {
-        const detected = d.detected === 1 ? '<span style="color:var(--red);font-family:var(--mono);font-size:0.7rem">⚠ Yes</span>' : '<span style="color:var(--text3);font-family:var(--mono);font-size:0.7rem">No</span>';
+        const detected = d.detected === 1 ? '<span style="color:var(--red);font-family:var(--mono);font-size:0.7rem">âš  Yes</span>' : '<span style="color:var(--text3);font-family:var(--mono);font-size:0.7rem">No</span>';
         const truth = d.ground_truth === 1 ? '<span style="color:var(--green);font-size:0.7rem">Attack</span>' : '<span style="color:var(--text3);font-size:0.7rem">Normal</span>';
         tbody.innerHTML += `
             <tr>
@@ -539,7 +539,7 @@ async function init() {
     } catch (e) {
         hideLoader();
         console.error(e);
-        document.getElementById('report-table').innerHTML = `<tr><td colspan="11" style="text-align:center;padding:30px;color:var(--red);font-family:var(--mono)">⚠ Cannot connect to backend. Make sure the server is running.</td></tr>`;
+        document.getElementById('report-table').innerHTML = `<tr><td colspan="11" style="text-align:center;padding:30px;color:var(--red);font-family:var(--mono)">âš  Cannot connect to backend. Make sure the server is running.</td></tr>`;
     }
 }
 
@@ -547,3 +547,4 @@ init();
 </script>
 </body>
 </html>
+
