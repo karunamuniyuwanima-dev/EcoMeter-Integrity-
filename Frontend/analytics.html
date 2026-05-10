@@ -155,7 +155,7 @@
             <span>User: Admin</span>
             <span style="color:var(--border2)">|</span>
             <span>Role: Admin</span>
-            <button class="notif-btn" style="margin-left:8px">🔔</button><div class="user-btn"><div class="dot"></div>👤 User: Admin</div>
+            <div class="user-btn"><div class="dot"></div>👤 User: Admin</div>
         </div>
     </div>
     <div class="header-nav">
@@ -170,6 +170,7 @@
         <button class="nav-btn active">Analytics</button>
         <span class="nav-sep">|</span>
         <button class="nav-btn" onclick="location.href='settings.html'">Settings</button>
+        <button class="notif-btn" style="margin-left:auto">🔔</button>
     </div>
 </header>
 
@@ -190,7 +191,6 @@
         <div class="card">
             <div class="card-head">
                 <div class="card-title">Detection Accuracy</div>
-                <div class="card-tag">GAUGE</div>
             </div>
             <div class="gauge-wrap">
                 <div class="gauge-circle">
@@ -236,7 +236,6 @@
         <div class="card">
             <div class="card-head">
                 <div class="card-title">True Positive vs False Negative</div>
-                <div class="card-tag">BAR CHART</div>
             </div>
             <canvas id="tpFnChart" height="160"></canvas>
         </div>
@@ -247,7 +246,6 @@
         <div class="card">
             <div class="card-head">
                 <div class="card-title">Confusion Matrix</div>
-                <div class="card-tag">DETECTION RESULTS</div>
             </div>
             <div class="matrix-wrap">
                 <div class="matrix">
@@ -279,7 +277,6 @@
         <div class="card">
             <div class="card-head">
                 <div class="card-title">Risk Score Distribution</div>
-                <div class="card-tag">BAR CHART</div>
             </div>
             <canvas id="riskDistChart" height="180"></canvas>
         </div>
@@ -290,7 +287,6 @@
         <div class="card">
             <div class="card-head">
                 <div class="card-title">Attack Type Comparison</div>
-                <div class="card-tag">BREAKDOWN</div>
             </div>
             <div class="progress-list" id="attack-progress"></div>
         </div>
@@ -298,7 +294,6 @@
         <div class="card">
             <div class="card-head">
                 <div class="card-title">Rule Trigger Frequency</div>
-                <div class="card-tag">DETECTION RULES</div>
             </div>
             <canvas id="ruleChart" height="180"></canvas>
         </div>
@@ -308,7 +303,6 @@
     <div class="card">
         <div class="card-head">
             <div class="card-title">Per Meter Risk Analysis</div>
-            <div class="card-tag">METER BREAKDOWN</div>
         </div>
         <div class="table-wrap">
             <table>
@@ -335,7 +329,7 @@
 
 </main>
 
-<footer>ECOMETER INTEGRITY — CYBERSECURITY PROTECTION FRAMEWORK FOR SMART ENERGY METER SYSTEMS &nbsp;|&nbsp; GROUP 24 | CSG3101 | EDITH COWAN UNIVERSITY</footer>
+<footer></footer>
 </div>
 
 <script>
