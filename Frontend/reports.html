@@ -511,8 +511,13 @@ async function init() {
         allAttacked = await aR.json();
         allDetection = await dR.json();
 
-        // Populate meter ID dropdown
-        const meters = [...new Set(allMeter.map(d => d.meter_id))].sort();
+        // Populate meter ID dropdown from by-meter endpoint (gets all meters)
+        let meters = [];
+        try {
+            const byMeter = await fetch(`${API}/api/fdia/by-meter`).then(r => r.json());
+            meters = byMeter.map(d => d.meter_id).filter(Boolean).sort();
+        } catch(_) {}
+        if (!meters.length) meters = [...new Set(allMeter.map(d => d.meter_id))].filter(Boolean).sort();
         const sel = document.getElementById('meter-select');
         sel.innerHTML = '<option value="all">All Meters</option>';
         meters.forEach(m => {
