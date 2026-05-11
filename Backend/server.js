@@ -120,11 +120,11 @@ function logEvent(ip, attackType, detail, blocked, path) {
 // ── Users (in-memory, bcrypt-hashed passwords) ────────────────────────────────
 const _hash = p => bcrypt.hashSync(p, SALT_ROUNDS);
 const USERS = [
-    { bill: 'BILL-2026-001', password: _hash('ecometer123'), name: 'Shehani Navodya',     role: 'admin',   email: 'sanduelecu@gmail.com' },
-    { bill: 'BILL-2026-002', password: _hash('ecometer123'), name: 'Yuwanima Ransini',    role: 'analyst', email: '' },
-    { bill: 'BILL-2026-003', password: _hash('ecometer123'), name: 'Verginiya Narathota', role: 'analyst', email: '' },
-    { bill: 'BILL-2026-004', password: _hash('ecometer123'), name: 'Treveen Manisha',     role: 'analyst', email: '' },
-    { bill: 'BILL-2026-005', password: _hash('ecometer123'), name: 'Thisari Chamathka',   role: 'analyst', email: '' },
+    { bill: 'BILL-2026-001', password: _hash('ecometer123'), name: 'Shehani Navodya',     role: 'admin',   email: 'navo.200ranasinghe@gmail.com' },
+    { bill: 'BILL-2026-002', password: _hash('ecometer123'), name: 'Yuwanima Ransini',    role: 'analyst', email: 'yuwanima@gmail.com' },
+    { bill: 'BILL-2026-003', password: _hash('ecometer123'), name: 'Verginiya Narathota', role: 'analyst', email: 'verginiya@gmail.com' },
+    { bill: 'BILL-2026-004', password: _hash('ecometer123'), name: 'Treveen Manisha',     role: 'analyst', email: 'treveen@gmail.com' },
+    { bill: 'BILL-2026-005', password: _hash('ecometer123'), name: 'Thisari Chamathka',   role: 'analyst', email: 'thisari@gmail.com' },
 ];
 
 // ── Auth Helpers ───────────────────────────────────────────────────────────────
