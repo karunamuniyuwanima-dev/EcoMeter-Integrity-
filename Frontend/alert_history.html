@@ -503,12 +503,14 @@ async function init() {
         allData = await res.json();
         filteredData = [...allData];
 
-        // Populate attack type filter with friendly labels
+        // Populate attack type filter — known types always shown, extras added from data
         const typeLabels = { spike: 'Energy Spike', stealth_reduce: 'Stealth Reduction', noise: 'Noise Pattern', none: 'No Attack' };
-        const types = [...new Set(allData.map(d => d.attack_type).filter(Boolean))].sort();
+        const knownTypes = ['spike', 'stealth_reduce', 'noise', 'none'];
+        const dataTypes  = [...new Set(allData.map(d => d.attack_type).filter(Boolean))];
+        const allTypes   = [...new Set([...knownTypes, ...dataTypes])].sort();
         const select = document.getElementById('attack-type-filter');
         select.innerHTML = '<option value="all">All Types</option>';
-        types.forEach(t => {
+        allTypes.forEach(t => {
             const label = typeLabels[t] || t.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
             select.innerHTML += `<option value="${t}">${label}</option>`;
         });
