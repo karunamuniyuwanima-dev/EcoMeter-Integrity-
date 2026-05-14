@@ -173,7 +173,7 @@
             <span>User: Admin</span>
             <span style="color:var(--border2)">|</span>
             <span>Role: Admin</span>
-            <div class="user-btn"><div class="dot"></div>👤 User: Admin ▾</div>
+            <div class="user-btn"><div class="dot"></div>👤 User: Admin</div>
         </div>
     </div>
     <div class="header-nav">
@@ -188,11 +188,23 @@
         <button class="nav-btn" onclick="location.href='analytics.html'">Analytics</button>
         <span class="nav-sep">|</span>
         <button class="nav-btn" onclick="location.href='settings.html'">Settings</button>
-        <span class="nav-sep">|</span>
-        <button class="nav-btn">Notification</button>
-        <button class="notif-btn">🔔</button>
+        <button class="notif-btn" style="margin-left:auto">🔔</button>
     </div>
 </header>
+<script>
+(function(){
+    const u = JSON.parse(sessionStorage.getItem('ecometer_user')||'{}');
+    if(u.role !== 'admin'){
+        document.querySelectorAll('.nav-btn').forEach(btn=>{
+            if(btn.textContent.trim()==='User Management'){
+                const prev = btn.previousElementSibling;
+                if(prev && prev.classList.contains('nav-sep')) prev.remove();
+                btn.remove();
+            }
+        });
+    }
+})();
+</script>
 
 <main>
 
@@ -210,7 +222,6 @@
     <div class="card">
         <div class="card-head">
             <div class="card-title">Filter Alerts</div>
-            <div class="card-tag">CUSTOMIZE VIEW</div>
         </div>
         <div class="filter-row">
             <div class="filter-group">
@@ -245,7 +256,6 @@
     <div class="card">
         <div class="card-head">
             <div class="card-title">Alert Timeline — 2026</div>
-            <div class="card-tag">CHRONOLOGICAL</div>
         </div>
         <div class="timeline-wrap">
             <div class="timeline-track">
@@ -272,7 +282,6 @@
         <div class="card">
             <div class="card-head">
                 <div class="card-title">Alerts By Risk Level</div>
-                <div class="card-tag">BAR CHART</div>
             </div>
             <canvas id="riskBarChart" height="120"></canvas>
         </div>
@@ -320,11 +329,11 @@
 
 </main>
 
-<footer>ECOMETER INTEGRITY — CYBERSECURITY PROTECTION FRAMEWORK FOR SMART ENERGY METER SYSTEMS &nbsp;|&nbsp; GROUP 24 | CSG3101 | EDITH COWAN UNIVERSITY</footer>
+<footer></footer>
 </div>
 
 <script>
-const API = 'http://127.0.0.1:5000';
+const API = 'https://ecometer-integrity-production-52a0.up.railway.app';
 let allData = [];
 let filteredData = [];
 let selectedRisk = 'all';
@@ -494,11 +503,16 @@ async function init() {
         allData = await res.json();
         filteredData = [...allData];
 
-        // Populate attack type filter
-        const types = [...new Set(allData.map(d => d.attack_type).filter(Boolean))].sort();
+        // Populate attack type filter — known types always shown, extras added from data
+        const typeLabels = { spike: 'Energy Spike', stealth_reduce: 'Stealth Reduction', noise: 'Noise Pattern', none: 'No Attack' };
+        const knownTypes = ['spike', 'stealth_reduce', 'noise', 'none'];
+        const dataTypes  = [...new Set(allData.map(d => d.attack_type).filter(Boolean))];
+        const allTypes   = [...new Set([...knownTypes, ...dataTypes])].sort();
         const select = document.getElementById('attack-type-filter');
-        types.forEach(t => {
-            select.innerHTML += `<option value="${t}">${t}</option>`;
+        select.innerHTML = '<option value="all">All Types</option>';
+        allTypes.forEach(t => {
+            const label = typeLabels[t] || t.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+            select.innerHTML += `<option value="${t}">${label}</option>`;
         });
 
         renderAll();

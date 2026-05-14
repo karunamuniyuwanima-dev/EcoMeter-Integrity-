@@ -153,7 +153,7 @@
             <span>User: Admin</span>
             <span style="color:var(--border2)">|</span>
             <span>Role: Admin</span>
-            <div class="user-btn"><div class="dot"></div>👤 User: Admin ▾</div>
+            <div class="user-btn"><div class="dot"></div>👤 User: Admin</div>
         </div>
     </div>
     <div class="header-nav">
@@ -168,11 +168,23 @@
         <button class="nav-btn" onclick="location.href='analytics.html'">Analytics</button>
         <span class="nav-sep">|</span>
         <button class="nav-btn" onclick="location.href='settings.html'">Settings</button>
-        <span class="nav-sep">|</span>
-        <button class="nav-btn">Notification</button>
-        <button class="notif-btn">🔔</button>
+        <button class="notif-btn" style="margin-left:auto">🔔</button>
     </div>
 </header>
+<script>
+(function(){
+    const u = JSON.parse(sessionStorage.getItem('ecometer_user')||'{}');
+    if(u.role !== 'admin'){
+        document.querySelectorAll('.nav-btn').forEach(btn=>{
+            if(btn.textContent.trim()==='User Management'){
+                const prev = btn.previousElementSibling;
+                if(prev && prev.classList.contains('nav-sep')) prev.remove();
+                btn.remove();
+            }
+        });
+    }
+})();
+</script>
 
 <main>
 
@@ -181,7 +193,6 @@
     <div class="card">
         <div class="card-head">
             <div class="card-title">Report Filters</div>
-            <div class="card-tag">CUSTOMIZE VIEW</div>
         </div>
         <div class="filter-row">
             <div class="filter-group">
@@ -194,14 +205,9 @@
             </div>
             <div class="filter-group">
                 <div class="filter-label">Meter ID</div>
-                <div class="filter-btns" id="meter-filters">
-                    <button class="filter-btn active" onclick="filterMeter(this, 'all')">All Meters</button>
-                    <button class="filter-btn" onclick="filterMeter(this, 'M001')">M001</button>
-                    <button class="filter-btn" onclick="filterMeter(this, 'M002')">M002</button>
-                    <button class="filter-btn" onclick="filterMeter(this, 'M003')">M003</button>
-                    <button class="filter-btn" onclick="filterMeter(this, 'M004')">M004</button>
-                    <button class="filter-btn" onclick="filterMeter(this, 'M005')">M005</button>
-                </div>
+                <select class="filter-input" id="meter-select" onchange="selectedMeter=this.value">
+                    <option value="all">All Meters</option>
+                </select>
             </div>
         </div>
         <div style="display:flex;gap:10px;align-items:center;margin-top:8px">
@@ -225,14 +231,12 @@
         <div class="card">
             <div class="card-head">
                 <div class="card-title">Energy Consumption Over Time</div>
-                <div class="card-tag">LINE CHART</div>
             </div>
             <canvas id="energyTrendChart" height="110"></canvas>
         </div>
         <div class="card">
             <div class="card-head">
                 <div class="card-title">Attack Frequency Over Time</div>
-                <div class="card-tag">BAR CHART</div>
             </div>
             <canvas id="attackFreqChart" height="110"></canvas>
         </div>
@@ -243,7 +247,6 @@
         <div class="card">
             <div class="card-head">
                 <div class="card-title">Detection Accuracy</div>
-                <div class="card-tag">GAUGE</div>
             </div>
             <div class="accuracy-display">
                 <div class="accuracy-circle">
@@ -281,14 +284,12 @@
         <div class="card">
             <div class="card-head">
                 <div class="card-title">Risk Score Trend</div>
-                <div class="card-tag">LINE CHART</div>
             </div>
             <canvas id="riskTrendChart" height="130"></canvas>
         </div>
         <div class="card">
             <div class="card-head">
                 <div class="card-title">Attack Type Breakdown</div>
-                <div class="card-tag">PIE CHART</div>
             </div>
             <canvas id="attackTypeChart" height="130"></canvas>
         </div>
@@ -329,21 +330,28 @@
 
 </main>
 
-<footer>ECOMETER INTEGRITY — CYBERSECURITY PROTECTION FRAMEWORK FOR SMART ENERGY METER SYSTEMS &nbsp;|&nbsp; GROUP 24 | CSG3101 | EDITH COWAN UNIVERSITY</footer>
+<footer></footer>
 </div>
 
 <script>
-const API = 'http://127.0.0.1:5000';
+const API = 'https://ecometer-integrity-production-52a0.up.railway.app';
 let allDetection = [];
 let allMeter = [];
 let allAttacked = [];
 let selectedMeter = 'all';
 let energyChart, attackChart, riskChart, attackTypeChart, accChart;
 
-function filterMeter(btn, meter) {
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    selectedMeter = meter;
+async function loadMeterIds() {
+    try {
+        const data = await fetch(`${API}/api/meter-data?limit=500`).then(r => r.json());
+        const meters = [...new Set(data.map(d => d.meter_id))].sort();
+        const sel = document.getElementById('meter-select');
+        meters.forEach(m => {
+            const opt = document.createElement('option');
+            opt.value = m; opt.textContent = m;
+            sel.appendChild(opt);
+        });
+    } catch(e) {}
 }
 
 function getFilteredData() {
@@ -503,12 +511,19 @@ async function init() {
         allAttacked = await aR.json();
         allDetection = await dR.json();
 
-        // Get unique meter IDs
-        const meters = [...new Set(allMeter.map(d => d.meter_id))].sort();
-        const filterBtns = document.getElementById('meter-filters');
-        filterBtns.innerHTML = '<button class="filter-btn active" onclick="filterMeter(this, \'all\')">All Meters</button>';
+        // Populate meter ID dropdown from by-meter endpoint (gets all meters)
+        let meters = [];
+        try {
+            const byMeter = await fetch(`${API}/api/fdia/by-meter`).then(r => r.json());
+            meters = byMeter.map(d => d.meter_id).filter(Boolean).sort();
+        } catch(_) {}
+        if (!meters.length) meters = [...new Set(allMeter.map(d => d.meter_id))].filter(Boolean).sort();
+        const sel = document.getElementById('meter-select');
+        sel.innerHTML = '<option value="all">All Meters</option>';
         meters.forEach(m => {
-            filterBtns.innerHTML += `<button class="filter-btn" onclick="filterMeter(this, '${m}')">${m}</button>`;
+            const opt = document.createElement('option');
+            opt.value = m; opt.textContent = m;
+            sel.appendChild(opt);
         });
 
         loadReports();

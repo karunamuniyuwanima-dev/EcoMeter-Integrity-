@@ -155,7 +155,7 @@
             <span>User: Admin</span>
             <span style="color:var(--border2)">|</span>
             <span>Role: Admin</span>
-            <div class="user-btn"><div class="dot"></div>👤 User: Admin ▾</div>
+            <div class="user-btn"><div class="dot"></div>👤 User: Admin</div>
         </div>
     </div>
     <div class="header-nav">
@@ -170,11 +170,23 @@
         <button class="nav-btn active">Analytics</button>
         <span class="nav-sep">|</span>
         <button class="nav-btn" onclick="location.href='settings.html'">Settings</button>
-        <span class="nav-sep">|</span>
-        <button class="nav-btn">Notification</button>
-        <button class="notif-btn">🔔</button>
+        <button class="notif-btn" style="margin-left:auto">🔔</button>
     </div>
 </header>
+<script>
+(function(){
+    const u = JSON.parse(sessionStorage.getItem('ecometer_user')||'{}');
+    if(u.role !== 'admin'){
+        document.querySelectorAll('.nav-btn').forEach(btn=>{
+            if(btn.textContent.trim()==='User Management'){
+                const prev = btn.previousElementSibling;
+                if(prev && prev.classList.contains('nav-sep')) prev.remove();
+                btn.remove();
+            }
+        });
+    }
+})();
+</script>
 
 <main>
 
@@ -193,7 +205,6 @@
         <div class="card">
             <div class="card-head">
                 <div class="card-title">Detection Accuracy</div>
-                <div class="card-tag">GAUGE</div>
             </div>
             <div class="gauge-wrap">
                 <div class="gauge-circle">
@@ -239,7 +250,6 @@
         <div class="card">
             <div class="card-head">
                 <div class="card-title">True Positive vs False Negative</div>
-                <div class="card-tag">BAR CHART</div>
             </div>
             <canvas id="tpFnChart" height="160"></canvas>
         </div>
@@ -250,7 +260,6 @@
         <div class="card">
             <div class="card-head">
                 <div class="card-title">Confusion Matrix</div>
-                <div class="card-tag">DETECTION RESULTS</div>
             </div>
             <div class="matrix-wrap">
                 <div class="matrix">
@@ -282,7 +291,6 @@
         <div class="card">
             <div class="card-head">
                 <div class="card-title">Risk Score Distribution</div>
-                <div class="card-tag">BAR CHART</div>
             </div>
             <canvas id="riskDistChart" height="180"></canvas>
         </div>
@@ -293,7 +301,6 @@
         <div class="card">
             <div class="card-head">
                 <div class="card-title">Attack Type Comparison</div>
-                <div class="card-tag">BREAKDOWN</div>
             </div>
             <div class="progress-list" id="attack-progress"></div>
         </div>
@@ -301,7 +308,6 @@
         <div class="card">
             <div class="card-head">
                 <div class="card-title">Rule Trigger Frequency</div>
-                <div class="card-tag">DETECTION RULES</div>
             </div>
             <canvas id="ruleChart" height="180"></canvas>
         </div>
@@ -311,7 +317,6 @@
     <div class="card">
         <div class="card-head">
             <div class="card-title">Per Meter Risk Analysis</div>
-            <div class="card-tag">METER BREAKDOWN</div>
         </div>
         <div class="table-wrap">
             <table>
@@ -338,11 +343,11 @@
 
 </main>
 
-<footer>ECOMETER INTEGRITY — CYBERSECURITY PROTECTION FRAMEWORK FOR SMART ENERGY METER SYSTEMS &nbsp;|&nbsp; GROUP 24 | CSG3101 | EDITH COWAN UNIVERSITY</footer>
+<footer></footer>
 </div>
 
 <script>
-const API = 'http://127.0.0.1:5000';
+const API = 'https://ecometer-integrity-production-52a0.up.railway.app';
 
 async function init() {
     try {

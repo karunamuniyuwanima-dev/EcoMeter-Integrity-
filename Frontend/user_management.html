@@ -4,6 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EcoMeter — User Management</title>
+    <script>
+        (function(){
+            const u = JSON.parse(sessionStorage.getItem('ecometer_user') || '{}');
+            if (!u || u.role !== 'admin') {
+                window.location.replace('index.html');
+            }
+        })();
+    </script>
     <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&family=Exo+2:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -169,7 +177,7 @@
             <span>User: Admin</span>
             <span style="color:var(--border2)">|</span>
             <span>Role: Admin</span>
-            <div class="user-btn"><div class="dot"></div>👤 User: Admin ▾</div>
+            <div class="user-btn"><div class="dot"></div>👤 User: Admin</div>
         </div>
     </div>
     <div class="header-nav">
@@ -184,9 +192,7 @@
         <button class="nav-btn" onclick="location.href='analytics.html'">Analytics</button>
         <span class="nav-sep">|</span>
         <button class="nav-btn" onclick="location.href='settings.html'">Settings</button>
-        <span class="nav-sep">|</span>
-        <button class="nav-btn">Notification</button>
-        <button class="notif-btn">🔔</button>
+        <button class="notif-btn" style="margin-left:auto">🔔</button>
     </div>
 </header>
 
@@ -372,7 +378,6 @@
         <div class="card" id="add-user-form">
             <div class="card-head">
                 <div class="card-title">Add New User</div>
-                <div class="card-tag">ADMIN ONLY</div>
             </div>
             <div class="form-grid">
                 <div class="form-group">
@@ -433,7 +438,6 @@
     <div class="card">
         <div class="card-head">
             <div class="card-title">User List</div>
-            <div class="card-tag">5 USERS</div>
         </div>
         <div class="table-wrap">
             <table>
@@ -541,7 +545,7 @@
     </div>
 </div>
 
-<footer>ECOMETER INTEGRITY — CYBERSECURITY PROTECTION FRAMEWORK FOR SMART ENERGY METER SYSTEMS &nbsp;|&nbsp; GROUP 24 | CSG3101 | EDITH COWAN UNIVERSITY</footer>
+<footer></footer>
 </div>
 
 <script>

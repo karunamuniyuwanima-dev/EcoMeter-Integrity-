@@ -139,7 +139,7 @@
             <span>User: Admin</span>
             <span style="color:var(--border2)">|</span>
             <span>Role: Admin</span>
-            <div class="user-btn"><div class="dot"></div>👤 User: Admin ▾</div>
+            <div class="user-btn"><div class="dot"></div>👤 User: Admin</div>
         </div>
     </div>
     <div class="header-nav">
@@ -154,11 +154,23 @@
         <button class="nav-btn" onclick="location.href='analytics.html'">Analytics</button>
         <span class="nav-sep">|</span>
         <button class="nav-btn active">Settings</button>
-        <span class="nav-sep">|</span>
-        <button class="nav-btn">Notification</button>
-        <button class="notif-btn">🔔</button>
+        <button class="notif-btn" style="margin-left:auto">🔔</button>
     </div>
 </header>
+<script>
+(function(){
+    const u = JSON.parse(sessionStorage.getItem('ecometer_user')||'{}');
+    if(u.role !== 'admin'){
+        document.querySelectorAll('.nav-btn').forEach(btn=>{
+            if(btn.textContent.trim()==='User Management'){
+                const prev = btn.previousElementSibling;
+                if(prev && prev.classList.contains('nav-sep')) prev.remove();
+                btn.remove();
+            }
+        });
+    }
+})();
+</script>
 
 <main>
 
@@ -169,7 +181,6 @@
         <div class="card">
             <div class="card-head">
                 <div class="card-title">Detection Thresholds</div>
-                <div class="card-tag">ADMIN ONLY</div>
             </div>
 
             <div class="form-group">
@@ -227,7 +238,6 @@
         <div class="card">
             <div class="card-head">
                 <div class="card-title">Notification Settings</div>
-                <div class="card-tag">ALERTS</div>
             </div>
 
             <div class="toggle-row">
@@ -353,66 +363,96 @@
             </div>
         </div>
 
-        <!-- SYSTEM INFO + API CONFIG -->
-        <div style="display:flex;flex-direction:column;gap:14px">
-
-            <!-- SYSTEM INFO -->
-            <div class="card">
-                <div class="card-head">
-                    <div class="card-title">System Information</div>
-                    <div class="card-tag">READ ONLY</div>
-                </div>
-                <div class="info-grid">
-                    <div class="info-item"><div class="info-key">Project</div><div class="info-val">EcoMeter Integrity</div></div>
-                    <div class="info-item"><div class="info-key">Version</div><div class="info-val">1.0.0</div></div>
-                    <div class="info-item"><div class="info-key">Backend</div><div class="info-val">Flask 3.1.3</div></div>
-                    <div class="info-item"><div class="info-key">Database</div><div class="info-val">PostgreSQL 17</div></div>
-                    <div class="info-item"><div class="info-key">Python</div><div class="info-val">3.14.3</div></div>
-                    <div class="info-item"><div class="info-key">Group</div><div class="info-val">Group 24</div></div>
-                    <div class="info-item"><div class="info-key">Unit</div><div class="info-val">CSG3101</div></div>
-                    <div class="info-item"><div class="info-key">University</div><div class="info-val">ECU</div></div>
-                    <div class="info-item"><div class="info-key">Supervisor</div><div class="info-val">Dr. Jude Mayuran</div></div>
-                    <div class="info-item"><div class="info-key">Prototype Due</div><div class="info-val">27 Apr 2026</div></div>
-                </div>
+        <!-- HELP CENTER -->
+        <div class="card">
+            <div class="card-head">
+                <div class="card-title">Help Center</div>
             </div>
+            <div style="display:flex;flex-direction:column;gap:20px">
 
-            <!-- API CONFIG -->
-            <div class="card">
-                <div class="card-head">
-                    <div class="card-title">API Configuration</div>
-                    <div class="card-tag">BACKEND</div>
+                <!-- PAGE GUIDE -->
+                <div>
+                    <div style="font-family:var(--mono);font-size:0.65rem;color:var(--cyan);letter-spacing:2px;margin-bottom:10px">PAGE GUIDE</div>
+                    <div class="info-grid">
+                        <div class="info-item"><div class="info-key">Dashboard</div><div class="info-val">View real-time energy usage charts, anomaly alerts, risk indicators and attack type breakdown</div></div>
+                        <div class="info-item"><div class="info-key">Reports</div><div class="info-val">Filter and export energy consumption and attack detection reports by date range and meter ID</div></div>
+                        <div class="info-item"><div class="info-key">Alert History</div><div class="info-val">Browse all detected anomalies filtered by date, risk level and attack type with a full timeline</div></div>
+                        <div class="info-item"><div class="info-key">Analytics</div><div class="info-val">Deep-dive charts showing FDIA detection trends, risk distribution and per-meter statistics</div></div>
+                        <div class="info-item"><div class="info-key">User Management</div><div class="info-val">Admin only — manage user accounts, roles and access permissions for the system</div></div>
+                        <div class="info-item"><div class="info-key">Detection Thresholds</div><div class="info-val">Adjust Z-score, spike and stealth reduction sensitivity levels for anomaly detection</div></div>
+                        <div class="info-item"><div class="info-key">Notifications</div><div class="info-val">Configure email and alert preferences for critical, high and medium risk detections</div></div>
+                        <div class="info-item"><div class="info-key">Data Export</div><div class="info-val">Download reports as CSV from the Reports page using the Export button in the data table</div></div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <div class="form-label">API Base URL</div>
-                    <input type="text" class="form-input" id="api-url" value="http://127.0.0.1:5000">
+
+                <!-- ATTACK TYPES -->
+                <div style="background:rgba(0,168,255,0.05);border:1px solid rgba(0,168,255,0.15);border-radius:8px;padding:14px">
+                    <div style="font-family:var(--mono);font-size:0.7rem;color:var(--cyan);margin-bottom:8px;letter-spacing:1px">ATTACK TYPES DETECTED</div>
+                    <div style="display:flex;flex-direction:column;gap:6px;font-size:0.78rem">
+                        <div><span style="color:var(--red);font-family:var(--mono)">Energy Spike</span> — Sudden abnormal increase in energy consumption beyond the baseline threshold</div>
+                        <div><span style="color:var(--orange);font-family:var(--mono)">Stealth Reduction</span> — Gradual or sudden drop in energy readings to hide actual consumption</div>
+                        <div><span style="color:var(--yellow);font-family:var(--mono)">Noise Pattern</span> — Random fluctuation injected into meter data to mask anomalies</div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <div class="form-label">API Endpoints</div>
-                    <div style="display:flex;flex-direction:column;gap:4px;margin-top:4px">
-                        <div class="status-row" style="padding:5px 0">
-                            <span class="status-label">GET /api/meter-data</span>
-                            <span class="status-value status-dot-connected" id="ep1">● Active</span>
+
+                <!-- FAQ -->
+                <div>
+                    <div style="font-family:var(--mono);font-size:0.65rem;color:var(--cyan);letter-spacing:2px;margin-bottom:10px">FREQUENTLY ASKED QUESTIONS</div>
+                    <div style="display:flex;flex-direction:column;gap:8px">
+                        <details style="background:rgba(0,168,255,0.04);border:1px solid var(--border);border-radius:8px;padding:12px 16px;cursor:pointer">
+                            <summary style="font-family:var(--display);font-size:0.85rem;font-weight:600;letter-spacing:1px;list-style:none;display:flex;justify-content:space-between;align-items:center">What is False Data Injection Attack (FDIA)? <span style="color:var(--cyan)">+</span></summary>
+                            <p style="margin-top:10px;font-size:0.78rem;color:var(--text2);line-height:1.6">FDIA is a cyberattack where an attacker manipulates sensor readings or meter data to deceive the energy management system. EcoMeter detects these by comparing readings against statistical baselines using Z-score and IQR methods.</p>
+                        </details>
+                        <details style="background:rgba(0,168,255,0.04);border:1px solid var(--border);border-radius:8px;padding:12px 16px;cursor:pointer">
+                            <summary style="font-family:var(--display);font-size:0.85rem;font-weight:600;letter-spacing:1px;list-style:none;display:flex;justify-content:space-between;align-items:center">How does the anomaly detection work? <span style="color:var(--cyan)">+</span></summary>
+                            <p style="margin-top:10px;font-size:0.78rem;color:var(--text2);line-height:1.6">The system analyzes each meter reading against a statistical baseline (mean, standard deviation, IQR) computed from historical data. Readings that deviate beyond defined thresholds are flagged as anomalies and assigned a risk score from 0–100.</p>
+                        </details>
+                        <details style="background:rgba(0,168,255,0.04);border:1px solid var(--border);border-radius:8px;padding:12px 16px;cursor:pointer">
+                            <summary style="font-family:var(--display);font-size:0.85rem;font-weight:600;letter-spacing:1px;list-style:none;display:flex;justify-content:space-between;align-items:center">What do the risk levels mean? <span style="color:var(--cyan)">+</span></summary>
+                            <p style="margin-top:10px;font-size:0.78rem;color:var(--text2);line-height:1.6"><strong style="color:var(--red)">Critical (75–100)</strong> — Severe anomaly, immediate action needed.<br><strong style="color:var(--orange)">High (50–74)</strong> — Significant deviation, investigation recommended.<br><strong style="color:var(--yellow)">Medium (25–49)</strong> — Moderate anomaly, monitor closely.<br><strong style="color:var(--green)">Low (0–24)</strong> — Minor deviation, likely normal variation.</p>
+                        </details>
+                        <details style="background:rgba(0,168,255,0.04);border:1px solid var(--border);border-radius:8px;padding:12px 16px;cursor:pointer">
+                            <summary style="font-family:var(--display);font-size:0.85rem;font-weight:600;letter-spacing:1px;list-style:none;display:flex;justify-content:space-between;align-items:center">How do I export reports? <span style="color:var(--cyan)">+</span></summary>
+                            <p style="margin-top:10px;font-size:0.78rem;color:var(--text2);line-height:1.6">Go to the <strong>Reports</strong> page, apply your desired filters (date range, meter ID), then scroll down to the data table and click the <strong>Export CSV</strong> button. The file will download automatically.</p>
+                        </details>
+                        <details style="background:rgba(0,168,255,0.04);border:1px solid var(--border);border-radius:8px;padding:12px 16px;cursor:pointer">
+                            <summary style="font-family:var(--display);font-size:0.85rem;font-weight:600;letter-spacing:1px;list-style:none;display:flex;justify-content:space-between;align-items:center">What meters are monitored? <span style="color:var(--cyan)">+</span></summary>
+                            <p style="margin-top:10px;font-size:0.78rem;color:var(--text2);line-height:1.6">EcoMeter monitors 5 smart meters (M001–M005). Each meter records energy consumption (kWh), voltage, current, power factor, and temperature at 15-minute intervals. All readings are stored in the Supabase cloud database.</p>
+                        </details>
+                        <details style="background:rgba(0,168,255,0.04);border:1px solid var(--border);border-radius:8px;padding:12px 16px;cursor:pointer">
+                            <summary style="font-family:var(--display);font-size:0.85rem;font-weight:600;letter-spacing:1px;list-style:none;display:flex;justify-content:space-between;align-items:center">How do I reset my password? <span style="color:var(--cyan)">+</span></summary>
+                            <p style="margin-top:10px;font-size:0.78rem;color:var(--text2);line-height:1.6">On the login page click <strong>Forgot Password?</strong>, enter your registered email address, and an OTP (One-Time Password) will be sent to your email. Enter the OTP to verify and set a new password.</p>
+                        </details>
+                    </div>
+                </div>
+
+                <!-- CONTACT SUPPORT -->
+                <div>
+                    <div style="font-family:var(--mono);font-size:0.65rem;color:var(--cyan);letter-spacing:2px;margin-bottom:10px">CONTACT SUPPORT</div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px">
+                        <div style="background:rgba(0,168,255,0.05);border:1px solid rgba(0,168,255,0.15);border-radius:8px;padding:16px;text-align:center">
+                            <div style="font-size:1.8rem;margin-bottom:8px">📧</div>
+                            <div style="font-family:var(--display);font-size:0.82rem;font-weight:600;letter-spacing:1px;margin-bottom:6px">Email Support</div>
+                            <div style="font-size:0.75rem;color:var(--text2);margin-bottom:10px">Get help via email within 24 hours</div>
+                            <div style="font-family:var(--mono);font-size:0.7rem;color:var(--cyan)">she234na@gmail.com</div>
                         </div>
-                        <div class="status-row" style="padding:5px 0">
-                            <span class="status-label">GET /api/attacked-data</span>
-                            <span class="status-value status-dot-connected" id="ep2">● Active</span>
+                        <div style="background:rgba(0,230,118,0.05);border:1px solid rgba(0,230,118,0.15);border-radius:8px;padding:16px;text-align:center">
+                            <div style="font-size:1.8rem;margin-bottom:8px">📖</div>
+                            <div style="font-family:var(--display);font-size:0.82rem;font-weight:600;letter-spacing:1px;margin-bottom:6px">Documentation</div>
+                            <div style="font-size:0.75rem;color:var(--text2);margin-bottom:10px">Full API and system documentation</div>
+                            <div style="font-family:var(--mono);font-size:0.7rem;color:var(--green)">EcoMeter Integrity v1.0</div>
                         </div>
-                        <div class="status-row" style="padding:5px 0">
-                            <span class="status-label">GET /api/detection-results</span>
-                            <span class="status-value status-dot-connected" id="ep3">● Active</span>
-                        </div>
-                        <div class="status-row" style="padding:5px 0">
-                            <span class="status-label">GET /api/anomalies</span>
-                            <span class="status-value status-dot-connected" id="ep4">● Active</span>
-                        </div>
-                        <div class="status-row" style="padding:5px 0">
-                            <span class="status-label">GET /api/stats</span>
-                            <span class="status-value status-dot-connected" id="ep5">● Active</span>
+                        <div style="background:rgba(255,214,0,0.05);border:1px solid rgba(255,214,0,0.15);border-radius:8px;padding:16px;text-align:center">
+                            <div style="font-size:1.8rem;margin-bottom:8px">🎓</div>
+                            <div style="font-family:var(--display);font-size:0.82rem;font-weight:600;letter-spacing:1px;margin-bottom:6px">Academic Support</div>
+                            <div style="font-size:0.75rem;color:var(--text2);margin-bottom:10px">CSG3101 — Edith Cowan University</div>
+                            <div style="font-family:var(--mono);font-size:0.7rem;color:var(--yellow)">Group 24 — Dr. Jude Mayuran</div>
                         </div>
                     </div>
                 </div>
-                <button class="test-btn" onclick="testAllEndpoints()">Test All Endpoints</button>
+
             </div>
+        </div>
 
         </div>
     </div>
@@ -421,7 +461,6 @@
     <div class="card">
         <div class="card-head">
             <div class="card-title">Data Management</div>
-            <div class="card-tag">ADMIN ONLY</div>
         </div>
         <div class="three-col" style="margin-bottom:0">
             <div>
@@ -468,11 +507,11 @@
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
-<footer>ECOMETER INTEGRITY — CYBERSECURITY PROTECTION FRAMEWORK FOR SMART ENERGY METER SYSTEMS &nbsp;|&nbsp; GROUP 24 | CSG3101 | EDITH COWAN UNIVERSITY</footer>
+<footer></footer>
 </div>
 
 <script>
-const API = 'http://127.0.0.1:5000';
+const API = 'https://ecometer-integrity-production-52a0.up.railway.app';
 
 function updateSlider(sliderId, valId, suffix) {
     const val = document.getElementById(sliderId).value;
