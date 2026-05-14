@@ -520,7 +520,7 @@ async function load() {
 
     } catch(e) {
         console.error(e);
-        document.getElementById('tbl').innerHTML=`<tr><td colspan="9" style="text-align:center;padding:30px;color:var(--red);font-family:var(--mono)">⚠ CANNOT CONNECT TO BACKEND — Make sure Flask is running on port 5000</td></tr>`;
+        document.getElementById('tbl').innerHTML=`<tr><td colspan="9" style="text-align:center;padding:30px;color:var(--red);font-family:var(--mono)">⚠ CANNOT CONNECT TO BACKEND — Railway API is not responding. Check deployment status.</td></tr>`;
     }
 }
 
