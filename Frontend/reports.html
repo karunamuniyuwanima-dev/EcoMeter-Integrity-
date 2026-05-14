@@ -376,7 +376,7 @@ async function loadReports() {
 
     const totalAttacks = atk.filter(d => d.is_attack).length;
     const totalDetections = det.filter(d => d.detected === 1).length;
-    const avgRisk = det.length > 0 ? det.reduce((s, d) => s + (d.risk_score || 0), 0) / det.length : 0;
+    const avgRisk = det.length > 0 ? det.reduce((s, d) => s + parseFloat(d.risk_score || 0), 0) / det.length : 0;
     const rate = totalAttacks > 0 ? ((totalDetections / totalAttacks) * 100).toFixed(1) : 0;
     const truePos = det.filter(d => d.detected === 1 && d.ground_truth === 1).length;
     const falseNeg = det.filter(d => d.detected === 0 && d.ground_truth === 1).length;
@@ -474,8 +474,8 @@ async function loadReports() {
                 <td class="t-muted mid">${i + 1}</td>
                 <td class="t-blue mid">${d.meter_id || 'N/A'}</td>
                 <td class="t-muted mid" style="font-size:0.65rem">${d.timestamp ? d.timestamp.toString().slice(0, 16) : 'N/A'}</td>
-                <td class="t-cyan mid">${d.energy_kwh != null ? d.energy_kwh.toFixed(4) : 'N/A'}</td>
-                <td class="mid" style="color:var(--text2)">${d.reading_kwh != null ? d.reading_kwh.toFixed(4) : 'N/A'}</td>
+                <td class="t-cyan mid">${d.energy_kwh != null ? parseFloat(d.energy_kwh).toFixed(4) : 'N/A'}</td>
+                <td class="mid" style="color:var(--text2)">${d.reading_kwh != null ? parseFloat(d.reading_kwh).toFixed(4) : 'N/A'}</td>
                 <td>${detected}</td>
                 <td class="mid" style="color:var(--yellow)">${d.risk_score != null ? d.risk_score : 'N/A'}</td>
                 <td><span class="badge ${d.risk_level || 'NORMAL'}">${d.risk_level || 'NORMAL'}</span></td>
@@ -503,9 +503,9 @@ function exportCSV() {
 async function init() {
     try {
         const [mR, aR, dR] = await Promise.all([
-            fetch(`${API}/api/meter-data`),
-            fetch(`${API}/api/attacked-data`),
-            fetch(`${API}/api/detection-results`)
+            fetch(`${API}/api/meter-data?limit=500`),
+            fetch(`${API}/api/attacked-data?limit=500`),
+            fetch(`${API}/api/detection-results?limit=500`)
         ]);
         allMeter = await mR.json();
         allAttacked = await aR.json();
@@ -529,7 +529,7 @@ async function init() {
         loadReports();
     } catch (e) {
         console.error(e);
-        document.getElementById('report-table').innerHTML = `<tr><td colspan="11" style="text-align:center;padding:30px;color:var(--red);font-family:var(--mono)">⚠ CANNOT CONNECT TO BACKEND — Make sure Flask is running on port 5000</td></tr>`;
+        document.getElementById('report-table').innerHTML = `<tr><td colspan="11" style="text-align:center;padding:30px;color:var(--red);font-family:var(--mono)">⚠ CANNOT CONNECT TO BACKEND — Railway API is not responding. Check deployment status.</td></tr>`;
     }
 }
 
