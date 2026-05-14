@@ -525,7 +525,9 @@ async function init() {
         ]);
         allMeter     = mResults.flat();
         allAttacked  = aResults.flat();
-        allDetection = dResults.flat();
+        // Sort by attack_type so spike, noise, stealth_reduce all appear in table
+        const typeOrder = { spike:0, noise:1, stealth_reduce:2, none:3 };
+        allDetection = dResults.flat().sort((a,b)=>(typeOrder[a.attack_type]??4)-(typeOrder[b.attack_type]??4));
 
         // Populate meter ID dropdown from by-meter endpoint (gets all meters)
         let meters = [];

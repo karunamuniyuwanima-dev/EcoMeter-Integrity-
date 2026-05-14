@@ -508,7 +508,9 @@ async function init() {
             fetch(`${API}/api/detection-results?limit=300&meter_id=M005`)
         ]);
         const [d1,d2,d3,d4,d5] = await Promise.all([r1.json(),r2.json(),r3.json(),r4.json(),r5.json()]);
-        allData = [...d1,...d2,...d3,...d4,...d5];
+        // Sort by attack_type so spike, noise, stealth_reduce all appear at top
+        const typeOrder = { spike:0, noise:1, stealth_reduce:2, none:3 };
+        allData = [...d1,...d2,...d3,...d4,...d5].sort((a,b)=>(typeOrder[a.attack_type]??4)-(typeOrder[b.attack_type]??4));
         filteredData = [...allData];
 
         // Populate attack type filter — known types always shown, extras added from data
