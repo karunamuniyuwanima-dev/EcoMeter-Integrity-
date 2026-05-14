@@ -209,6 +209,16 @@
                     <option value="all">All Meters</option>
                 </select>
             </div>
+            <div class="filter-group">
+                <div class="filter-label">Attack Type</div>
+                <select class="filter-input" id="attack-select" onchange="selectedAttack=this.value">
+                    <option value="all">All Types</option>
+                    <option value="spike">Energy Spike</option>
+                    <option value="stealth_reduce">Stealth Reduction</option>
+                    <option value="noise">Noise Pattern</option>
+                    <option value="none">No Attack</option>
+                </select>
+            </div>
         </div>
         <div style="display:flex;gap:10px;align-items:center;margin-top:8px">
             <button class="apply-btn" onclick="loadReports()">Apply Filters</button>
@@ -339,6 +349,7 @@ let allDetection = [];
 let allMeter = [];
 let allAttacked = [];
 let selectedMeter = 'all';
+let selectedAttack = 'all';
 let energyChart, attackChart, riskChart, attackTypeChart, accChart;
 
 async function loadMeterIds() {
@@ -362,6 +373,9 @@ function getFilteredData() {
         det = det.filter(d => d.meter_id === selectedMeter);
         met = met.filter(d => d.meter_id === selectedMeter);
         atk = atk.filter(d => d.meter_id === selectedMeter);
+    }
+    if (selectedAttack !== 'all') {
+        det = det.filter(d => d.attack_type === selectedAttack);
     }
     return { det, met, atk };
 }
@@ -503,13 +517,22 @@ function exportCSV() {
 async function init() {
     try {
         const [mR, aR, dR] = await Promise.all([
-            fetch(`${API}/api/meter-data?limit=500`),
-            fetch(`${API}/api/attacked-data?limit=500`),
-            fetch(`${API}/api/detection-results?limit=500`)
+            fetch(`${API}/api/meter-data?limit=500&offset=0`),
+            fetch(`${API}/api/attacked-data?limit=500&offset=0`),
+            fetch(`${API}/api/detection-results?limit=500&offset=0`)
         ]);
-        allMeter = await mR.json();
-        allAttacked = await aR.json();
-        allDetection = await dR.json();
+        const m1 = await mR.json();
+        const a1 = await aR.json();
+        const d1 = await dR.json();
+        // Also fetch offset 2880 to get data from different meters (each meter has ~2880 rows)
+        const [mR2, aR2, dR2] = await Promise.all([
+            fetch(`${API}/api/meter-data?limit=500&offset=2880`),
+            fetch(`${API}/api/attacked-data?limit=500&offset=2880`),
+            fetch(`${API}/api/detection-results?limit=500&offset=2880`)
+        ]);
+        allMeter     = [...m1, ...await mR2.json()];
+        allAttacked  = [...a1, ...await aR2.json()];
+        allDetection = [...d1, ...await dR2.json()];
 
         // Populate meter ID dropdown from by-meter endpoint (gets all meters)
         let meters = [];
