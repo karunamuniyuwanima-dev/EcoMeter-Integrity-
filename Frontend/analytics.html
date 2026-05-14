@@ -367,7 +367,7 @@ async function init() {
         const tn = dD.filter(d => d.detected === 0 && d.ground_truth === 0).length;
         const total = tp + fn + fp + tn;
         const rate = total > 0 ? ((tp / (tp + fn)) * 100).toFixed(1) : 0;
-        const avgRisk = dD.reduce((s, d) => s + (d.risk_score || 0), 0) / dD.length;
+        const avgRisk = dD.reduce((s, d) => s + parseFloat(d.risk_score || 0), 0) / dD.length;
 
         // Stats
         document.getElementById('a-rate').textContent = rate + '%';
@@ -512,7 +512,7 @@ async function init() {
             const mAttacks = aD.filter(d => d.meter_id === m && d.is_attack).length;
             const mDet = dD.filter(d => d.meter_id === m && d.detected === 1).length;
             const mMissed = dD.filter(d => d.meter_id === m && d.detected === 0 && d.ground_truth === 1).length;
-            const mRisks = dD.filter(d => d.meter_id === m).map(d => d.risk_score || 0);
+            const mRisks = dD.filter(d => d.meter_id === m).map(d => parseFloat(d.risk_score || 0));
             const mAvgRisk = mRisks.length > 0 ? (mRisks.reduce((s, r) => s + r, 0) / mRisks.length).toFixed(1) : 0;
             const mMaxRisk = mRisks.length > 0 ? Math.max(...mRisks) : 0;
             const mRate = mAttacks > 0 ? ((mDet / mAttacks) * 100).toFixed(1) + '%' : 'N/A';
