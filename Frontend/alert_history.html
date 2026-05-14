@@ -499,16 +499,16 @@ function exportCSV() {
 
 async function init() {
     try {
-        // Fetch from multiple offsets to cover all 5 meters and all attack types
-        const [r1, r2, r3] = await Promise.all([
-            fetch(`${API}/api/detection-results?limit=500&offset=0`),
-            fetch(`${API}/api/detection-results?limit=500&offset=2880`),
-            fetch(`${API}/api/detection-results?limit=500&offset=8640`)
+        // Fetch 300 rows from each meter to cover all attack types across all meters
+        const [r1,r2,r3,r4,r5] = await Promise.all([
+            fetch(`${API}/api/detection-results?limit=300&meter_id=M001`),
+            fetch(`${API}/api/detection-results?limit=300&meter_id=M002`),
+            fetch(`${API}/api/detection-results?limit=300&meter_id=M003`),
+            fetch(`${API}/api/detection-results?limit=300&meter_id=M004`),
+            fetch(`${API}/api/detection-results?limit=300&meter_id=M005`)
         ]);
-        const d1 = await r1.json();
-        const d2 = await r2.json();
-        const d3 = await r3.json();
-        allData = [...d1, ...d2, ...d3];
+        const [d1,d2,d3,d4,d5] = await Promise.all([r1.json(),r2.json(),r3.json(),r4.json(),r5.json()]);
+        allData = [...d1,...d2,...d3,...d4,...d5];
         filteredData = [...allData];
 
         // Populate attack type filter — known types always shown, extras added from data

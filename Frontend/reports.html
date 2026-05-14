@@ -516,23 +516,16 @@ function exportCSV() {
 
 async function init() {
     try {
-        const [mR, aR, dR] = await Promise.all([
-            fetch(`${API}/api/meter-data?limit=500&offset=0`),
-            fetch(`${API}/api/attacked-data?limit=500&offset=0`),
-            fetch(`${API}/api/detection-results?limit=500&offset=0`)
+        // Fetch 200 rows from each meter to cover all attack types
+        const meters5 = ['M001','M002','M003','M004','M005'];
+        const [mResults, aResults, dResults] = await Promise.all([
+            Promise.all(meters5.map(m => fetch(`${API}/api/meter-data?limit=200&meter_id=${m}`).then(r=>r.json()))),
+            Promise.all(meters5.map(m => fetch(`${API}/api/attacked-data?limit=200&meter_id=${m}`).then(r=>r.json()))),
+            Promise.all(meters5.map(m => fetch(`${API}/api/detection-results?limit=200&meter_id=${m}`).then(r=>r.json())))
         ]);
-        const m1 = await mR.json();
-        const a1 = await aR.json();
-        const d1 = await dR.json();
-        // Also fetch offset 2880 to get data from different meters (each meter has ~2880 rows)
-        const [mR2, aR2, dR2] = await Promise.all([
-            fetch(`${API}/api/meter-data?limit=500&offset=2880`),
-            fetch(`${API}/api/attacked-data?limit=500&offset=2880`),
-            fetch(`${API}/api/detection-results?limit=500&offset=2880`)
-        ]);
-        allMeter     = [...m1, ...await mR2.json()];
-        allAttacked  = [...a1, ...await aR2.json()];
-        allDetection = [...d1, ...await dR2.json()];
+        allMeter     = mResults.flat();
+        allAttacked  = aResults.flat();
+        allDetection = dResults.flat();
 
         // Populate meter ID dropdown from by-meter endpoint (gets all meters)
         let meters = [];
