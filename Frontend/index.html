@@ -408,23 +408,26 @@ function getNotes(diff, detected) {
 
 async function load() {
   try {
-        const [mR,aR,dR,ovR] = await Promise.all([
+        const [mR,aR,dR,ovR,stR] = await Promise.all([
             fetch(`${API}/api/meter-data?limit=500`),
             fetch(`${API}/api/attacked-data?limit=500`),
             fetch(`${API}/api/detection-results?limit=500`),
-            fetch(`${API}/api/attack-overview`)
+            fetch(`${API}/api/attack-overview`),
+            fetch(`${API}/api/stats`)
         ]);
-        const mD = await mR.json();
-        const aD = await aR.json();
-        const dD = await dR.json();
+        const mD  = await mR.json();
+        const aD  = await aR.json();
+        const dD  = await dR.json();
         const ovD = await ovR.json();
+        const st  = await stR.json();
 
-        const totalAtk = aD.filter(d=>d.is_attack).length;
-        const totalDet = dD.filter(d=>d.detected===1).length;
-        const avgRisk = dD.reduce((s,d)=>s+(d.risk_score||0),0)/dD.length;
-        const rate = totalAtk>0?((totalDet/totalAtk)*100).toFixed(1)+'%':'N/A';
+        // Use /api/stats for accurate full-database counts
+        const totalAtk = st.total_attacks    || 0;
+        const totalDet = st.total_detections || 0;
+        const avgRisk  = parseFloat(st.avg_risk_score) || 0;
+        const rate = totalAtk > 0 ? ((totalDet / totalAtk) * 100).toFixed(1) + '%' : 'N/A';
 
-        document.getElementById('s1').textContent = mD.length.toLocaleString();
+        document.getElementById('s1').textContent = (st.total_readings || 0).toLocaleString();
         document.getElementById('s2').textContent = totalAtk.toLocaleString();
         document.getElementById('s3').textContent = totalDet.toLocaleString();
         document.getElementById('s4').textContent = avgRisk.toFixed(1);
@@ -498,10 +501,10 @@ async function load() {
         tbody.innerHTML='';
         dD.slice(0,50).forEach((d,i)=>{
             const atk=aD.find(a=>a.meter_id===d.meter_id)||{};
-            const diff=atk.diff_pct!=null?atk.diff_pct:0;
+            const diff=parseFloat(atk.diff_pct ?? 0);
             const diffStr=atk.diff_pct!=null?(diff>0?'+':'')+diff.toFixed(1)+'%':'N/A';
             const diffColor=diff>0?'var(--red)':diff<0?'var(--cyan)':'var(--text3)';
-            const thresh=d.energy_kwh!=null?(d.energy_kwh*1.3).toFixed(3):'N/A';
+            const thresh=d.energy_kwh!=null?(parseFloat(d.energy_kwh)*1.3).toFixed(3):'N/A';
             const anom=d.detected===1?'<span class="yes">⚠ Yes</span>':'<span class="no">No</span>';
             const n=getNotes(diff,d.detected===1);
             tbody.innerHTML+=`
@@ -509,7 +512,7 @@ async function load() {
                     <td class="t-muted mid">${i+1}</td>
                     <td class="t-blue mid">${d.meter_id||'N/A'}</td>
                     <td class="t-muted mid" style="font-size:0.65rem">${d.timestamp?d.timestamp.toString().slice(0,16):'N/A'}</td>
-                    <td class="t-cyan mid">${d.energy_kwh!=null?d.energy_kwh.toFixed(4):'N/A'}</td>
+                    <td class="t-cyan mid">${d.energy_kwh!=null?parseFloat(d.energy_kwh).toFixed(4):'N/A'}</td>
                     <td>${anom}</td>
                     <td class="mid" style="color:var(--text2)">${thresh}</td>
                     <td class="mid" style="color:${diffColor}">${diffStr}</td>
