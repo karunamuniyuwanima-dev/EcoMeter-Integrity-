@@ -5,7 +5,7 @@ Project Structure
 - simulator/   → Smart meter data simulator (Verginiya)
 - attack/      → FDIA attack simulation (Treveen)
 - detection/   → Anomaly detection engine (Thisari)
-- backend/     → Flask REST API and Dashboard (Shehani)
+- backend/     → Node.js API and Dashboard (Shehani)
 - database/    → PostgreSQL schema
   How to Run
 Install dependencies:
