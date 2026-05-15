@@ -289,7 +289,7 @@
         <div class="stat s-red"><div class="stat-icon">⚔️</div><div class="stat-lbl">Total Attacks</div><div class="stat-val" id="s2">--</div><div class="stat-sub">Simulated attacks</div></div>
         <div class="stat s-cyan"><div class="stat-icon">🔍</div><div class="stat-lbl">Detections</div><div class="stat-val" id="s3">--</div><div class="stat-sub">Anomalies found</div></div>
         <div class="stat s-yellow"><div class="stat-icon">⚠️</div><div class="stat-lbl">Avg Risk Score</div><div class="stat-val" id="s4">--</div><div class="stat-sub">Out of 100</div></div>
-        <div class="stat s-green"><div class="stat-icon">✅</div><div class="stat-lbl">Detection Rate</div><div class="stat-val" id="s5">--</div><div class="stat-sub">Accuracy</div></div>
+        <div class="stat s-green"><div class="stat-icon">✅</div><div class="stat-lbl">Detection Rate</div><div class="stat-val" id="s5">--</div><div class="stat-sub">Accuracy (TP+TN)/Total</div></div>
     </div>
 
     <div class="top-row">
@@ -425,7 +425,24 @@ async function load() {
         const totalAtk = st.total_attacks    || 0;
         const totalDet = st.total_detections || 0;
         const avgRisk  = parseFloat(st.avg_risk_score) || 0;
-        const rate = totalAtk > 0 ? ((totalDet / totalAtk) * 100).toFixed(1) + '%' : 'N/A';
+
+        // Accuracy = (TP+TN)/Total — official formula from detection_engine.py evaluate_accuracy()
+        // Expected: TP=3588, TN=8073, FP=2078, FN=661 → (3588+8073)/14400 = 81.0%
+        const tpV = st.true_positives  || 0;
+        const tnV = st.true_negatives  || 0;
+        const fpV = st.false_positives || 0;
+        const fnV = st.false_negatives || 0;
+        const cmTotal = tpV + tnV + fpV + fnV;
+        let rate;
+        if (st.accuracy != null && st.accuracy > 0) {
+            // Use pre-computed value from backend
+            rate = parseFloat(st.accuracy).toFixed(1) + '%';
+        } else if (cmTotal > 0) {
+            // Calculate directly from TP/TN counts if backend sent them
+            rate = ((tpV + tnV) / cmTotal * 100).toFixed(1) + '%';
+        } else {
+            rate = 'N/A';
+        }
 
         document.getElementById('s1').textContent = (st.total_readings || 0).toLocaleString();
         document.getElementById('s2').textContent = totalAtk.toLocaleString();

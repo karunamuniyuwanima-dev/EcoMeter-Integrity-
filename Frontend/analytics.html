@@ -193,7 +193,7 @@
     <!-- STATS -->
     <div class="sec-title">Analytics Overview</div>
     <div class="stats-row">
-        <div class="stat s-green"><div class="stat-icon">🎯</div><div class="stat-lbl">Detection Rate</div><div class="stat-val" id="a-rate">--</div><div class="stat-sub">Overall accuracy</div></div>
+        <div class="stat s-green"><div class="stat-icon">🎯</div><div class="stat-lbl">Detection Rate</div><div class="stat-val" id="a-rate">--</div><div class="stat-sub">Accuracy (TP+TN)/Total</div></div>
         <div class="stat s-blue"><div class="stat-icon">✅</div><div class="stat-lbl">True Positive</div><div class="stat-val" id="a-tp">--</div><div class="stat-sub">Correctly detected</div></div>
         <div class="stat s-red"><div class="stat-icon">❌</div><div class="stat-lbl">False Negative</div><div class="stat-val" id="a-fn">--</div><div class="stat-sub">Missed attacks</div></div>
         <div class="stat s-yellow"><div class="stat-icon">⚠️</div><div class="stat-lbl">False Positive</div><div class="stat-val" id="a-fp">--</div><div class="stat-sub">False alarms</div></div>
@@ -351,33 +351,40 @@ const API = 'https://ecometer-integrity-production-52a0.up.railway.app';
 
 async function init() {
     try {
-        const [mR, aR, dR] = await Promise.all([
-            fetch(`${API}/api/meter-data`),
-            fetch(`${API}/api/attacked-data`),
-            fetch(`${API}/api/detection-results`)
+        const meters5 = ['M001','M002','M003','M004','M005'];
+        const [mResults, aResults, dResults] = await Promise.all([
+            Promise.all(meters5.map(m => fetch(`${API}/api/meter-data?limit=200&meter_id=${m}`).then(r=>r.json()))),
+            Promise.all(meters5.map(m => fetch(`${API}/api/attacked-data?limit=200&meter_id=${m}`).then(r=>r.json()))),
+            Promise.all(meters5.map(m => fetch(`${API}/api/detection-results?limit=200&meter_id=${m}`).then(r=>r.json())))
         ]);
-        const mD = await mR.json();
-        const aD = await aR.json();
-        const dD = await dR.json();
+        const mD = mResults.flat();
+        const aD = aResults.flat();
+        const dD = dResults.flat();
 
-        // ── CORE METRICS ──
+        // ── CORE METRICS (official formula from detection_engine.py) ──
         const tp = dD.filter(d => d.detected === 1 && d.ground_truth === 1).length;
-        const fn = dD.filter(d => d.detected === 0 && d.ground_truth === 1).length;
-        const fp = dD.filter(d => d.detected === 1 && d.ground_truth === 0).length;
         const tn = dD.filter(d => d.detected === 0 && d.ground_truth === 0).length;
-        const total = tp + fn + fp + tn;
-        const rate = total > 0 ? ((tp / (tp + fn)) * 100).toFixed(1) : 0;
+        const fp = dD.filter(d => d.detected === 1 && d.ground_truth === 0).length;
+        const fn = dD.filter(d => d.detected === 0 && d.ground_truth === 1).length;
+        const total = tp + tn + fp + fn || 1;
+        // Accuracy = (TP+TN)/Total — matches detection_engine.py evaluate_accuracy()
+        const accuracy  = ((tp + tn) / total * 100).toFixed(1);
+        const precision = (tp + fp) > 0 ? (tp / (tp + fp) * 100).toFixed(1) : '0.0';
+        const recall    = (tp + fn) > 0 ? (tp / (tp + fn) * 100).toFixed(1) : '0.0';
+        const f1        = (parseFloat(precision) + parseFloat(recall)) > 0
+                          ? (2 * parseFloat(precision) * parseFloat(recall) / (parseFloat(precision) + parseFloat(recall))).toFixed(1)
+                          : '0.0';
         const avgRisk = dD.reduce((s, d) => s + parseFloat(d.risk_score || 0), 0) / dD.length;
 
-        // Stats
-        document.getElementById('a-rate').textContent = rate + '%';
+        // Stats cards
+        document.getElementById('a-rate').textContent = accuracy + '%';
         document.getElementById('a-tp').textContent = tp.toLocaleString();
         document.getElementById('a-fn').textContent = fn.toLocaleString();
         document.getElementById('a-fp').textContent = fp.toLocaleString();
         document.getElementById('a-risk').textContent = avgRisk.toFixed(1);
 
         // Gauge
-        document.getElementById('gauge-num').textContent = rate + '%';
+        document.getElementById('gauge-num').textContent = accuracy + '%';
         document.getElementById('g-tp').textContent = tp.toLocaleString();
         document.getElementById('g-fn').textContent = fn.toLocaleString();
         document.getElementById('g-fp').textContent = fp.toLocaleString();
@@ -389,12 +396,17 @@ async function init() {
         document.getElementById('m-fp').textContent = fp.toLocaleString();
         document.getElementById('m-tn').textContent = tn.toLocaleString();
 
+        // Extra metric labels if elements exist
+        if (document.getElementById('a-precision')) document.getElementById('a-precision').textContent = precision + '%';
+        if (document.getElementById('a-recall'))    document.getElementById('a-recall').textContent    = recall    + '%';
+        if (document.getElementById('a-f1'))        document.getElementById('a-f1').textContent        = f1        + '%';
+
         // ── GAUGE CHART ──
         new Chart(document.getElementById('gaugeChart'), {
             type: 'doughnut',
             data: {
                 datasets: [{
-                    data: [parseFloat(rate), 100 - parseFloat(rate)],
+                    data: [parseFloat(accuracy), 100 - parseFloat(accuracy)],
                     backgroundColor: ['#00e676', 'rgba(26,58,92,0.5)'],
                     borderWidth: 0
                 }]

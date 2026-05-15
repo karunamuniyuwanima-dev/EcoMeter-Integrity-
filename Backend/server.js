@@ -507,19 +507,57 @@ app.get('/api/risk-summary', lim30, optionalJwt, async (req, res) => {
 // GET /api/stats
 app.get('/api/stats', lim30, optionalJwt, async (req, res) => {
     try {
-        const [[tot], [det], [avg], [atk], [met]] = await Promise.all([
+        // Single combined query for confusion matrix — detected & ground_truth are INTEGER columns
+        const cmQuery = `
+            SELECT
+                COUNT(*)                                                              AS total,
+                SUM(CASE WHEN detected = 1 AND ground_truth = 1 THEN 1 ELSE 0 END)  AS tp,
+                SUM(CASE WHEN detected = 0 AND ground_truth = 0 THEN 1 ELSE 0 END)  AS tn,
+                SUM(CASE WHEN detected = 1 AND ground_truth = 0 THEN 1 ELSE 0 END)  AS fp,
+                SUM(CASE WHEN detected = 0 AND ground_truth = 1 THEN 1 ELSE 0 END)  AS fn,
+                AVG(risk_score)                                                       AS avg_risk,
+                SUM(detected)                                                         AS detections
+            FROM detection_results`;
+
+        const [[tot], [atk], [met], [cm]] = await Promise.all([
             dbQuery('SELECT COUNT(*) AS n FROM meter_data'),
-            dbQuery('SELECT COUNT(*) AS n FROM detection_results WHERE detected = 1'),
-            dbQuery('SELECT AVG(risk_score) AS n FROM detection_results'),
             dbQuery('SELECT COUNT(*) AS n FROM attacked_meter_data WHERE is_attack = true'),
             dbQuery('SELECT COUNT(DISTINCT meter_id) AS n FROM meter_data'),
+            dbQuery(cmQuery),
         ]);
+
+        const totalReadings = parseInt(tot.n) || 1;
+        const tpN  = parseInt(cm.tp)  || 0;
+        const tnN  = parseInt(cm.tn)  || 0;
+        const fpN  = parseInt(cm.fp)  || 0;
+        const fnN  = parseInt(cm.fn)  || 0;
+        const detN = parseInt(cm.detections) || 0;
+
+        // Official formula from detection_engine.py  evaluate_accuracy():
+        //   acc  = (TP + TN) / total * 100
+        //   prec = TP / (TP + FP) * 100
+        //   rec  = TP / (TP + FN) * 100
+        //   f1   = 2 * prec * rec / (prec + rec)
+        const accuracy  = parseFloat(((tpN + tnN) / (tpN + tnN + fpN + fnN || 1) * 100).toFixed(1));
+        const precision = (tpN + fpN) > 0 ? parseFloat((tpN / (tpN + fpN) * 100).toFixed(1)) : 0;
+        const recall    = (tpN + fnN) > 0 ? parseFloat((tpN / (tpN + fnN) * 100).toFixed(1)) : 0;
+        const f1        = (precision + recall) > 0
+                          ? parseFloat((2 * precision * recall / (precision + recall)).toFixed(1)) : 0;
+
         res.json({
-            total_readings:   parseInt(tot.n),
-            total_detections: parseInt(det.n),
-            avg_risk_score:   parseFloat((parseFloat(avg.n) || 0).toFixed(2)),
+            total_readings:   totalReadings,
+            total_detections: detN,
+            avg_risk_score:   parseFloat((parseFloat(cm.avg_risk) || 0).toFixed(2)),
             total_attacks:    parseInt(atk.n),
             total_meters:     parseInt(met.n),
+            true_positives:   tpN,
+            true_negatives:   tnN,
+            false_positives:  fpN,
+            false_negatives:  fnN,
+            accuracy,
+            precision,
+            recall,
+            f1,
         });
     } catch (e) { res.status(500).json({ error: e.message }); }
 });
