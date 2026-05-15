@@ -480,11 +480,12 @@ async function loadReports() {
         options: { responsive: true, cutout: '60%', plugins: { legend: { position: 'bottom', labels: { color: '#7ba7c9', font: { family: 'Share Tech Mono', size: 9 }, padding: 8 } } } }
     });
 
-    // Table
+    // Table — show up to 300 rows; sorted by timestamp so all attack types appear
     const tbody = document.getElementById('report-table');
     tbody.innerHTML = '';
-    document.getElementById('table-count').textContent = det.length.toLocaleString() + ' records';
-    det.slice(0, 100).forEach((d, i) => {
+    const tableRows = det.slice(0, 300);
+    document.getElementById('table-count').textContent = det.length.toLocaleString() + ' records' + (det.length > 300 ? ' (showing 300)' : '');
+    tableRows.forEach((d, i) => {
         const detected = d.detected === 1 ? '<span style="color:var(--red);font-family:var(--mono);font-size:0.7rem">⚠ Yes</span>' : '<span style="color:var(--text3);font-family:var(--mono);font-size:0.7rem">No</span>';
         const truth = d.ground_truth === 1 ? '<span style="color:var(--green);font-size:0.7rem">Attack</span>' : '<span style="color:var(--text3);font-size:0.7rem">Normal</span>';
         tbody.innerHTML += `
@@ -532,9 +533,8 @@ async function init() {
         allAttacked  = aResults.flat();
         // Store full-DB stats so loadReports() can use them for the accuracy card
         window._fullStats = await stR.json();
-        // Sort by attack_type so spike, noise, stealth_reduce all appear in table
-        const typeOrder = { spike:0, noise:1, stealth_reduce:2, none:3 };
-        allDetection = dResults.flat().sort((a,b)=>(typeOrder[a.attack_type]??4)-(typeOrder[b.attack_type]??4));
+        // Sort by timestamp — interleaves all 5 meters so all attack types appear early in the table
+        allDetection = dResults.flat().sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
 
         // Populate meter ID dropdown from by-meter endpoint (gets all meters)
         let meters = [];
