@@ -391,13 +391,14 @@ async function loadReports() {
     const totalAttacks = atk.filter(d => d.is_attack).length;
     const totalDetections = det.filter(d => d.detected === 1).length;
     const avgRisk = det.length > 0 ? det.reduce((s, d) => s + parseFloat(d.risk_score || 0), 0) / det.length : 0;
-    const truePos = det.filter(d => d.detected === 1 && d.ground_truth === 1).length;
-    const trueNeg = det.filter(d => d.detected === 0 && d.ground_truth === 0).length;
+    const truePos  = det.filter(d => d.detected === 1 && d.ground_truth === 1).length;
+    const trueNeg  = det.filter(d => d.detected === 0 && d.ground_truth === 0).length;
     const falsePos = det.filter(d => d.detected === 1 && d.ground_truth === 0).length;
     const falseNeg = det.filter(d => d.detected === 0 && d.ground_truth === 1).length;
-    // Accuracy = (TP+TN)/Total — official formula from detection_engine.py
-    const total = det.length || 1;
-    const rate = (((truePos + trueNeg) / total) * 100).toFixed(1);
+    // Use full-database accuracy from /api/stats so it matches Dashboard and Analytics
+    const st = window._fullStats || {};
+    const rate = st.accuracy != null ? parseFloat(st.accuracy).toFixed(1)
+                 : (((truePos + trueNeg) / (det.length || 1)) * 100).toFixed(1);
 
     document.getElementById('r-readings').textContent = met.length.toLocaleString();
     document.getElementById('r-attacks').textContent = totalAttacks.toLocaleString();
@@ -519,15 +520,18 @@ function exportCSV() {
 
 async function init() {
     try {
-        // Fetch 200 rows from each meter to cover all attack types
+        // Fetch 200 rows from each meter + full-database stats for accurate accuracy metric
         const meters5 = ['M001','M002','M003','M004','M005'];
-        const [mResults, aResults, dResults] = await Promise.all([
+        const [mResults, aResults, dResults, stR] = await Promise.all([
             Promise.all(meters5.map(m => fetch(`${API}/api/meter-data?limit=200&meter_id=${m}`).then(r=>r.json()))),
             Promise.all(meters5.map(m => fetch(`${API}/api/attacked-data?limit=200&meter_id=${m}`).then(r=>r.json()))),
-            Promise.all(meters5.map(m => fetch(`${API}/api/detection-results?limit=200&meter_id=${m}`).then(r=>r.json())))
+            Promise.all(meters5.map(m => fetch(`${API}/api/detection-results?limit=200&meter_id=${m}`).then(r=>r.json()))),
+            fetch(`${API}/api/stats`)
         ]);
         allMeter     = mResults.flat();
         allAttacked  = aResults.flat();
+        // Store full-DB stats so loadReports() can use them for the accuracy card
+        window._fullStats = await stR.json();
         // Sort by attack_type so spike, noise, stealth_reduce all appear in table
         const typeOrder = { spike:0, noise:1, stealth_reduce:2, none:3 };
         allDetection = dResults.flat().sort((a,b)=>(typeOrder[a.attack_type]??4)-(typeOrder[b.attack_type]??4));

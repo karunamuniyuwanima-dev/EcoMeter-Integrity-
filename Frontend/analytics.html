@@ -352,49 +352,56 @@ const API = 'https://ecometer-integrity-production-52a0.up.railway.app';
 async function init() {
     try {
         const meters5 = ['M001','M002','M003','M004','M005'];
-        const [mResults, aResults, dResults] = await Promise.all([
+        const [mResults, aResults, dResults, stR] = await Promise.all([
             Promise.all(meters5.map(m => fetch(`${API}/api/meter-data?limit=200&meter_id=${m}`).then(r=>r.json()))),
             Promise.all(meters5.map(m => fetch(`${API}/api/attacked-data?limit=200&meter_id=${m}`).then(r=>r.json()))),
-            Promise.all(meters5.map(m => fetch(`${API}/api/detection-results?limit=200&meter_id=${m}`).then(r=>r.json())))
+            Promise.all(meters5.map(m => fetch(`${API}/api/detection-results?limit=200&meter_id=${m}`).then(r=>r.json()))),
+            fetch(`${API}/api/stats`)
         ]);
         const mD = mResults.flat();
         const aD = aResults.flat();
         const dD = dResults.flat();
+        const st = await stR.json();
 
-        // ── CORE METRICS (official formula from detection_engine.py) ──
+        // ── FULL-DATABASE METRICS from /api/stats (all 14,400 rows) ──
+        // Same source as Dashboard — ensures all pages show the same accuracy
+        const fullTP  = st.true_positives  || 0;
+        const fullTN  = st.true_negatives  || 0;
+        const fullFP  = st.false_positives || 0;
+        const fullFN  = st.false_negatives || 0;
+        // Use pre-computed accuracy from backend (detection_engine.py formula: (TP+TN)/Total)
+        const accuracy  = st.accuracy  != null ? parseFloat(st.accuracy).toFixed(1)  : ((fullTP+fullTN)/(fullTP+fullTN+fullFP+fullFN||1)*100).toFixed(1);
+        const precision = st.precision != null ? parseFloat(st.precision).toFixed(1) : '0.0';
+        const recall    = st.recall    != null ? parseFloat(st.recall).toFixed(1)    : '0.0';
+        const f1        = st.f1        != null ? parseFloat(st.f1).toFixed(1)        : '0.0';
+        const avgRisk   = parseFloat(st.avg_risk_score) || 0;
+
+        // ── SAMPLE METRICS for confusion matrix display (1,000 loaded rows) ──
+        // These show the distribution in the loaded sample, not full DB totals
         const tp = dD.filter(d => d.detected === 1 && d.ground_truth === 1).length;
         const tn = dD.filter(d => d.detected === 0 && d.ground_truth === 0).length;
         const fp = dD.filter(d => d.detected === 1 && d.ground_truth === 0).length;
         const fn = dD.filter(d => d.detected === 0 && d.ground_truth === 1).length;
-        const total = tp + tn + fp + fn || 1;
-        // Accuracy = (TP+TN)/Total — matches detection_engine.py evaluate_accuracy()
-        const accuracy  = ((tp + tn) / total * 100).toFixed(1);
-        const precision = (tp + fp) > 0 ? (tp / (tp + fp) * 100).toFixed(1) : '0.0';
-        const recall    = (tp + fn) > 0 ? (tp / (tp + fn) * 100).toFixed(1) : '0.0';
-        const f1        = (parseFloat(precision) + parseFloat(recall)) > 0
-                          ? (2 * parseFloat(precision) * parseFloat(recall) / (parseFloat(precision) + parseFloat(recall))).toFixed(1)
-                          : '0.0';
-        const avgRisk = dD.reduce((s, d) => s + parseFloat(d.risk_score || 0), 0) / dD.length;
 
-        // Stats cards
+        // Stats cards — use FULL-DATABASE accuracy so it matches Dashboard
         document.getElementById('a-rate').textContent = accuracy + '%';
-        document.getElementById('a-tp').textContent = tp.toLocaleString();
-        document.getElementById('a-fn').textContent = fn.toLocaleString();
-        document.getElementById('a-fp').textContent = fp.toLocaleString();
+        document.getElementById('a-tp').textContent = fullTP.toLocaleString();
+        document.getElementById('a-fn').textContent = fullFN.toLocaleString();
+        document.getElementById('a-fp').textContent = fullFP.toLocaleString();
         document.getElementById('a-risk').textContent = avgRisk.toFixed(1);
 
-        // Gauge
+        // Gauge — full-database accuracy
         document.getElementById('gauge-num').textContent = accuracy + '%';
-        document.getElementById('g-tp').textContent = tp.toLocaleString();
-        document.getElementById('g-fn').textContent = fn.toLocaleString();
-        document.getElementById('g-fp').textContent = fp.toLocaleString();
-        document.getElementById('g-tn').textContent = tn.toLocaleString();
+        document.getElementById('g-tp').textContent = fullTP.toLocaleString();
+        document.getElementById('g-fn').textContent = fullFN.toLocaleString();
+        document.getElementById('g-fp').textContent = fullFP.toLocaleString();
+        document.getElementById('g-tn').textContent = fullTN.toLocaleString();
 
-        // Confusion Matrix
-        document.getElementById('m-tp').textContent = tp.toLocaleString();
-        document.getElementById('m-fn').textContent = fn.toLocaleString();
-        document.getElementById('m-fp').textContent = fp.toLocaleString();
-        document.getElementById('m-tn').textContent = tn.toLocaleString();
+        // Confusion Matrix — full-database counts
+        document.getElementById('m-tp').textContent = fullTP.toLocaleString();
+        document.getElementById('m-fn').textContent = fullFN.toLocaleString();
+        document.getElementById('m-fp').textContent = fullFP.toLocaleString();
+        document.getElementById('m-tn').textContent = fullTN.toLocaleString();
 
         // Extra metric labels if elements exist
         if (document.getElementById('a-precision')) document.getElementById('a-precision').textContent = precision + '%';
